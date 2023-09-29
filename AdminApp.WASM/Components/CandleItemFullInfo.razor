@@ -1,0 +1,100 @@
+﻿@if (Candle is not null)
+{
+	<table class="table table-bordered">
+	<tr>
+		<td>
+			Id 
+		</td>
+		<td>
+			@Candle.Id
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Назва
+		</td>
+		<td>
+				@Candle.Name
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Категорія
+		</td>
+		<td>
+				@Candle.Category
+		</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Опис
+		</td>
+		<td colspan="2">
+				@Candle.Description
+		</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Собівартість
+		</td>
+		<td colspan="1">
+				@Candle.RealCost
+		</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Ціна продажу
+		</td>
+		<td colspan="1">
+				@Candle.SellPrice
+		</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Висота (см)
+		</td>
+		<td colspan="1">
+				@Candle.HeightCM
+		</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Час горіння (хв)
+		</td>
+		<td colspan="1">
+			@Candle.BurningTimeMins
+			</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Воску потрібно (г)
+		</td>
+		<td colspan="1">
+				@Candle.WaxNeededGram
+		</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Гніт (см)
+		</td>
+			<td colspan="1">
+				@Candle.WickDiameterCM
+				</td>
+	</tr>
+	<tr>
+		<td colspan="1">
+			Photo 
+			</td>
+			<td colspan="1">
+			@Candle.PhotoLink
+
+		</td>
+	</tr>
+	</table>
+}
+
+@code {
+	[CascadingParameter]
+	public CandleFullVM Candle { get; set; } = null!;
+
+}

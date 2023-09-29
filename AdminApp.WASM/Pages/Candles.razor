@@ -1,0 +1,111 @@
+﻿@page "/candles"
+@layout CandlesLayout
+@inject HttpClient client;
+@inject NavigationManager navmanager;
+
+<body class="mainbody">
+<div class="container-fluid mainbody">
+
+	<h3>Candles</h3>
+
+	<div class="nav-item px-3">
+		<NavLink class="nav-link" href="new-candle">
+			<span class="oi oi-list-rich" aria-hidden="true"></span> Додати свічку
+		</NavLink>
+	</div>
+
+	@if (CandlesExpanded is not null && CandlesExpanded.Any())
+	{
+		<div class="container-fluid">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Id</th>
+						<th scope="col">Name </th>
+						<th scope="col"></th>
+					</tr>
+
+				</thead>
+
+				<tbody>
+					@foreach (var can in CandlesExpanded)
+					{
+						<tr style="cursor:pointer">
+							<td> @can.CandleItem.Id </td>
+							<td @onclick="() => can.Expanded = !can.Expanded"> @can.CandleItem.Name </td>
+							<td> <button type="button" @onclick="() => EditCandle(can.CandleItem.Id)">Edit</button></td>
+						</tr>
+						@if (can.Expanded)
+						{
+							<tr>
+								<td colspan="3">
+									<CascadingValue Value="can.CandleItem">
+										<CandleItemFullInfo />
+									</CascadingValue>
+								</td>
+							</tr>
+						}
+					}
+				</tbody>
+
+			</table>
+		</div>
+	}
+	else
+	{
+		<p> Loading... </p>
+	}
+
+
+</div>
+
+</body>	
+@code {
+	private string path = $"api/Candle?view=full";
+
+	public IEnumerable<CandleFullVM>? CandleList { get; set; }
+
+	//public override async Task SetParametersAsync(ParameterView paramss)
+	//{
+	//	CandleList = await client.GetFromJsonAsync<IEnumerable<CandleBasicVM>>(path);
+	//}
+
+	public ICollection<CandleWithExpanded> CandlesExpanded { get; set; } = new List<CandleWithExpanded>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			CandleList = await client.GetFromJsonAsync<IEnumerable<CandleFullVM>>(path);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error happened - \n {ex}");
+		}
+
+		foreach (var c in CandleList)
+		{
+			CandlesExpanded.Add(new CandleWithExpanded(c, false));
+		}
+
+	}
+
+	public void EditCandle(int candleId)
+	{
+		navmanager.NavigateTo($"candle/{candleId}");
+	}
+
+
+	public class CandleWithExpanded
+	{
+		public CandleFullVM CandleItem { get; set; }
+		public bool Expanded { get; set; } = false;
+
+		public CandleWithExpanded(CandleFullVM c, bool value)
+		{
+			CandleItem = c;
+			Expanded = value;
+		}
+	}
+
+}

@@ -1,0 +1,46 @@
+﻿@page "/candle/{id}"
+@using AdminApp.WASM.Pages.FormModels;
+@using AdminApp.WASM.Utility;
+@inject NavigationManager navmanager;
+@inject HttpClient hclient;
+
+<h3>EditCandle</h3>
+
+<EditForm Model="CandleFormModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+	<DataAnnotationsValidator />
+	<CascadingValue Value="CandleFormModel">
+		<CandleFieldsTemplate />
+	</CascadingValue>
+
+	<div>
+
+		<button>Зберегти</button>
+	</div>
+</EditForm>
+
+@code {
+	[Parameter]
+	public string Id { get; set; }
+
+	public NewCandleFormModel CandleFormModel { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var cndl = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
+		CandleFormModel = cndl?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+	}
+
+
+	public void HandleValidSubmit()
+	{
+
+
+	}
+
+	public void HandleInvalidSubmit()
+	{
+		
+
+	}
+
+}

@@ -1,0 +1,87 @@
+﻿@using AdminApp.WASM.Pages.FormModels;
+
+
+<h3>CandleFieldsTemplate</h3>
+	<div>
+		<label>
+			Назва
+			<InputText @bind-Value="NewCandleForm.Name" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.Name" />
+	</div>
+
+	<div>
+		<label>
+			Опис
+			<InputText @bind-Value="NewCandleForm.Description" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.Description" />
+	</div>
+
+	<div>
+		<label>
+			Категорія
+			<InputText @bind-Value="NewCandleForm.Category" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.Category" />
+	</div>
+
+	<div>
+		<label>
+			Фото
+			<InputText @bind-Value="NewCandleForm.PhotoLink" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.PhotoLink" />
+	</div>
+	<div>
+		<label>
+			Собівартість
+			<InputNumber @bind-Value="NewCandleForm.RealCost" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.RealCost" />
+	</div>
+	<div>
+		<label>
+			Ціна продажу
+			<InputNumber @bind-Value="NewCandleForm.SellPrice" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.SellPrice" />
+	</div>
+	<div>
+		<label>
+			Час горіння
+			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.BurningTimeMins" />
+	</div>
+	<div>
+		<label>
+			Висота (см)
+			<InputNumber @bind-Value="NewCandleForm.HeightCM" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.HeightCM" />
+	</div>
+	<div>
+		<label>
+			Гніт діаметр (см)
+			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.WickDiameterCM" />
+	</div>
+	<div>
+		<label>
+			Воску потрібно (г)
+			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" />
+		</label>
+		<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
+	</div>
+
+
+
+@code {
+
+	[CascadingParameter]
+	public NewCandleFormModel NewCandleForm { get; set; } = null!;
+
+
+}

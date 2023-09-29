@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <UserSecretsId>18c241c7-3008-450f-a7a5-8dd6c0cb371a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

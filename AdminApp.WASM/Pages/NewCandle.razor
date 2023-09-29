@@ -1,0 +1,52 @@
+﻿@page "/new-candle"
+@using AdminApp.WASM.Pages.FormModels;
+@using AdminApp.WASM.Utility;
+@inject NavigationManager navmanager;
+@inject HttpClient hclient;
+
+<h3>Нова Свічка</h3>
+
+<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+	<DataAnnotationsValidator />
+	<CascadingValue Value="NewCandleForm">
+		<CandleFieldsTemplate/>
+	</CascadingValue>
+
+	<div>
+
+		<button>Додати</button>
+	</div>
+</EditForm>
+
+<p> @MessageResponse</p>
+@code {
+	public NewCandleFormModel NewCandleForm { get; set; } = new();
+
+	public string MessageResponse { get; set; } = "";
+
+	public async Task HandleValidSubmit()
+	{
+		CandleFullVM candleToAdd = NewCandleForm.ConvertToFullVM_FromFormModel();
+
+		var result = await hclient.PostAsJsonAsync<CandleFullVM>("api/candle?categoryId=1", candleToAdd);
+
+		if (result.IsSuccessStatusCode)
+		{
+			MessageResponse = "Свічка успішно додана.";
+			NewCandleForm = new();
+			//navmanager.NavigateTo("candles");
+		}
+
+		else 
+		{
+			MessageResponse = "Не вдалось додати свічку.";
+		}
+
+	}
+
+	public void HandleInvalidSubmit()
+	{
+		MessageResponse = "Invalid entry";
+	}
+
+}

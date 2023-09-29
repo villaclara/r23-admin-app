@@ -1,0 +1,25 @@
+﻿@using System.Collections.Specialized;
+@inject HttpClient hClient;
+
+
+
+<h3>TestCandle</h3>
+
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		
+
+	}
+
+	public void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
+	{
+		InvokeAsync(StateHasChanged);
+	}
+
+	public void Dispose()
+	{
+		
+	}
+}

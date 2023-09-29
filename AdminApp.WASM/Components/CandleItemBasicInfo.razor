@@ -1,0 +1,13 @@
+﻿<h3>CandleBasicInfo</h3>
+
+Name - @CandleBasic.Name
+Description - @CandleBasic.Desciption
+Category - @CandleBasic.Category
+Price - @CandleBasic.Price
+Height - @CandleBasic.Height
+BurningTime - @CandleBasic.BurningTime
+
+@code {
+	[CascadingParameter]
+	public CandleBasicVM CandleBasic { get; set; } = null!;
+}
