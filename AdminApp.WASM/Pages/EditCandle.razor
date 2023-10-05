@@ -1,4 +1,4 @@
-﻿@page "/candle/{id}"
+﻿@page "/candle/{id:int}"
 @using AdminApp.WASM.Pages.FormModels;
 @using AdminApp.WASM.Utility;
 @inject NavigationManager navmanager;
@@ -6,9 +6,9 @@
 
 <h3>EditCandle</h3>
 
-<EditForm Model="CandleFormModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 	<DataAnnotationsValidator />
-	<CascadingValue Value="CandleFormModel">
+	<CascadingValue Value="NewCandleForm">
 		<CandleFieldsTemplate />
 	</CascadingValue>
 
@@ -17,30 +17,94 @@
 		<button>Зберегти</button>
 	</div>
 </EditForm>
+<div> div to not missclick </div>
+		<button @onclick="DeleteCandle"> Видалити</button>
+		<button @onclick="GetCandle">GET CANDLE </button>
+<p> @MessageResponse</p>
 
 @code {
 	[Parameter]
-	public string Id { get; set; }
+	public int Id { get; set; }
 
-	public NewCandleFormModel CandleFormModel { get; set; } = new();
+	public NewCandleFormModel NewCandleForm { get; set; } = new();
+
+	public string MessageResponse { get; set; } = "";
+
+	private CandleFullVM? _selectedCandle = new CandleFullVM();
+
+	private bool isFunctionDone = false;
 
 	protected override async Task OnInitializedAsync()
 	{
-		var cndl = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
-		CandleFormModel = cndl?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+		//if (!isFunctionDone)
+		//{
+		//	_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
+		//	NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+		//	MessageResponse = "On initialized message";
+		//}
 	}
 
-
-	public void HandleValidSubmit()
+	public async void GetCandle()
 	{
+		_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
+		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+		MessageResponse = "On initialized message";
+	}
+
+	public async void HandleValidSubmit()
+	{
+		//_selectedCandle = CandleFormModel.ConvertToFullVM_FromFormModel();
+		//_selectedCandle = _selectedCandle?.UpdateValues_FromFormModel(CandleFormModel);
+
+		_selectedCandle.Name = NewCandleForm.Name;
+		_selectedCandle.Description = NewCandleForm.Description;
+		_selectedCandle.Category = NewCandleForm.Category;
+		_selectedCandle.PhotoLink = NewCandleForm.PhotoLink;
+		_selectedCandle.RealCost = NewCandleForm.RealCost ?? _selectedCandle.RealCost;
+		_selectedCandle.SellPrice = NewCandleForm.SellPrice ?? _selectedCandle.SellPrice;
+		_selectedCandle.HeightCM = NewCandleForm.HeightCM ?? _selectedCandle.HeightCM;
+		_selectedCandle.BurningTimeMins = NewCandleForm.BurningTimeMins ?? _selectedCandle.BurningTimeMins;
+		_selectedCandle.WickDiameterCM = NewCandleForm.WickDiameterCM ?? _selectedCandle.WickDiameterCM;
+		_selectedCandle.WaxNeededGram = NewCandleForm.WaxNeededGram ?? _selectedCandle.WaxNeededGram;
 
 
+		_selectedCandle.Id = Id;
+		var result = await hclient.PutAsJsonAsync<CandleFullVM>($"api/Candle/cid={Id}", _selectedCandle);
+
+		if(result.IsSuccessStatusCode)
+		{
+			MessageResponse = "Свічка оновлена.";
+			NewCandleForm = new();
+			_selectedCandle = null;
+		}
+		else 
+		{
+			MessageResponse = "Error when updating.";
+		}
+		isFunctionDone = true;
 	}
 
 	public void HandleInvalidSubmit()
 	{
-		
 
+		MessageResponse = "Invalid submit.";
+	}
+
+	public async void DeleteCandle()
+	{
+
+		//var result = await hclient.DeleteFromJsonAsync<bool>($"api/Candle/cid={Id}");
+		var result = await hclient.DeleteAsync($"api/Candle/cid={Id}");
+		
+		if (result.IsSuccessStatusCode)
+		{
+			MessageResponse = "Свічка видалена.";
+			NewCandleForm = new NewCandleFormModel();
+		}
+		else
+		{
+			MessageResponse = "Error when deleting.";
+		}
 	}
 
 }
