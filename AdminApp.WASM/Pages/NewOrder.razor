@@ -2,8 +2,23 @@
 
 <h3>NewOrder</h3>
 
+<EditForm Model="OrderModel" OnSubmit="HandleSubmit">
+	<DataAnnotationsValidator />
+	<CascadingValue Value="OrderModel">
+		<AdminApp.WASM.Components.OrderComponents.NewOrderTemplate/>
+	</CascadingValue>
 
+	<div>
+
+		<button>Додати</button>
+	</div>
+</EditForm>
 
 @code {
+    public FormModels.NewOrderFormModel OrderModel { get; set; } = new();
 
+    public void HandleSubmit()
+    {
+
+    }
 }

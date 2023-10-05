@@ -1,0 +1,81 @@
+<h3> Order Tepmlate </h3>
+
+<div>
+	<label>
+		ПІБ отримувача
+		<InputText @bind-Value="OrderModel.Name" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Номер телефону отримувача
+		<InputText @bind-Value="OrderModel.PhoneNumber" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Місто
+		<InputText @bind-Value="OrderModel.City" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Адреса доставки
+		<InputText @bind-Value="OrderModel.Adress" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Свічка
+		<InputText @bind-Value="OrderModel.Candle" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Кількість
+		<InputText @bind-Value="OrderModel.Quantity" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Сума
+		<InputText @bind-Value="OrderModel.Price" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Коментар
+		<InputText @bind-Value="OrderModel.Comment" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+<div>
+	<label>
+		Промокод
+		<InputText @bind-Value="OrderModel.Promocode" />
+	</label>
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+@code {
+
+    [CascadingParameter]
+    public Pages.FormModels.NewOrderFormModel OrderModel { get; set; }
+}
+
+
