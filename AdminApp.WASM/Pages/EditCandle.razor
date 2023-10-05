@@ -18,8 +18,7 @@
 	</div>
 </EditForm>
 <div> div to not missclick </div>
-		<button @onclick="DeleteCandle"> Видалити</button>
-		<button @onclick="GetCandle">GET CANDLE </button>
+		<button @onclick="(() => DeleteCandle())"> Видалити</button>
 <p> @MessageResponse</p>
 
 @code {
@@ -36,22 +35,16 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		//if (!isFunctionDone)
-		//{
-		//	_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
-		//	NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
-		//	MessageResponse = "On initialized message";
-		//}
+		if (!isFunctionDone)
+		{
+			_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
+			NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+			MessageResponse = "";
+		}
 	}
 
-	public async void GetCandle()
-	{
-		_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
-		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
-		MessageResponse = "On initialized message";
-	}
 
-	public async void HandleValidSubmit()
+	public async Task HandleValidSubmit()
 	{
 		//_selectedCandle = CandleFormModel.ConvertToFullVM_FromFormModel();
 		//_selectedCandle = _selectedCandle?.UpdateValues_FromFormModel(CandleFormModel);
@@ -90,7 +83,7 @@
 		MessageResponse = "Invalid submit.";
 	}
 
-	public async void DeleteCandle()
+	public async Task DeleteCandle()
 	{
 
 		//var result = await hclient.DeleteFromJsonAsync<bool>($"api/Candle/cid={Id}");
