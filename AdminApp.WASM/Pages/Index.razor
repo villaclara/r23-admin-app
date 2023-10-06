@@ -1,22 +1,109 @@
 ﻿@page "/"
+@inject HttpClient hclient;
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Road23 Home</PageTitle>
 
 <h3> Welcome </h3>
 
 <article>
 	<div>
+		<NavLink class="nav-link" href="orders">
 		Останні замовлення
+		</NavLink>
+	</div>
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>ПІБ</th>
+					<th>Номер телефону</th>
+					<th>Сума</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (!LastOrders.Any())
+				{
+					<tr>No orders</tr>
+				}
+				else
+				{
+					@foreach (var order in LastOrders)
+					{
+						<tr>
+							<td>@order.Id</td>
+							<td>@order.Receiver.FullName</td>
+							<td>@order.Receiver.PhoneNumber</td>
+							<td>@order.TotalSum</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
 	</div>
 </article>
 
 <article>
 	<div>
+		<NavLink class="nav-link" href="/candles">
 		Свічки
+		</NavLink>
+	</div>
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Назва</th>
+					<th>Ціна</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (!LastCandles.Any())
+				{
+					<tr>No orders</tr>
+				}
+				else
+				{
+					@foreach (var candle in LastCandles)
+					{
+						<tr>
+							<td>@candle.Id</td>
+							<td>@candle.Name</td>
+							<td>@candle.SellPrice</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
 	</div>
 </article>
 
 
 @code {
-	
+	public IEnumerable<OrderVM> LastOrders { get; set; } = new List<OrderVM>();
+	public IEnumerable<CandleFullVM> LastCandles { get; set; } = new List<CandleFullVM>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order");
+		if(orders.Count() >= 5)
+		{
+			LastOrders = orders.OrderByDescending(o => o.OrderDate).Take(5);
+		}
+		else
+		{
+			LastOrders = orders.OrderByDescending(o => o.OrderDate);
+		}
+
+		var candles = await hclient.GetFromJsonAsync<IEnumerable<CandleFullVM>>("api/candle?view=full");
+		if(candles.Count() >= 5)
+		{
+			LastCandles = candles.OrderByDescending(c => c.Id).Take(5);
+		}
+		else
+		{
+			LastCandles = candles.OrderByDescending(c => c.Id);
+		}
+	}
 }

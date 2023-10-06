@@ -12,8 +12,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(delegate (IServiceProvider sp) {
 	return new HttpClient
 	{
-		//BaseAddress = new Uri("http://localhost:5117/")
-		BaseAddress = new Uri("https://testwasmblazor.bsite.net/")
+		BaseAddress = new Uri("http://localhost:5117/")
+		//BaseAddress = new Uri("https://testwasmblazor.bsite.net/")
 	};
 });
 

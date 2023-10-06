@@ -7,9 +7,9 @@
 		public decimal TotalSum { get; set; }
 		public string? Promocode { get; set; }
 		public string? Comments { get; set; }
-		public string? Receiver { get; set; }
 		public int CustomerId { get; set; }
 		public ICollection<OrderDetailsVM> OrderDetails { get; set; } = null!;
+		public OrderReceiverVM Receiver { get; set; } = null!;
 
 	}
 }

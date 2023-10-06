@@ -10,16 +10,61 @@
 	</NavLink>
 </div>
 
-
+<table class="table">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Дата</th>
+			<th>ПІБ</th>
+			<th>Номер телефону</th>
+			<th>Місто</th>
+			<th>Адреса доставки</th>
+			<th>Свічка</th>
+			<th>Кількість</th>
+			<th>Сума</th>
+			<th>Промокод</th>
+			<th>Коментар</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var order in OrdersList)
+		{
+			<tr>
+				<td>@order.Id</td>
+				<td>@order.OrderDate</td>
+				<td>@order.Receiver.FullName</td>
+				<td>@order.Receiver.PhoneNumber</td>
+				<td>@order.Receiver.City</td>
+				<td>@order.Receiver.DeliveryAdress</td>
+				<td>
+					@foreach(var detail in order.OrderDetails)
+					{
+						@candleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
+					}
+				</td>
+				<td>
+					@foreach(var detail in order.OrderDetails)
+					{
+						@detail.CandleQuantity
+					}
+				</td>
+				<td>@order.TotalSum</td>
+				<td>@order.Promocode</td>
+				<td>@order.Comments</td>
+			</tr>
+		}
+	</tbody>
+</table>
 
 @code {
+	public IEnumerable<OrderVM> OrdersList { get; set; } = new List<OrderVM>();
 
-
-
+	private ICollection<CandleFullVM> candleNames { get; set; } = new List<CandleFullVM>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		
+		candleNames = await hclient.GetFromJsonAsync<ICollection<CandleFullVM>>("api/candle?view=full");
+		OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order") ?? new List<OrderVM>();
 	}
 
 }

@@ -63,16 +63,16 @@
 
 		_selectedCandle.Id = Id;
 		var result = await hclient.PutAsJsonAsync<CandleFullVM>($"api/Candle/cid={Id}", _selectedCandle);
-
+		
 		if(result.IsSuccessStatusCode)
 		{
-			MessageResponse = "Свічка оновлена.";
+			MessageResponse = $"Свічка оновлена. - code {result.StatusCode}";
 			NewCandleForm = new();
 			_selectedCandle = null;
 		}
 		else 
 		{
-			MessageResponse = "Error when updating.";
+			MessageResponse = $"Error when updating. - code {result.StatusCode}";
 		}
 		isFunctionDone = true;
 	}
