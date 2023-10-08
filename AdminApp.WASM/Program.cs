@@ -12,15 +12,16 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-//builder.Services.AddScoped(delegate (IServiceProvider sp) {
-//	return new HttpClient
-//	{
-//		//BaseAddress = new Uri("http://localhost:5117/")
-//		BaseAddress = new Uri("https://testwasmblazor.bsite.net/")
-//	};
-//});
+builder.Services.AddScoped(delegate (IServiceProvider sp)
+{
+	return new HttpClient
+	{
+		//BaseAddress = new Uri("http://localhost:5117/")
+		BaseAddress = new Uri("https://testwasmblazor.bsite.net/")
+	};
+});
 
-builder.Services.AddScoped<HttpClient>(sp => new HttpClient { BaseAddress = new Uri("https://testwasmblazor.bsite.net/") });
+//builder.Services.AddScoped<HttpClient>(sp => new HttpClient { BaseAddress = new Uri("https://testwasmblazor.bsite.net/") });
 
 //builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>(sp =>
 //{
@@ -28,8 +29,8 @@ builder.Services.AddScoped<HttpClient>(sp => new HttpClient { BaseAddress = new 
 //	return new HttpCheckerService("api/candle?view=full", "api/order", myservice);
 //});
 
-//builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>();
+builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>();
 
-builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>(sp => new HttpCheckerService(sp.GetRequiredService<HttpClient>()));
+//builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>(sp => new HttpCheckerService(sp.GetRequiredService<HttpClient>()));
 
 await builder.Build().RunAsync();

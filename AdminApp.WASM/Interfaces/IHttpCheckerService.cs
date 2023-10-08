@@ -2,7 +2,6 @@
 {
 	public interface IHttpCheckerService
 	{
-		Task<HttpResponseMessage> CheckCandlesExistAsync();
-		Task<HttpResponseMessage> CheckOrdersExistAsync();
+		Task<bool> CheckItemExistsByPathAsync(string path);
 	}
 }

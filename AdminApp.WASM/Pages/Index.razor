@@ -26,7 +26,7 @@
 			<tbody>
 				@if (!LastOrders.Any())
 				{
-					<tr>No orders</tr>
+					<tr>@OrdersLoadingMessage</tr>
 				}
 				else
 				{
@@ -63,7 +63,7 @@
 			<tbody>
 				@if (!LastCandles.Any())
 				{
-					<tr>No candles</tr>
+					<tr>@CandlesLoadingMessage</tr>
 				}
 				else
 				{
@@ -81,49 +81,74 @@
 	</div>
 </article>
 
-<h3> status code - @StatusCode</h3>
-<h3> status code2 - @StatusCode2</h3>
+<h3> status code - @OrdersLoadingMessage</h3>
+<h3> status code2 - @CandlesLoadingMessage</h3>
+
 @code {
 	public IEnumerable<OrderVM> LastOrders { get; set; } = new List<OrderVM>();
 	public IEnumerable<CandleFullVM> LastCandles { get; set; } = new List<CandleFullVM>();
-	public string StatusCode { get; set; }
-	public string StatusCode2 { get; set; }
 
+	// Message 'Loading...' or 'No {item}' displayed in the Table
+	public string OrdersLoadingMessage { get; set; } = "Loading...";
+	public string CandlesLoadingMessage { get; set; } = "Loading...";
+
+	// strings to HttpChecker to get if the items exist by path
+	private string _ordersPath = "api/order";
+	private string _candlesPath = "api/candle?view=full";
+
+	// const for pattern matching 
+	// to display 5 last Candles and 5 last Orders
+	private const int AMOUNT_ITEMS = 5;
 
 	protected override async Task OnInitializedAsync()
 	{
-		HttpResponseMessage responseMessage = await hclient.GetAsync("api/order");
-		if (responseMessage.IsSuccessStatusCode)
-		{
-			var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order");
+		// var ordersExist = await checker.CheckItemExistsByPathAsync(_ordersPath);
+		// var candlesExist = await checker.CheckItemExistsByPathAsync(_candlesPath);
 
-			if (orders is not null && orders.Count() <= 5)
-			{
-				LastOrders = orders.OrderByDescending(o => o.OrderDate);
-			}
-			else if (orders.Count() > 5)
-			{
-				LastOrders = orders.OrderByDescending(o => o.OrderDate).Take(5);
-			}
+		// if (!ordersExist)
+		// {
+		// 	OrdersLoadingMessage = "Немає замовлень.";
+		// }
+		// else
+		// {
+		// 	var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>(_ordersPath)!;
+		// 	LastOrders = orders?.Count() switch
+		// 	{
+		// 		>= AMOUNT_ITEMS => orders.OrderByDescending(o => o.OrderDate).Take(5),
+		// 		> 0 and < AMOUNT_ITEMS => orders.OrderByDescending(o => o.OrderDate),
+		// 		_ => Enumerable.Empty<OrderVM>() 
+		// 	};
+		// }
+
+		// if(!candlesExist)
+		// {
+		// 	CandlesLoadingMessage = "Немає свічок.";
+		// }
+		// else
+		// {
+		// 	var candles = await hclient.GetFromJsonAsync<IEnumerable<CandleFullVM>>(_candlesPath)!;
+		// 	LastCandles = candles?.Count() switch
+		// 	{
+		// 		>= AMOUNT_ITEMS => candles.OrderByDescending(c => c.Id).Take(5),
+		// 		> 0 and < AMOUNT_ITEMS => candles.OrderByDescending(c => c.Id),
+		// 		_ => Enumerable.Empty<CandleFullVM>()
+		// 	};
+		// }
+
+		try
+		{
+			var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>(_ordersPath);
+			
+			if(orders != null)
+				LastOrders = orders.ToList();
+		}
+		catch (Exception ex)
+		{
+			OrdersLoadingMessage = ex.Message;
 		}
 
-		responseMessage = await hclient.GetAsync("api/candle?view=full");
-		if(responseMessage.IsSuccessStatusCode)
-		{
-			var candles = await hclient.GetFromJsonAsync<IEnumerable<CandleFullVM>>("api/candle?view=full");
-			if (candles is not null && candles.Count() <= 5)
-			{
-				LastCandles = candles.OrderByDescending(c => c.Id);
-			}
-			else if (candles.Count() > 5)
-			{
-				LastCandles = candles.OrderByDescending(c => c.Id).Take(5);
-			}
-		}
-
-		var response = await checker.CheckCandlesExistAsync();
-		StatusCode = response.StatusCode.ToString();
-		response = await checker.CheckOrdersExistAsync();
-		StatusCode2 = response.StatusCode.ToString();
 	}
+
+	
+
 }
