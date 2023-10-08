@@ -64,7 +64,13 @@
 	protected override async Task OnInitializedAsync()
 	{
 		candleNames = await hclient.GetFromJsonAsync<ICollection<CandleFullVM>>("api/candle?view=full");
-		OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order") ?? new List<OrderVM>();
+		//OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order") ?? new List<OrderVM>();
+		
+		HttpResponseMessage responseMessage = await hclient.GetAsync("api/order");
+		if (responseMessage.IsSuccessStatusCode)
+		{
+			OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order")!;
+		}
 	}
 
 }

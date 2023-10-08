@@ -1,5 +1,7 @@
 ﻿@page "/"
+@using AdminApp.WASM.Interfaces;
 @inject HttpClient hclient;
+@inject IHttpCheckerService checker;
 
 <PageTitle>Road23 Home</PageTitle>
 
@@ -8,7 +10,7 @@
 <article>
 	<div>
 		<NavLink class="nav-link" href="orders">
-		Останні замовлення
+			Останні замовлення
 		</NavLink>
 	</div>
 	<div>
@@ -46,7 +48,7 @@
 <article>
 	<div>
 		<NavLink class="nav-link" href="/candles">
-		Свічки
+			Свічки
 		</NavLink>
 	</div>
 	<div>
@@ -61,7 +63,7 @@
 			<tbody>
 				@if (!LastCandles.Any())
 				{
-					<tr>No orders</tr>
+					<tr>No candles</tr>
 				}
 				else
 				{
@@ -79,31 +81,49 @@
 	</div>
 </article>
 
-
+<h3> status code - @StatusCode</h3>
+<h3> status code2 - @StatusCode2</h3>
 @code {
 	public IEnumerable<OrderVM> LastOrders { get; set; } = new List<OrderVM>();
 	public IEnumerable<CandleFullVM> LastCandles { get; set; } = new List<CandleFullVM>();
+	public string StatusCode { get; set; }
+	public string StatusCode2 { get; set; }
+
 
 	protected override async Task OnInitializedAsync()
 	{
-		var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order");
-		if(orders.Count() >= 5)
+		HttpResponseMessage responseMessage = await hclient.GetAsync("api/order");
+		if (responseMessage.IsSuccessStatusCode)
 		{
-			LastOrders = orders.OrderByDescending(o => o.OrderDate).Take(5);
-		}
-		else
-		{
-			LastOrders = orders.OrderByDescending(o => o.OrderDate);
+			var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order");
+
+			if (orders is not null && orders.Count() <= 5)
+			{
+				LastOrders = orders.OrderByDescending(o => o.OrderDate);
+			}
+			else if (orders.Count() > 5)
+			{
+				LastOrders = orders.OrderByDescending(o => o.OrderDate).Take(5);
+			}
 		}
 
-		var candles = await hclient.GetFromJsonAsync<IEnumerable<CandleFullVM>>("api/candle?view=full");
-		if(candles.Count() >= 5)
+		responseMessage = await hclient.GetAsync("api/candle?view=full");
+		if(responseMessage.IsSuccessStatusCode)
 		{
-			LastCandles = candles.OrderByDescending(c => c.Id).Take(5);
+			var candles = await hclient.GetFromJsonAsync<IEnumerable<CandleFullVM>>("api/candle?view=full");
+			if (candles is not null && candles.Count() <= 5)
+			{
+				LastCandles = candles.OrderByDescending(c => c.Id);
+			}
+			else if (candles.Count() > 5)
+			{
+				LastCandles = candles.OrderByDescending(c => c.Id).Take(5);
+			}
 		}
-		else
-		{
-			LastCandles = candles.OrderByDescending(c => c.Id);
-		}
+
+		var response = await checker.CheckCandlesExistAsync();
+		StatusCode = response.StatusCode.ToString();
+		response = await checker.CheckOrdersExistAsync();
+		StatusCode2 = response.StatusCode.ToString();
 	}
 }
