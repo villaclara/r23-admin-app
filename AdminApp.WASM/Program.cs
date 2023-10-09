@@ -1,6 +1,9 @@
 using AdminApp.WASM;
-using AdminApp.WASM.Interfaces;
-using AdminApp.WASM.Services;
+using AdminApp.WASM.Application.Candle;
+using AdminApp.WASM.Application.Interfaces;
+using AdminApp.WASM.Application.Order;
+using AdminApp.WASM.Application.Services;
+using AdminApp.WASM.ViewModels;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -29,8 +32,11 @@ builder.Services.AddScoped(delegate (IServiceProvider sp)
 //	return new HttpCheckerService("api/candle?view=full", "api/order", myservice);
 //});
 
-builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>();
+builder.Services.AddScoped<IGetItem<OrderVM>, GetItemService<OrderVM>>();
 
-//builder.Services.AddScoped<IHttpCheckerService, HttpCheckerService>(sp => new HttpCheckerService(sp.GetRequiredService<HttpClient>()));
+
+builder.Services.AddScoped<IGetItem<CandleFullVM>, GetItemService<CandleFullVM>>();
+builder.Services.AddScoped<IPostItem<CandleFullVM>, PostItemService<CandleFullVM>>();
+builder.Services.AddScoped<CandleInteractor>();
 
 await builder.Build().RunAsync();

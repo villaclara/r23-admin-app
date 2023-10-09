@@ -1,6 +1,7 @@
 ﻿@page "/orders"
 @layout OrdersLayout
 @inject HttpClient hclient;
+@inject IGetItem<OrderVM> getOrder;
 
 <h3>Orders</h3>
 
@@ -56,8 +57,12 @@
 	</tbody>
 </table>
 
+@OrdersExistMessage
+
 @code {
 	public IEnumerable<OrderVM> OrdersList { get; set; } = new List<OrderVM>();
+
+	public string OrdersExistMessage { get; set; } = "Loading...";
 
 	private ICollection<CandleFullVM> candleNames { get; set; } = new List<CandleFullVM>();
 
@@ -65,12 +70,13 @@
 	{
 		candleNames = await hclient.GetFromJsonAsync<ICollection<CandleFullVM>>("api/candle?view=full");
 		//OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order") ?? new List<OrderVM>();
-		
-		HttpResponseMessage responseMessage = await hclient.GetAsync("api/order");
-		if (responseMessage.IsSuccessStatusCode)
+
+		OrdersList = await new OrderInteractor(getOrder).GetAllOrdesListAsync("api/orders");
+		OrdersExistMessage = OrdersList.Any() switch
 		{
-			OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order")!;
-		}
+			true => "",
+			_ => "Сталась помилка або замовлення відсутні"
+		};
 	}
 
 }

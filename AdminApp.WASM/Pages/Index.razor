@@ -1,7 +1,10 @@
 ﻿@page "/"
-@using AdminApp.WASM.Interfaces;
+@using AdminApp.WASM.Application.Candle;
+@using AdminApp.WASM.Application.Order;
+@using AdminApp.WASM.Application.Interfaces;
 @inject HttpClient hclient;
-@inject IHttpCheckerService checker;
+@inject IGetItem<OrderVM> getOrders;
+@inject CandleInteractor candleInteractor;
 
 <PageTitle>Road23 Home</PageTitle>
 
@@ -63,7 +66,11 @@
 			<tbody>
 				@if (!LastCandles.Any())
 				{
-					<tr>@CandlesLoadingMessage</tr>
+					<tr>
+						<td colspan="4">
+							@CandlesLoadingMessage
+						</td>
+					</tr>
 				}
 				else
 				{
@@ -85,8 +92,8 @@
 <h3> status code2 - @CandlesLoadingMessage</h3>
 
 @code {
-	public IEnumerable<OrderVM> LastOrders { get; set; } = new List<OrderVM>();
-	public IEnumerable<CandleFullVM> LastCandles { get; set; } = new List<CandleFullVM>();
+	public IEnumerable<OrderVM> LastOrders { get; set; } = Enumerable.Empty<OrderVM>();
+	public IEnumerable<CandleFullVM> LastCandles { get; set; } = Enumerable.Empty<CandleFullVM>();
 
 	// Message 'Loading...' or 'No {item}' displayed in the Table
 	public string OrdersLoadingMessage { get; set; } = "Loading...";
@@ -96,57 +103,22 @@
 	private string _ordersPath = "api/order";
 	private string _candlesPath = "api/candle?view=full";
 
-	// const for pattern matching 
-	// to display 5 last Candles and 5 last Orders
-	private const int AMOUNT_ITEMS = 5;
 
 	protected override async Task OnInitializedAsync()
 	{
-		// var ordersExist = await checker.CheckItemExistsByPathAsync(_ordersPath);
-		// var candlesExist = await checker.CheckItemExistsByPathAsync(_candlesPath);
-
-		// if (!ordersExist)
-		// {
-		// 	OrdersLoadingMessage = "Немає замовлень.";
-		// }
-		// else
-		// {
-		// 	var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>(_ordersPath)!;
-		// 	LastOrders = orders?.Count() switch
-		// 	{
-		// 		>= AMOUNT_ITEMS => orders.OrderByDescending(o => o.OrderDate).Take(5),
-		// 		> 0 and < AMOUNT_ITEMS => orders.OrderByDescending(o => o.OrderDate),
-		// 		_ => Enumerable.Empty<OrderVM>() 
-		// 	};
-		// }
-
-		// if(!candlesExist)
-		// {
-		// 	CandlesLoadingMessage = "Немає свічок.";
-		// }
-		// else
-		// {
-		// 	var candles = await hclient.GetFromJsonAsync<IEnumerable<CandleFullVM>>(_candlesPath)!;
-		// 	LastCandles = candles?.Count() switch
-		// 	{
-		// 		>= AMOUNT_ITEMS => candles.OrderByDescending(c => c.Id).Take(5),
-		// 		> 0 and < AMOUNT_ITEMS => candles.OrderByDescending(c => c.Id),
-		// 		_ => Enumerable.Empty<CandleFullVM>()
-		// 	};
-		// }
-
-		try
+		LastOrders = await new OrderInteractor(getOrders).GetLastOrdersAsync(_ordersPath);
+		OrdersLoadingMessage = LastOrders.Any() switch
 		{
-			var orders = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>(_ordersPath);
-			
-			if(orders != null)
-				LastOrders = orders.ToList();
-		}
-		catch (Exception ex)
-		{
-			OrdersLoadingMessage = ex.Message;
-		}
+			true => "",
+			false => "Сталась помилка або замовлення відсутні."
+		};
 
+		LastCandles = await candleInteractor.GetLastCandlesListAsync(_candlesPath);
+		CandlesLoadingMessage = LastCandles.Any() switch
+		{
+			true => "",
+			false => "Сталась помилка або свічки відсутні."
+		};
 	}
 
 	
