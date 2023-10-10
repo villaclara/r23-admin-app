@@ -1,7 +1,5 @@
 using AdminApp.WASM;
-using AdminApp.WASM.Application.Candle;
 using AdminApp.WASM.Application.Interfaces;
-using AdminApp.WASM.Application.Order;
 using AdminApp.WASM.Application.Services;
 using AdminApp.WASM.ViewModels;
 using Microsoft.AspNetCore.Components.Web;
@@ -32,11 +30,17 @@ builder.Services.AddScoped(delegate (IServiceProvider sp)
 //	return new HttpCheckerService("api/candle?view=full", "api/order", myservice);
 //});
 
-builder.Services.AddScoped<IGetItem<OrderVM>, GetItemService<OrderVM>>();
 
 
-builder.Services.AddScoped<IGetItem<CandleFullVM>, GetItemService<CandleFullVM>>();
-builder.Services.AddScoped<IPostItem<CandleFullVM>, PostItemService<CandleFullVM>>();
-builder.Services.AddScoped<CandleInteractor>();
+//builder.Services.AddScoped<IGetItem<CandleFullVM>, GetItemService<CandleFullVM>>();
+//builder.Services.AddScoped<IPostItem<CandleFullVM>, PostItemService<CandleFullVM>>();
+//builder.Services.AddScoped<IPutItem<CandleFullVM>, PutItemService<CandleFullVM>>();
+//builder.Services.AddScoped<IDeleteItem<CandleFullVM>, DeleteItemService<CandleFullVM>>();
+
+builder.Services.AddScoped<ICRUDService<CandleFullVM>, CRUDService<CandleFullVM>>();
+builder.Services.AddScoped<CandleHandlerService>();
+
+builder.Services.AddScoped<ICRUDService<OrderVM>, CRUDService<OrderVM>>();
+builder.Services.AddScoped<OrderHandlerService>();
 
 await builder.Build().RunAsync();

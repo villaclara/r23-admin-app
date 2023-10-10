@@ -1,10 +1,7 @@
 ﻿@page "/"
-@using AdminApp.WASM.Application.Candle;
-@using AdminApp.WASM.Application.Order;
 @using AdminApp.WASM.Application.Interfaces;
-@inject HttpClient hclient;
-@inject IGetItem<OrderVM> getOrders;
-@inject CandleInteractor candleInteractor;
+@inject CandleHandlerService candleHandler;
+@inject OrderHandlerService orderHandler;
 
 <PageTitle>Road23 Home</PageTitle>
 
@@ -21,15 +18,18 @@
 			<thead>
 				<tr>
 					<th>Id</th>
-					<th>ПІБ</th>
+					<th>Дата</th>
 					<th>Номер телефону</th>
+					<th>Свічки</th>
 					<th>Сума</th>
 				</tr>
 			</thead>
 			<tbody>
 				@if (!LastOrders.Any())
 				{
-					<tr>@OrdersLoadingMessage</tr>
+					<tr>
+						<td colspan="5">@OrdersLoadingMessage</td>
+					</tr>
 				}
 				else
 				{
@@ -37,8 +37,12 @@
 					{
 						<tr>
 							<td>@order.Id</td>
-							<td>@order.Receiver.FullName</td>
+							<td>@order.OrderDate</td>
 							<td>@order.Receiver.PhoneNumber</td>
+							@foreach(var candle in order.OrderDetails)
+							{
+								<td>@candle.CandleId - @candle.CandleQuantity</td>
+							}
 							<td>@order.TotalSum</td>
 						</tr>
 					}
@@ -106,14 +110,14 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		LastOrders = await new OrderInteractor(getOrders).GetLastOrdersAsync(_ordersPath);
+		LastOrders = await orderHandler.GetLastOrdersAsync(_ordersPath);
 		OrdersLoadingMessage = LastOrders.Any() switch
 		{
 			true => "",
 			false => "Сталась помилка або замовлення відсутні."
 		};
 
-		LastCandles = await candleInteractor.GetLastCandlesListAsync(_candlesPath);
+		LastCandles = await candleHandler.GetLastCandlesListAsync(_candlesPath);
 		CandlesLoadingMessage = LastCandles.Any() switch
 		{
 			true => "",

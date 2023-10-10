@@ -15,11 +15,11 @@ namespace AdminApp.WASM.Pages.FormModels
 		[Required]
 		public string Adress { get; set; } = null!;
 
-		public string Candle { get; set; } = null!;
+		public int Candle { get; set; }
 
- 		public string Quantity { get; set; } = null!;
+ 		public int Quantity { get; set; }
 
-		public string Price { get; set; } = null!;
+		public decimal Price { get; set; } 
 
 		public string Comment { get; set; } = null!;
 

@@ -9,6 +9,7 @@
 		public string? Comments { get; set; }
 		public int CustomerId { get; set; }
 		public ICollection<OrderDetailsVM> OrderDetails { get; set; } = null!;
+		public int ReceiverRepeat { get; set; }
 		public OrderReceiverVM Receiver { get; set; } = null!;
 
 	}

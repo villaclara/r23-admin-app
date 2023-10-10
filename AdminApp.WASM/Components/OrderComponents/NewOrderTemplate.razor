@@ -35,7 +35,7 @@
 <div>
 	<label>
 		Свічка
-		<InputText @bind-Value="OrderModel.Candle" />
+		<InputNumber @bind-Value="OrderModel.Candle" />
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
@@ -43,7 +43,7 @@
 <div>
 	<label>
 		Кількість
-		<InputText @bind-Value="OrderModel.Quantity" />
+		<InputNumber @bind-Value="OrderModel.Quantity" />
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
@@ -51,7 +51,7 @@
 <div>
 	<label>
 		Сума
-		<InputText @bind-Value="OrderModel.Price" />
+		<InputNumber @bind-Value="OrderModel.Price" />
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
@@ -74,8 +74,8 @@
 
 @code {
 
-    [CascadingParameter]
-    public Pages.FormModels.NewOrderFormModel OrderModel { get; set; }
+	[CascadingParameter]
+	public Pages.FormModels.NewOrderFormModel OrderModel { get; set; }
 }
 
 

@@ -2,6 +2,7 @@
 @layout CandlesLayout
 @inject HttpClient client;
 @inject NavigationManager navmanager;
+@inject CandleHandlerService candleHandler;
 
 <body class="mainbody">
 <div class="container-fluid mainbody">
@@ -74,14 +75,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		try
-		{
-			CandleList = await client.GetFromJsonAsync<IEnumerable<CandleFullVM>>(path);
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Error happened - \n {ex}");
-		}
+		CandleList = await candleHandler.GetAllCandlesListAsync(path);
 
 		foreach (var c in CandleList)
 		{

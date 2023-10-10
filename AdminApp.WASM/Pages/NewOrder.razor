@@ -1,8 +1,9 @@
 ﻿@page "/new-order"
+@inject OrderHandlerService orderHandler;
 
 <h3>NewOrder</h3>
 
-<EditForm Model="OrderModel" OnSubmit="HandleSubmit">
+<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />
 	<CascadingValue Value="OrderModel">
 		<AdminApp.WASM.Components.OrderComponents.NewOrderTemplate/>
@@ -10,15 +11,38 @@
 
 	<div>
 
-		<button>Додати</button>
+		<button>Додати замовлення</button>
 	</div>
 </EditForm>
 
+@MessageResponse
+
 @code {
-    public FormModels.NewOrderFormModel OrderModel { get; set; } = new();
+	public FormModels.NewOrderFormModel OrderModel { get; set; } = new();
 
-    public void HandleSubmit()
-    {
+	private string _url = "api/order";
 
-    }
+	public string MessageResponse { get; set; } = "";
+
+	public async Task HandleValidSubmit()
+	{
+		var orderToAdd = OrderModel.ConvertToFullVM_FromFormModel();
+
+		var result = await orderHandler.CreateOrder(_url, orderToAdd);
+
+		if(result)
+		{
+			MessageResponse = "Замовлення додано.";
+			OrderModel = new();
+		}
+		else
+		{
+			MessageResponse = "Помилка при додаванні замовлення. Спробуйте ще раз.";
+		}
+	}
+
+	public void HandleInvalidSubmit()
+	{
+		MessageResponse = "Некоректно введені дані.";
+	}
 }

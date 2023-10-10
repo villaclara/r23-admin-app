@@ -1,7 +1,7 @@
 ﻿@page "/orders"
 @layout OrdersLayout
 @inject HttpClient hclient;
-@inject IGetItem<OrderVM> getOrder;
+@inject OrderHandlerService orderHandler;
 
 <h3>Orders</h3>
 
@@ -71,7 +71,7 @@
 		candleNames = await hclient.GetFromJsonAsync<ICollection<CandleFullVM>>("api/candle?view=full");
 		//OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order") ?? new List<OrderVM>();
 
-		OrdersList = await new OrderInteractor(getOrder).GetAllOrdesListAsync("api/orders");
+		OrdersList = await orderHandler.GetAllOrdesListAsync("api/order");
 		OrdersExistMessage = OrdersList.Any() switch
 		{
 			true => "",

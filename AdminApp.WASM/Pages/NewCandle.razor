@@ -1,10 +1,9 @@
 ﻿@page "/new-candle"
-@using AdminApp.WASM.Application.Candle;
 @using AdminApp.WASM.Application.Utility;
 @using AdminApp.WASM.Pages.FormModels;
 @inject NavigationManager navmanager;
 @inject HttpClient hclient;
-@inject CandleInteractor candleInteractor;
+@inject CandleHandlerService candleInteractor;
 
 <h3>Нова Свічка</h3>
 
@@ -53,8 +52,7 @@
 		}
 		else
 		{
-			MessageResponse = "Не вдалось додати свічку";
-		}
+			MessageResponse = "Не вдалось додати свічку";	}
 	}
 
 	public void HandleInvalidSubmit()
