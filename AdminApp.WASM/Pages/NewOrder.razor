@@ -1,14 +1,12 @@
 ﻿@page "/new-order"
 @inject OrderHandlerService orderHandler;
+@inject CandleHandlerService candleHandler;
 
 <h3>NewOrder</h3>
 
 <EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />
-	<CascadingValue Value="OrderModel">
-		<AdminApp.WASM.Components.OrderComponents.NewOrderTemplate/>
-	</CascadingValue>
-
+	<NewOrderTemplate OrderModel="OrderModel" Candles="Candles"/>
 	<div>
 
 		<button>Додати замовлення</button>
@@ -23,6 +21,13 @@
 	private string _url = "api/order";
 
 	public string MessageResponse { get; set; } = "";
+
+	public IEnumerable<CandleFullVM> Candles { get; set; } = Enumerable.Empty<CandleFullVM>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
+	}
 
 	public async Task HandleValidSubmit()
 	{

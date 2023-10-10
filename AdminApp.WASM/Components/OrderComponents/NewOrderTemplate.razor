@@ -10,7 +10,7 @@
 
 <div>
 	<label>
-		Номер телефону отримувача
+		Номер телефону
 		<InputText @bind-Value="OrderModel.PhoneNumber" />
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
@@ -34,19 +34,44 @@
 
 <div>
 	<label>
-		Свічка
-		<InputNumber @bind-Value="OrderModel.Candle" />
+		Коментар
+		<InputText @bind-Value="OrderModel.Comment" />
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
 
+
+<div>
+	<label @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
+		Свічка </label>
+		<button type="button" @onclick="() => CandlesExpanded = !CandlesExpanded">click</button>
+		
+		@if(CandlesExpanded)
+		{
+				<br />
+				@foreach(var candle in CandlesOrdered)
+				{
+				<span>@candle.Name =</span>
+				<button type="button" @onclick="(e) => DecreaseCounterFoChosenCandle(e, candle)">- </button>
+				<span>@candle.Quantity</span>
+				<button type="button" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">+</button>
+				<span>@candle.TotalSum</span><br />
+				}
+
+		}
+	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+</div>
+
+
 <div>
 	<label>
-		Кількість
-		<InputNumber @bind-Value="OrderModel.Quantity" />
+		Промокод (% або знижка грн)
+		<InputText @bind-Value="OrderModel.Promocode" />
+		<button type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
+
 
 <div>
 	<label>
@@ -56,26 +81,65 @@
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
 
-<div>
-	<label>
-		Коментар
-		<InputText @bind-Value="OrderModel.Comment" />
-	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
-</div>
 
-<div>
-	<label>
-		Промокод
-		<InputText @bind-Value="OrderModel.Promocode" />
-	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
-</div>
+
 
 @code {
 
-	[CascadingParameter]
-	public Pages.FormModels.NewOrderFormModel OrderModel { get; set; }
+	// ordermodel from form models
+	[Parameter]
+	public Pages.FormModels.NewOrderFormModel OrderModel { get; set; } = null!;
+
+	// needed to display them when adding new candle to order
+	[Parameter]
+	public IEnumerable<CandleFullVM> Candles { get; set; } = null!;
+
+	// expand/hide candles to add them
+	private bool CandlesExpanded { get; set; } = false;
+
+	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
+
+	// called after received parameters from parent
+	protected override void OnParametersSet()
+	{
+		foreach (var candle in Candles)
+		{
+			CandlesOrdered.Add(new CandleOrdered { Id = candle.Id, Name = candle.Name, Price = candle.SellPrice, Quantity = 0, TotalSum = 0 });
+		}
+	}
+
+
+	// functions for increasing/decreasing counter 
+	public void IncreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
+	{
+		candle.Quantity++;
+		candle.TotalSum += candle.Price;
+		OrderModel.Price += candle.Price;
+	}
+	public void DecreaseCounterFoChosenCandle(MouseEventArgs args, CandleOrdered candle)
+	{
+		if(candle.Quantity > 0 && candle.TotalSum >= candle.Price)
+		{
+			candle.Quantity--;
+			candle.TotalSum -= candle.Price;
+			OrderModel.Price -= candle.Price;
+		}
+	}
+
+	public void UsePromocode(MouseEventArgs args, string promocodeValue)
+	{
+		var value = int.Parse(promocodeValue);
+		OrderModel.Price -= value;
+	}
+
+	public class CandleOrdered
+	{
+		public int Id { get; set; }
+		public string Name { get; set; } = null!;
+		public int Quantity { get; set; }
+		public decimal Price { get; set; }
+		public decimal TotalSum { get; set; }
+	}
 }
 
 

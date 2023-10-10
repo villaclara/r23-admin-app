@@ -19,6 +19,7 @@ namespace AdminApp.WASM.Pages.FormModels
 
  		public int Quantity { get; set; }
 
+		public Dictionary<int, int> CandleIdAndQuantity { get; set; } = new();
 		public decimal Price { get; set; } 
 
 		public string Comment { get; set; } = null!;
