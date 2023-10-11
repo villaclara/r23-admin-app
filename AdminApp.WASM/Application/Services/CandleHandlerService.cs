@@ -1,6 +1,6 @@
 ﻿using AdminApp.WASM.Application.Interfaces;
 using AdminApp.WASM.Application.Utility;
-using AdminApp.WASM.ViewModels;
+using AdminApp.WASM.Models.ViewModels;
 
 namespace AdminApp.WASM.Application.Services
 {

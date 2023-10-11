@@ -1,9 +1,9 @@
-﻿using AdminApp.WASM.Pages.FormModels;
-using AdminApp.WASM.ViewModels;
+﻿using AdminApp.WASM.Models.FormModels;
+using AdminApp.WASM.Models.ViewModels;
 
 namespace AdminApp.WASM.Application.Utility
 {
-	public static class ConvertOrderExtensions
+    public static class ConvertOrderExtensions
 	{
 		public static OrderVM ConvertToFullVM_FromFormModel(this NewOrderFormModel model) =>
 			new()

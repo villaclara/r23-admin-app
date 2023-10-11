@@ -1,4 +1,5 @@
 ﻿@page "/new-order"
+@using AdminApp.WASM.Models;
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
 
@@ -16,13 +17,14 @@
 @MessageResponse
 
 @code {
-	public FormModels.NewOrderFormModel OrderModel { get; set; } = new();
+	public NewOrderFormModel OrderModel { get; set; } = new();
 
 	private string _url = "api/order";
 
 	public string MessageResponse { get; set; } = "";
 
 	public IEnumerable<CandleFullVM> Candles { get; set; } = Enumerable.Empty<CandleFullVM>();
+
 
 	protected override async Task OnInitializedAsync()
 	{

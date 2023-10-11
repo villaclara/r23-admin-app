@@ -1,3 +1,4 @@
+@using AdminApp.WASM.Models;
 <h3> Order Tepmlate </h3>
 
 <div>
@@ -44,7 +45,7 @@
 <div>
 	<label @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
 		Свічка </label>
-		<button type="button" @onclick="() => CandlesExpanded = !CandlesExpanded">click</button>
+	<button type="button" @onclick="() => CandlesExpanded = !CandlesExpanded">click</button>
 		
 		@if(CandlesExpanded)
 		{
@@ -55,7 +56,8 @@
 				<button type="button" @onclick="(e) => DecreaseCounterFoChosenCandle(e, candle)">- </button>
 				<span>@candle.Quantity</span>
 				<button type="button" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">+</button>
-				<span>@candle.TotalSum</span><br />
+				<span>@candle.TotalSum</span>
+				<br />
 				}
 
 		}
@@ -66,7 +68,7 @@
 <div>
 	<label>
 		Промокод (% або знижка грн)
-		<InputText @bind-Value="OrderModel.Promocode" />
+		<InputText @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
 		<button type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
@@ -76,19 +78,25 @@
 <div>
 	<label>
 		Сума
-		<InputNumber @bind-Value="OrderModel.Price" />
+		<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
 	</label>
 	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
 
-
+@foreach(var candle in CandlesOrdered)
+{
+	@if(candle.Quantity > 0)
+	{
+		<p>@candle.Name - @candle.Quantity</p>
+	}
+}
 
 
 @code {
 
 	// ordermodel from form models
 	[Parameter]
-	public Pages.FormModels.NewOrderFormModel OrderModel { get; set; } = null!;
+	public NewOrderFormModel OrderModel { get; set; } = null!;
 
 	// needed to display them when adding new candle to order
 	[Parameter]
@@ -126,20 +134,40 @@
 		}
 	}
 
+
+	// could be 10% or 10 (means -10 grn)
 	public void UsePromocode(MouseEventArgs args, string promocodeValue)
 	{
-		var value = int.Parse(promocodeValue);
-		OrderModel.Price -= value;
+		string trimmed = promocodeValue.Trim();
+		decimal value = 0;
+		if (trimmed.EndsWith('%'))
+		{
+			bool result = decimal.TryParse(promocodeValue[..^1], out value);
+			if (result)
+			{
+				var howmuch = value * OrderModel.Price / 100;
+				OrderModel.Price -= howmuch;
+			}
+		}
+		else
+		{
+
+			bool result = decimal.TryParse(promocodeValue, out value);
+			if (result && OrderModel.Price > value)
+			{
+				OrderModel.Price -= value;
+			}
+		}
 	}
 
-	public class CandleOrdered
-	{
-		public int Id { get; set; }
-		public string Name { get; set; } = null!;
-		public int Quantity { get; set; }
-		public decimal Price { get; set; }
-		public decimal TotalSum { get; set; }
-	}
+	// public class CandleOrdered
+	// {
+	// 	public int Id { get; set; }
+	// 	public string Name { get; set; } = null!;
+	// 	public int Quantity { get; set; }
+	// 	public decimal Price { get; set; }
+	// 	public decimal TotalSum { get; set; }
+	// }
 }
 
 

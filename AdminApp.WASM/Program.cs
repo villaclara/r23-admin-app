@@ -1,7 +1,7 @@
 using AdminApp.WASM;
 using AdminApp.WASM.Application.Interfaces;
 using AdminApp.WASM.Application.Services;
-using AdminApp.WASM.ViewModels;
+using AdminApp.WASM.Models.ViewModels;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 

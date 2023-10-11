@@ -1,4 +1,4 @@
-﻿namespace AdminApp.WASM.ViewModels
+﻿namespace AdminApp.WASM.Models.ViewModels
 {
     public class CandleBasicVM
     {
