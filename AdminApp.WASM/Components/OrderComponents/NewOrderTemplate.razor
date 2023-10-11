@@ -6,7 +6,7 @@
 		ПІБ отримувача
 		<InputText @bind-Value="OrderModel.Name" />
 	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+	<ValidationMessage For="() => OrderModel.Name" />
 </div>
 
 <div>
@@ -14,7 +14,7 @@
 		Номер телефону
 		<InputText @bind-Value="OrderModel.PhoneNumber" />
 	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+	<ValidationMessage For="() => OrderModel.PhoneNumber" />
 </div>
 
 <div>
@@ -22,7 +22,7 @@
 		Місто
 		<InputText @bind-Value="OrderModel.City" />
 	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+	<ValidationMessage For="() => OrderModel.City" />
 </div>
 
 <div>
@@ -30,7 +30,7 @@
 		Адреса доставки
 		<InputText @bind-Value="OrderModel.Adress" />
 	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
+	<ValidationMessage For="() => OrderModel.Adress" />
 </div>
 
 <div>
@@ -38,7 +38,6 @@
 		Коментар
 		<InputText @bind-Value="OrderModel.Comment" />
 	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
 
 
@@ -61,7 +60,6 @@
 				}
 
 		}
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
 
 
@@ -71,18 +69,10 @@
 		<InputText @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
 		<button type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
 	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
 </div>
 
 
-<div>
-	<label>
-		Сума
-		<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
-	</label>
-	@* <ValidationMessage For="() => NewCandleForm.Name" /> *@
-</div>
-
+Вибрані свічки: 
 @foreach(var candle in CandlesOrdered)
 {
 	@if(candle.Quantity > 0)
@@ -90,6 +80,15 @@
 		<p>@candle.Name - @candle.Quantity</p>
 	}
 }
+
+
+<div>
+	<label>
+		Сума
+		<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
+	</label>
+	<ValidationMessage For="() => OrderModel.Price" />
+</div>
 
 
 @code {
@@ -102,14 +101,19 @@
 	[Parameter]
 	public IEnumerable<CandleFullVM> Candles { get; set; } = null!;
 
+	// get all chosen candles with quantity > 0
+	[Parameter]
+	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = null!;
+
+
 	// expand/hide candles to add them
 	private bool CandlesExpanded { get; set; } = false;
 
-	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
 
 	// called after received parameters from parent
 	protected override void OnParametersSet()
 	{
+		// assigning each candle to CandlesOrdered model with default Quantity and Totalsum
 		foreach (var candle in Candles)
 		{
 			CandlesOrdered.Add(new CandleOrdered { Id = candle.Id, Name = candle.Name, Price = candle.SellPrice, Quantity = 0, TotalSum = 0 });
@@ -136,8 +140,13 @@
 
 
 	// could be 10% or 10 (means -10 grn)
-	public void UsePromocode(MouseEventArgs args, string promocodeValue)
+	public void UsePromocode(MouseEventArgs args, string? promocodeValue)
 	{
+		if(promocodeValue is null)
+		{
+			return;
+		}
+
 		string trimmed = promocodeValue.Trim();
 		decimal value = 0;
 		if (trimmed.EndsWith('%'))

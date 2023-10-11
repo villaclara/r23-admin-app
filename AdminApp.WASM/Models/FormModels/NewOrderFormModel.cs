@@ -1,29 +1,30 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AdminApp.WASM.Models.FormModels
 {
     public class NewOrderFormModel
     {
-        [Required(ErrorMessage = "PIB")]
+        [Required(ErrorMessage = "ПІБ")]
         public string Name { get; set; } = null!;
 
-        [Required(ErrorMessage = "Phonenumber")]
+        [Required(ErrorMessage = "Некоректний номер телефону")]
+        [StringLength(10)]
         public string PhoneNumber { get; set; } = null!;
 
+        [Required(ErrorMessage = "Місто не вказане.")]
         public string City { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Адреса доставки некоректна.")]
         public string Adress { get; set; } = null!;
 
-        public int Candle { get; set; }
-
-        public int Quantity { get; set; }
-
         public Dictionary<int, int> CandleIdAndQuantity { get; set; } = new();
+
+        [Required(ErrorMessage = "Сума не вказана.")]
+        [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
 
-        public string Comment { get; set; } = null!;
+        public string? Comment { get; set; }
 
-        public string Promocode { get; set; } = null!;
+        public string? Promocode { get; set; }
     }
 }

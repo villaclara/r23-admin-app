@@ -7,7 +7,7 @@
 
 <EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />
-	<NewOrderTemplate OrderModel="OrderModel" Candles="Candles"/>
+	<NewOrderTemplate OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered"/>
 	<div>
 
 		<button>Додати замовлення</button>
@@ -25,6 +25,7 @@
 
 	public IEnumerable<CandleFullVM> Candles { get; set; } = Enumerable.Empty<CandleFullVM>();
 
+	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -33,6 +34,15 @@
 
 	public async Task HandleValidSubmit()
 	{
+		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel
+		foreach(var candle in CandlesOrdered)
+		{
+			if(candle.Quantity > 0)
+			{
+				OrderModel.CandleIdAndQuantity.Add(candle.Id, candle.Quantity);
+			}
+		}
+
 		var orderToAdd = OrderModel.ConvertToFullVM_FromFormModel();
 
 		var result = await orderHandler.CreateOrder(_url, orderToAdd);

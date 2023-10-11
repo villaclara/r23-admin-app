@@ -5,11 +5,13 @@ namespace AdminApp.WASM.Application.Utility
 {
     public static class ConvertOrderExtensions
 	{
-		public static OrderVM ConvertToFullVM_FromFormModel(this NewOrderFormModel model) =>
-			new()
+		public static OrderVM ConvertToFullVM_FromFormModel(this NewOrderFormModel model)
+		{
+			var order = new OrderVM()
 			{
-				Id = 1,
-				CustomerId = 1,
+				
+				Id = 1,		// do not care
+				CustomerId = 1,		// care
 				OrderDate = DateTime.Now,
 				Comments = model.Comment,
 				Promocode = model.Promocode,
@@ -21,15 +23,23 @@ namespace AdminApp.WASM.Application.Utility
 					City = model.City,
 					DeliveryAdress = model.Adress
 				},
-				OrderDetails = new List<OrderDetailsVM>()
-				{
+				OrderDetails = new List<OrderDetailsVM>(),
+				ReceiverRepeat = 1 // do not care
+			};
+
+
+			// converting all ordered candles form Dictionary to OrderDetailsVM
+			foreach(var candleordered in model.CandleIdAndQuantity)
+			{
+				order.OrderDetails.Add(
 					new OrderDetailsVM()
 					{
-						CandleQuantity = model.Quantity,
-						CandleId = model.Candle
-					}
-				},
-				ReceiverRepeat = 1
-			};
+						CandleId = candleordered.Key,
+						CandleQuantity = candleordered.Value
+					});
+			}
+
+			return order;
+		}
 	}
 }
