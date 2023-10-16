@@ -10,7 +10,7 @@
 
 <article>
 	<div>
-		<NavLink class="nav-link" href="orders">
+		<NavLink class="nav-link" href="order">
 			Останні замовлення
 		</NavLink>
 	</div>
@@ -20,7 +20,6 @@
 				<tr>
 					<th>Id</th>
 					<th>Дата</th>
-					<th>Номер телефону</th>
 					<th>Свічки</th>
 					<th>Сума</th>
 				</tr>
@@ -38,12 +37,13 @@
 					{
 						<tr>
 							<td>@order.Id</td>
-							<td>@order.OrderDate</td>
-							<td>@order.Receiver.PhoneNumber</td>
-							@foreach(var candle in order.OrderDetails)
+							<td>@order.OrderDate.ToString("dd/MM/yy")</td>
+							<td>
+							@foreach(var detail in order.OrderDetails)
 							{
-								<td>@candle.CandleId - @candle.CandleQuantity</td>
+								<CandleOrderedNameAndQuantity CandleName="bruh" CandleQuantity="@detail.CandleQuantity"	/>							
 							}
+							</td>
 							<td>@order.TotalSum</td>
 						</tr>
 					}
@@ -55,7 +55,7 @@
 
 <article>
 	<div>
-		<NavLink class="nav-link" href="/candles">
+		<NavLink class="nav-link" href="/candle">
 			Свічки
 		</NavLink>
 	</div>

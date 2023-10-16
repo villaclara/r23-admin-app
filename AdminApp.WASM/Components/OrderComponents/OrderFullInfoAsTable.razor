@@ -1,0 +1,70 @@
+﻿@inject NavigationManager navManager;
+
+@if (Order is not null)
+{
+	<table class="table table-bordered">
+		<tr>
+			<th scope="row">Id</th>
+			<td colspan="4">@Order.Id</td>
+			<td>
+				<button type="button" @onclick="() => EditOrder(Order.Id)">Edit</button>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">Дата замовлення:</th>
+			<td colspan="5">@Order.OrderDate.ToShortDateString()</td>
+		</tr>
+		<tr>
+			<th scope="row">Отримувач</th>
+			<td>@Order.Receiver.FullName</td>
+		</tr>
+		<tr>
+			<th scope="row">Телефон</th>
+			<td>@Order.Receiver.PhoneNumber</td>
+		</tr>
+		<tr>
+			<th scope="row">Місто</th>
+			<td>@Order.Receiver.City</td>
+		</tr>
+		<tr>
+			<th scope="row">Адреса НП</th>
+			<td>@Order.Receiver.DeliveryAdress</td>
+		</tr>
+		<tr>
+			<th scope="row">Свічка</th>
+			<td colspan="4">
+				@foreach (var detail in Order.OrderDetails)
+				{
+					<CandleOrderedNameAndQuantity CandleName="@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name"
+						CandleQuantity="@detail.CandleQuantity"/>
+				}
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">Сума</th>
+			<td>@Order.TotalSum</td>
+		</tr>
+		<tr>
+			<th scope="row">Промокод</th>
+			<td>@Order.Promocode</td>
+		</tr>
+		<tr>
+			<th scope="row">Коментар</th>
+			<td>@Order.Comments</td>
+		</tr>
+	</table>
+}
+@code {
+	[Parameter]
+	public OrderVM Order { get; set; } = null!;
+
+	[Parameter]
+	public IEnumerable<CandleFullVM> CandleNames { get; set; } = null!;
+
+
+	public void EditOrder(int orderId)
+	{
+		navManager.NavigateTo($"order/{orderId}");
+	}
+
+}

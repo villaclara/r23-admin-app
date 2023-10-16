@@ -4,7 +4,9 @@
 @inject CandleHandlerService candleHandler;
 @inject NavigationManager navManager;
 
-<h3>Orders</h3>
+<div class="container-fluid" style="padding-left: 0px">
+<h3>Замовлення</h3>
+
 
 <div class="nav-item px-3">
 	<NavLink class="nav-link" href="new-order">
@@ -12,53 +14,56 @@
 	</NavLink>
 </div>
 
-<table class="table">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Дата</th>
-			<th>ПІБ</th>
-			<th>Номер телефону</th>
-			<th>Місто</th>
-			<th>Адреса доставки</th>
-			<th>Свічка</th>
-			<th>Кількість</th>
-			<th>Сума</th>
-			<th>Промокод</th>
-			<th>Коментар</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach(var order in OrdersList)
-		{
+@if (OrdersExpanded is not null && OrdersExpanded.Any())
+{
+	<table class="table">
+		<thead>
 			<tr>
-				<td>@order.Id</td>
-				<td>@order.OrderDate</td>
-				<td>@order.Receiver.FullName</td>
-				<td>@order.Receiver.PhoneNumber</td>
-				<td>@order.Receiver.City</td>
-				<td>@order.Receiver.DeliveryAdress</td>
-				<td>
-					@foreach(var detail in order.OrderDetails)
-					{
-						@candleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
-					}
-				</td>
-				<td>
-					@foreach(var detail in order.OrderDetails)
-					{
-						@detail.CandleQuantity
-					}
-				</td>
-				<td>@order.TotalSum</td>
-				<td>@order.Promocode</td>
-				<td>@order.Comments</td>
-				<td><button type="button" @onclick="() => EditOrder(order.Id)">Edit</button></td>
+				<th>Дата</th>
+				<th>Свічка</th>
+				<th>Шт</th>
+				<th>Сума</th>
+				<th>Коментар</th>
+				<th></th>
 			</tr>
-		}
-	</tbody>
-</table>
+		</thead>
+		<tbody>
+			@foreach (var order in OrdersExpanded)
+			{
+				<tr @onclick="() => order.Expanded = !order.Expanded">
+					<td>@order.OrderVM.OrderDate.ToString("dd/MM/yy")</td>
+					<td>
+						@foreach (var detail in order.OrderVM.OrderDetails)
+						{
+							@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
+							<br />
+						}
+					</td>
+					<td>
+						@foreach (var detail in order.OrderVM.OrderDetails)
+						{
+							@detail.CandleQuantity
+							<br />
+						}
+					</td>
+					<td>@order.OrderVM.TotalSum</td>
+					<td>@order.OrderVM.Comments</td>
+				</tr>
+				@if(order.Expanded)
+				{
+					<tr>
+						<td colspan="5">
+								<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames"/>
+						</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
 
+}
+
+</div>
 @OrdersExistMessage
 
 @code {
@@ -66,11 +71,13 @@
 
 	public string OrdersExistMessage { get; set; } = "Loading...";
 
-	private IEnumerable<CandleFullVM> candleNames { get; set; } = new List<CandleFullVM>();
+	private IEnumerable<CandleFullVM> CandleNames { get; set; } = new List<CandleFullVM>();
+
+	public ICollection<OrderWithExpanded> OrdersExpanded { get; set; } = new List<OrderWithExpanded>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		candleNames = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
+		CandleNames = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
 
 		OrdersList = await orderHandler.GetAllOrdesListAsync("api/order");
 		OrdersList = OrdersList.OrderByDescending(o => o.Id);
@@ -79,10 +86,24 @@
 			true => "",
 			_ => "Сталась помилка або замовлення відсутні"
 		};
+
+
+		foreach(var o in OrdersList)
+		{
+			OrdersExpanded.Add(new OrderWithExpanded(o, false));
+		}
 	}
 
-	public void EditOrder(int orderId)
+	
+	public class OrderWithExpanded
 	{
-		navManager.NavigateTo($"order/{orderId}");
+		public OrderVM OrderVM { get; set; } = null!;
+		public bool Expanded { get; set; } = false;
+
+		public OrderWithExpanded(OrderVM ordervm, bool value)
+		{
+			OrderVM = ordervm;
+			Expanded = value;
+		}
 	}
 }

@@ -8,9 +8,9 @@
 
 <EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />
-	<NewOrderTemplate OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered"/>
+	<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered"/>
+	
 	<div>
-
 		<button>Додати замовлення</button>
 	</div>
 </EditForm>

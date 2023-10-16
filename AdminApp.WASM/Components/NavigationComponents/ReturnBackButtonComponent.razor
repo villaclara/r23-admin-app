@@ -1,0 +1,13 @@
+﻿@inject NavigationManager navManager;
+
+<button type="button" @onclick="PerformNavigation"> Назад </button>
+
+@code {
+	[Parameter]
+	public string FromPageReached { get; set; } = "";
+
+	public void PerformNavigation()
+	{
+		navManager.NavigateTo(FromPageReached);
+	}
+}

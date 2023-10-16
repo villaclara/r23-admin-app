@@ -6,7 +6,10 @@
 @inject HttpClient hclient;
 @inject CandleHandlerService candleHandler;
 
-<h3>EditCandle</h3>
+<h3>Змінити свічку</h3>
+
+<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" />
+
 
 <EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 	<DataAnnotationsValidator />
@@ -66,19 +69,6 @@
 
 
 		_selectedCandle.Id = Id;
-		// var result = await hclient.PutAsJsonAsync<CandleFullVM>($"api/Candle/cid={Id}", _selectedCandle);
-
-		// if(result.IsSuccessStatusCode)
-		// {
-		// 	MessageResponse = $"Свічка оновлена. - code {result.StatusCode}";
-		// 	NewCandleForm = new();
-		// 	_selectedCandle = null;
-		// }
-		// else 
-		// {
-		// 	MessageResponse = $"Error when updating. - code {result.StatusCode}";
-		// }
-		// isFunctionDone = true;
 
 		var result = await candleHandler.UpdateCandleAsync($"api/candle/cid={Id}", _selectedCandle);
 		if(result)
@@ -102,17 +92,6 @@
 	public async Task DeleteCandle()
 	{
 
-		// var result = await hclient.DeleteAsync($"api/Candle/cid={Id}");
-
-		// if (result.IsSuccessStatusCode)
-		// {
-		// 	MessageResponse = "Свічка видалена.";
-		// 	NewCandleForm = new NewCandleFormModel();
-		// }
-		// else
-		// {
-		// 	MessageResponse = "Error when deleting.";
-		// }
 
 		var result = await candleHandler.DeleteCandleAsync($"api/candle/cid={Id}");
 		if(result)

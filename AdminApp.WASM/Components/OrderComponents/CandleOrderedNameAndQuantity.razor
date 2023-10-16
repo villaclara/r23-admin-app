@@ -1,0 +1,14 @@
+﻿<tr>
+<td>@CandleName</td>
+<td>@CandleQuantity<span> шт.</span></td>
+</tr>
+
+
+@code {
+	[Parameter]
+	public string CandleName { get; set; } = "";
+
+
+	[Parameter]
+	public int CandleQuantity { get; set; }
+}

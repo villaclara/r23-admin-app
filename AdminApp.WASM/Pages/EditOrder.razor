@@ -4,104 +4,21 @@
 @inject CandleHandlerService candleHandler;
 
 
-<h3>EditOrder</h3>
+
+<h3>Редагувати замовлення</h3>
+
+<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order"/>
 
 
-<h3> Order Tepmlate </h3>
+<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+	<DataAnnotationsValidator />
+	<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
 
-<div>
-	<label>
-		ПІБ отримувача
-		<InputText @bind-Value="OrderModel.Name" />
-	</label>
-	@* <ValidationMessage For="() => OrderModel.Name" /> *@
-</div>
+	<div>
+		<button>Зберегти зміни</button>
+	</div>
+</EditForm>
 
-<div>
-	<label>
-		Номер телефону
-		<InputText @bind-Value="OrderModel.PhoneNumber" />
-	</label>
-@* 	<ValidationMessage For="() => OrderModel.PhoneNumber" />
- *@</div>
-
-<div>
-	<label>
-		Місто
-		<InputText @bind-Value="OrderModel.City" />
-	</label>
-@* 	<ValidationMessage For="() => OrderModel.City" />
- *@</div>
-
-<div>
-	<label>
-		Адреса доставки
-		<InputText @bind-Value="OrderModel.Adress" />
-	</label>
-@* 	<ValidationMessage For="() => OrderModel.Adress" />
- *@</div>
-
-<div>
-	<label>
-		Коментар
-		<InputText @bind-Value="OrderModel.Comment" />
-	</label>
-</div>
-
-
-<div>
-	<label @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
-		Свічка </label>
-	<button type="button" @onclick="() => CandlesExpanded = !CandlesExpanded">click</button>
-		
-		@if(CandlesExpanded)
-		{
-				<br />
-				@foreach(var candle in CandlesOrdered)
-				{
-				<span>@candle.Name =</span>
-				<button type="button" @onclick="(e) => DecreaseCounterFoChosenCandle(e, candle)">- </button>
-				<span>@candle.Quantity</span>
-				<button type="button" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">+</button>
-				<span>@candle.TotalSum</span>
-				<br />
-				}
-
-		}
-</div>
-
-
-<div>
-	<label>
-		Промокод (% або знижка грн)
-		<InputText @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
-		<button type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
-	</label>
-</div>
-
-
-Вибрані свічки: 
-@foreach(var candle in CandlesOrdered)
-{
-	@if(candle.Quantity > 0)
-	{
-		<p>@candle.Name - @candle.Quantity шт - @candle.WaxNeededGramm г</p>
-	}
-}
-
-
-<div>
-	<label>
-		Сума
-		<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
-	</label>
-@* 	<ValidationMessage For="() => OrderModel.Price" />
- *@</div>
-
-
-<div>
-	<button type="button" @onclick="SaveOrder">Зберегти</button>
-</div>
 
 <p> indentation between buttons </p>
 
@@ -168,42 +85,6 @@
 	}
 
 
-	public async Task SaveOrder()
-	{
-		// clear all entrances of added candles
-		OrderModel.CandleIdAndQuantity.Clear();
-
-		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel
-		foreach (var candle in CandlesOrdered)
-		{
-			if (candle.Quantity > 0)
-			{
-				OrderModel.CandleIdAndQuantity.Add(candle.Id, candle.Quantity);
-			}
-		}
-
-		var orderToUpd = OrderModel.ConvertToFullVM_FromFormModel();
-		orderToUpd.Id = Id;
-
-		/* validation here */
-
-
-		// submitting to api
-		var result = await orderHandler.UpdateOrderAsync($"api/order/oid={Id}", orderToUpd);
-
-		if(result)
-		{
-			MessageResponse = "Замовлення збережено.";
-			OrderModel = new();
-		}
-		else
-		{
-			MessageResponse = "Помилка при збереженні замовлення. Спробуйте ще раз.";
-		}
-
-	}
-
-
 	public async Task DeleteOrderById(int orderId)
 	{
 		var result = await orderHandler.DeleteOrderAsync($"api/order/oid={orderId}");
@@ -265,7 +146,44 @@
 		}
 	}
 
+	public async Task HandleValidSubmit()
+	{
+		// clear all entrances of added candles
+		OrderModel.CandleIdAndQuantity.Clear();
 
+		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel
+		foreach (var candle in CandlesOrdered)
+		{
+			if (candle.Quantity > 0)
+			{
+				OrderModel.CandleIdAndQuantity.Add(candle.Id, candle.Quantity);
+			}
+		}
+
+		var orderToUpd = OrderModel.ConvertToFullVM_FromFormModel();
+		orderToUpd.Id = Id;
+
+		/* validation here */
+
+
+		// submitting to api
+		var result = await orderHandler.UpdateOrderAsync($"api/order/oid={Id}", orderToUpd);
+
+		if (result)
+		{
+			MessageResponse = "Замовлення збережено.";
+			OrderModel = new();
+		}
+		else
+		{
+			MessageResponse = "Помилка при збереженні замовлення. Спробуйте ще раз.";
+		}
+	}
+
+	public void HandleInvalidSubmit()
+	{
+		MessageResponse = "Некоректно введені дані.";
+	}
 }
 
 
