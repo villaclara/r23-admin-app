@@ -12,7 +12,7 @@ namespace AdminApp.WASM.Application.Utility
 				
 				Id = 1,		// do not care
 				CustomerId = 1,		// care
-				OrderDate = DateTime.Now,
+				OrderDate = model.DateOrdered,
 				Comments = model.Comment,
 				Promocode = model.Promocode,
 				TotalSum = model.Price,
@@ -40,6 +40,29 @@ namespace AdminApp.WASM.Application.Utility
 			}
 
 			return order;
+		}
+
+		public static NewOrderFormModel ConvertToOrderModel_FromFullVM(this OrderVM ordervm)
+		{
+			var ordermodel = new NewOrderFormModel()
+			{
+				Name = ordervm.Receiver.FullName,
+				DateOrdered = ordervm.OrderDate,
+				PhoneNumber = ordervm.Receiver.PhoneNumber,
+				City = ordervm.Receiver.City,
+				Adress = ordervm.Receiver.DeliveryAdress,
+				Comment = ordervm.Comments,
+				Promocode = ordervm.Promocode,
+				Price = ordervm.TotalSum,
+				CandleIdAndQuantity = new Dictionary<int, int>()
+			};
+
+			foreach(var orderdetail in ordervm.OrderDetails)
+			{
+				ordermodel.CandleIdAndQuantity.Add(orderdetail.CandleId, orderdetail.CandleQuantity);
+			}
+
+			return ordermodel;
 		}
 	}
 }

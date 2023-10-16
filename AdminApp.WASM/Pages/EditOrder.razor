@@ -1,4 +1,12 @@
+﻿@page "/order/{Id:int}"
 @using AdminApp.WASM.Models;
+@inject OrderHandlerService orderHandler;
+@inject CandleHandlerService candleHandler;
+
+
+<h3>EditOrder</h3>
+
+
 <h3> Order Tepmlate </h3>
 
 <div>
@@ -6,7 +14,7 @@
 		ПІБ отримувача
 		<InputText @bind-Value="OrderModel.Name" />
 	</label>
-	<ValidationMessage For="() => OrderModel.Name" />
+	@* <ValidationMessage For="() => OrderModel.Name" /> *@
 </div>
 
 <div>
@@ -14,24 +22,24 @@
 		Номер телефону
 		<InputText @bind-Value="OrderModel.PhoneNumber" />
 	</label>
-	<ValidationMessage For="() => OrderModel.PhoneNumber" />
-</div>
+@* 	<ValidationMessage For="() => OrderModel.PhoneNumber" />
+ *@</div>
 
 <div>
 	<label>
 		Місто
 		<InputText @bind-Value="OrderModel.City" />
 	</label>
-	<ValidationMessage For="() => OrderModel.City" />
-</div>
+@* 	<ValidationMessage For="() => OrderModel.City" />
+ *@</div>
 
 <div>
 	<label>
 		Адреса доставки
 		<InputText @bind-Value="OrderModel.Adress" />
 	</label>
-	<ValidationMessage For="() => OrderModel.Adress" />
-</div>
+@* 	<ValidationMessage For="() => OrderModel.Adress" />
+ *@</div>
 
 <div>
 	<label>
@@ -87,46 +95,123 @@
 		Сума
 		<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
 	</label>
-	<ValidationMessage For="() => OrderModel.Price" />
+@* 	<ValidationMessage For="() => OrderModel.Price" />
+ *@</div>
+
+
+<div>
+	<button type="button" @onclick="SaveOrder">Зберегти</button>
+</div>
+
+<p> indentation between buttons </p>
+
+<div>
+	<button type="button" @onclick="() => DeleteOrderById(Id)">Видалити замовлення</button>
 </div>
 
 
+<p>@MessageResponse</p>
 @code {
 
-	// ordermodel from form models
 	[Parameter]
-	public NewOrderFormModel OrderModel { get; set; } = null!;
+	public int Id { get; set; }
+
+	public string MessageResponse { get; set; } = "";
+
+	// new fixes the rendering error because in OnInitializedAsync it is later initialized, not at the start of rendering page
+	public NewOrderFormModel OrderModel { get; set; } = new();
 
 	// needed to display them when adding new candle to order
-	[Parameter]
-	public IEnumerable<CandleFullVM> Candles { get; set; } = null!;
+	public IEnumerable<CandleFullVM> Candles { get; set; } = new List<CandleFullVM>();
 
 	// get all chosen candles with quantity > 0
-	[Parameter]
-	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = null!;
+	public List<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
 
 
 	// expand/hide candles to add them
 	private bool CandlesExpanded { get; set; } = false;
 
 
-	// called after received parameters from parent
-	protected override void OnParametersSet()
+	private OrderVM? _orderVM = new();
+
+
+	protected override async Task OnInitializedAsync()
 	{
-		// assigning each candle to CandlesOrdered model with default Quantity and Totalsum
-		foreach (var candle in Candles)
+		_orderVM = await orderHandler.GetOrderAsync($"api/order/oid={Id}");
+		OrderModel = _orderVM?.ConvertToOrderModel_FromFullVM() ?? new NewOrderFormModel();
+
+		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
+		foreach(var candle in Candles)
 		{
-			CandlesOrdered.Add(new CandleOrdered 
-				{ 
-					Id = candle.Id, 
-					Name = candle.Name, 
-					Price = candle.SellPrice, 
-					Quantity = 0, 
-					TotalSum = 0, 
+			CandlesOrdered.Add(new CandleOrdered
+				{
+					Id = candle.Id,
+					Name = candle.Name,
+					Price = candle.SellPrice,
+					Quantity = 0,
+					TotalSum = 0,
 					WaxNeededGramm = candle.WaxNeededGram,
 					WickDiameterCM = candle.WickDiameterCM
 				});
 		}
+
+
+		// key - candleId
+		// value - quantity of candle
+		foreach(var c in OrderModel.CandleIdAndQuantity)
+		{
+			var index = CandlesOrdered.FindIndex(o => o.Id == c.Key);
+			CandlesOrdered[index].Quantity = c.Value;
+			CandlesOrdered[index].TotalSum = CandlesOrdered[index].Quantity * CandlesOrdered[index].Price;
+		}
+
+	}
+
+
+	public async Task SaveOrder()
+	{
+		// clear all entrances of added candles
+		OrderModel.CandleIdAndQuantity.Clear();
+
+		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel
+		foreach (var candle in CandlesOrdered)
+		{
+			if (candle.Quantity > 0)
+			{
+				OrderModel.CandleIdAndQuantity.Add(candle.Id, candle.Quantity);
+			}
+		}
+
+		var orderToUpd = OrderModel.ConvertToFullVM_FromFormModel();
+		orderToUpd.Id = Id;
+
+		/* validation here */
+
+
+		// submitting to api
+		var result = await orderHandler.UpdateOrderAsync($"api/order/oid={Id}", orderToUpd);
+
+		if(result)
+		{
+			MessageResponse = "Замовлення збережено.";
+			OrderModel = new();
+		}
+		else
+		{
+			MessageResponse = "Помилка при збереженні замовлення. Спробуйте ще раз.";
+		}
+
+	}
+
+
+	public async Task DeleteOrderById(int orderId)
+	{
+		var result = await orderHandler.DeleteOrderAsync($"api/order/oid={orderId}");
+		MessageResponse = result switch
+		{
+			true => "Замовлення видалено.",
+			false => "Помилка при видаленні замовлення. Спробуйте ще раз.",
+		};
 	}
 
 
@@ -180,14 +265,8 @@
 		}
 	}
 
-	// public class CandleOrdered
-	// {
-	// 	public int Id { get; set; }
-	// 	public string Name { get; set; } = null!;
-	// 	public int Quantity { get; set; }
-	// 	public decimal Price { get; set; }
-	// 	public decimal TotalSum { get; set; }
-	// }
+
 }
+
 
 

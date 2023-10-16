@@ -1,7 +1,8 @@
-﻿@page "/orders"
+﻿@page "/order"
 @layout OrdersLayout
-@inject HttpClient hclient;
 @inject OrderHandlerService orderHandler;
+@inject CandleHandlerService candleHandler;
+@inject NavigationManager navManager;
 
 <h3>Orders</h3>
 
@@ -52,6 +53,7 @@
 				<td>@order.TotalSum</td>
 				<td>@order.Promocode</td>
 				<td>@order.Comments</td>
+				<td><button type="button" @onclick="() => EditOrder(order.Id)">Edit</button></td>
 			</tr>
 		}
 	</tbody>
@@ -64,14 +66,14 @@
 
 	public string OrdersExistMessage { get; set; } = "Loading...";
 
-	private ICollection<CandleFullVM> candleNames { get; set; } = new List<CandleFullVM>();
+	private IEnumerable<CandleFullVM> candleNames { get; set; } = new List<CandleFullVM>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		candleNames = await hclient.GetFromJsonAsync<ICollection<CandleFullVM>>("api/candle?view=full");
-		//OrdersList = await hclient.GetFromJsonAsync<IEnumerable<OrderVM>>("api/order") ?? new List<OrderVM>();
+		candleNames = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
 
 		OrdersList = await orderHandler.GetAllOrdesListAsync("api/order");
+		OrdersList = OrdersList.OrderByDescending(o => o.Id);
 		OrdersExistMessage = OrdersList.Any() switch
 		{
 			true => "",
@@ -79,4 +81,8 @@
 		};
 	}
 
+	public void EditOrder(int orderId)
+	{
+		navManager.NavigateTo($"order/{orderId}");
+	}
 }

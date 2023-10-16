@@ -31,12 +31,24 @@ namespace AdminApp.WASM.Application.Services
             return orders;
         }
 
+        public async Task<OrderVM?> GetOrderAsync(string url)
+        {
+            return await _orderService.GetItemAsync(url);
+        }
+
         public async Task<bool> CreateOrder(string url, OrderVM orderVM)
         {
             return await _orderService.PostItem(url, orderVM);
         }
 
+		public async Task<bool> UpdateOrderAsync(string url, OrderVM orderToUpd)
+		{
+			return await _orderService.PutItem(url, orderToUpd);
+		}
 
-
-    }
+		public async Task<bool> DeleteOrderAsync(string url)
+		{
+			return await _orderService.DeleteItemFromURL(url);
+		}
+	}
 }

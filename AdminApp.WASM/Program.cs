@@ -17,8 +17,8 @@ builder.Services.AddScoped(delegate (IServiceProvider sp)
 {
 	return new HttpClient
 	{
-		//BaseAddress = new Uri("http://localhost:5117/")
-		BaseAddress = new Uri("https://testwasmblazor.bsite.net/")
+		BaseAddress = new Uri("http://localhost:5117/")
+		//BaseAddress = new Uri("https://testwasmblazor.bsite.net/")
 	};
 });
 
@@ -42,5 +42,6 @@ builder.Services.AddScoped<CandleHandlerService>();
 
 builder.Services.AddScoped<ICRUDService<OrderVM>, CRUDService<OrderVM>>();
 builder.Services.AddScoped<OrderHandlerService>();
+
 
 await builder.Build().RunAsync();

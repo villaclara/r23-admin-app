@@ -7,6 +7,8 @@ namespace AdminApp.WASM.Models.FormModels
         [Required(ErrorMessage = "ПІБ")]
         public string Name { get; set; } = null!;
 
+        public DateTime DateOrdered { get; set; } = DateTime.Now;
+
         [Required(ErrorMessage = "Некоректний номер телефону")]
         [StringLength(10)]
         public string PhoneNumber { get; set; } = null!;
