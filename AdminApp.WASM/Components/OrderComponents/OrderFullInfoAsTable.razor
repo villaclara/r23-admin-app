@@ -12,7 +12,7 @@
 		</tr>
 		<tr>
 			<th scope="row">Дата замовлення:</th>
-			<td colspan="5">@Order.OrderDate.ToShortDateString()</td>
+			<td colspan="5">@Order.OrderDate.ToString("dd/MM/yy")</td>
 		</tr>
 		<tr>
 			<th scope="row">Отримувач</th>
@@ -37,6 +37,22 @@
 				{
 					<CandleOrderedNameAndQuantity CandleName="@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name"
 						CandleQuantity="@detail.CandleQuantity"/>
+				}
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">Воску потрібно</th>
+			<td colspan="4">
+				@{
+					int totalgrams = 0;
+					foreach (var detail in Order.OrderDetails)
+					{
+						int aa = (int)CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.WaxNeededGram!;
+						int grams = aa * detail.CandleQuantity;
+						totalgrams += grams;
+						
+					}
+					@totalgrams<span> г.</span>
 				}
 			</td>
 		</tr>

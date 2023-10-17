@@ -26,12 +26,11 @@
 
 	public IEnumerable<CandleFullVM> Candles { get; set; } = Enumerable.Empty<CandleFullVM>();
 
-	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
+	public List<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
 
 	protected override async Task OnInitializedAsync()
 	{
 		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
-		logger.LogDebug("bruh");
 	}
 
 	public async Task HandleValidSubmit()

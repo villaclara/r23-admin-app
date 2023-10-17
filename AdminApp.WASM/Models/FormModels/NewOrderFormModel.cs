@@ -4,10 +4,13 @@ namespace AdminApp.WASM.Models.FormModels
 {
     public class NewOrderFormModel
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "ПІБ")]
         public string Name { get; set; } = null!;
 
-        public DateTime DateOrdered { get; set; } = DateTime.Now;
+		//[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yy}")]
+		public DateTime DateOrdered { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "Некоректний номер телефону")]
         [StringLength(10)]

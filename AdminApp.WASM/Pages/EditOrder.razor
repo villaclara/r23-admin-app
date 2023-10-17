@@ -58,29 +58,7 @@
 		OrderModel = _orderVM?.ConvertToOrderModel_FromFullVM() ?? new NewOrderFormModel();
 
 		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
-		foreach(var candle in Candles)
-		{
-			CandlesOrdered.Add(new CandleOrdered
-				{
-					Id = candle.Id,
-					Name = candle.Name,
-					Price = candle.SellPrice,
-					Quantity = 0,
-					TotalSum = 0,
-					WaxNeededGramm = candle.WaxNeededGram,
-					WickDiameterCM = candle.WickDiameterCM
-				});
-		}
-
-
-		// key - candleId
-		// value - quantity of candle
-		foreach(var c in OrderModel.CandleIdAndQuantity)
-		{
-			var index = CandlesOrdered.FindIndex(o => o.Id == c.Key);
-			CandlesOrdered[index].Quantity = c.Value;
-			CandlesOrdered[index].TotalSum = CandlesOrdered[index].Quantity * CandlesOrdered[index].Price;
-		}
+		
 
 	}
 
@@ -96,59 +74,10 @@
 	}
 
 
-	// functions for increasing/decreasing counter 
-	public void IncreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
-	{
-		candle.Quantity++;
-		candle.TotalSum += candle.Price;
-		OrderModel.Price += candle.Price;
-	}
-	public void DecreaseCounterFoChosenCandle(MouseEventArgs args, CandleOrdered candle)
-	{
-		if(candle.Quantity > 0 && candle.TotalSum >= candle.Price)
-		{
-			candle.Quantity--;
-			candle.TotalSum -= candle.Price;
-			OrderModel.Price -= candle.Price;
-
-			OrderModel.Price = OrderModel.Price < 0 ? 0 : OrderModel.Price;
-		}
-	}
-
-
-	// could be 10% or 10 (means -10 grn)
-	public void UsePromocode(MouseEventArgs args, string? promocodeValue)
-	{
-		if(promocodeValue is null)
-		{
-			return;
-		}
-
-		string trimmed = promocodeValue.Trim();
-		decimal value = 0;
-		if (trimmed.EndsWith('%'))
-		{
-			bool result = decimal.TryParse(promocodeValue[..^1], out value);
-			if (result)
-			{
-				var howmuch = value * OrderModel.Price / 100;
-				OrderModel.Price -= howmuch;
-			}
-		}
-		else
-		{
-
-			bool result = decimal.TryParse(promocodeValue, out value);
-			if (result && OrderModel.Price > value)
-			{
-				OrderModel.Price -= value;
-			}
-		}
-	}
 
 	public async Task HandleValidSubmit()
 	{
-		// clear all entrances of added candles
+		// clear all instances of added candles
 		OrderModel.CandleIdAndQuantity.Clear();
 
 		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel

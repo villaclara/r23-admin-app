@@ -46,6 +46,7 @@ namespace AdminApp.WASM.Application.Utility
 		{
 			var ordermodel = new NewOrderFormModel()
 			{
+				Id = ordervm.Id,
 				Name = ordervm.Receiver.FullName,
 				DateOrdered = ordervm.OrderDate,
 				PhoneNumber = ordervm.Receiver.PhoneNumber,

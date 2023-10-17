@@ -1,8 +1,19 @@
 @using AdminApp.WASM.Models;
 
 
-<h3> Order Tepmlate </h3>
+<h3>
+	@if (OrderModel.Id != 0)
+	{
+		<span>Замовлення -</span> @OrderModel.Id
+	}
+</h3>
 
+<div>
+	<label>
+		Дата замовлення
+		<InputDate @bind-Value="OrderModel.DateOrdered" @bind-Value:format="dd/MM/yyyy"/>
+	</label>
+</div>
 <div>
 	<label>
 		ПІБ отримувача
@@ -45,23 +56,23 @@
 
 <div>
 	<label @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
-		Свічка </label>
+		Свічка
+	</label>
 	<button type="button" @onclick="() => CandlesExpanded = !CandlesExpanded">click</button>
-		
-		@if(CandlesExpanded)
-		{
-				<br />
-				@foreach(var candle in CandlesOrdered)
-				{
-				<span>@candle.Name =</span>
-				<button type="button" @onclick="(e) => DecreaseCounterFoChosenCandle(e, candle)">- </button>
-				<span>@candle.Quantity</span>
-				<button type="button" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">+</button>
-				<span>@candle.TotalSum</span>
-				<br />
-				}
 
+	@if (CandlesExpanded)
+	{
+		<br />
+		@foreach (var candle in CandlesOrdered)
+		{
+			<span>@candle.Name =</span>
+			<button type="button" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">- </button>
+			<span>@candle.Quantity</span>
+			<button type="button" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">+</button>
+			<span>@candle.TotalSum</span>
+			<br />
 		}
+	}
 </div>
 
 
@@ -73,16 +84,20 @@
 	</label>
 </div>
 
-
-Вибрані свічки: 
-@foreach(var candle in CandlesOrdered)
-{
-	@if(candle.Quantity > 0)
-	{
-		<p>@candle.Name - @candle.Quantity шт - @candle.WaxNeededGramm г</p>
+<div>
+	Вибрані свічки:
+	@{ int totalgram = 0;
+		@foreach (var candle in CandlesOrdered)
+		{
+			@if (candle.Quantity > 0)
+			{
+				<br/><span>@candle.Name - @candle.Quantity шт - @(candle.WaxNeededGramm*candle.Quantity) г</span>
+				totalgram += candle.WaxNeededGramm * candle.Quantity;
+			}
+		}
+		<br><span>Воску потрібно: </span>@totalgram<span> г.</span>
 	}
-}
-
+</div>
 
 <div>
 	<label>
@@ -105,7 +120,7 @@
 
 	// get all chosen candles with quantity > 0
 	[Parameter]
-	public ICollection<CandleOrdered> CandlesOrdered { get; set; } = null!;
+	public List<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
 
 
 	// expand/hide candles to add them
@@ -118,35 +133,46 @@
 		// assigning each candle to CandlesOrdered model with default Quantity and Totalsum
 		foreach (var candle in Candles)
 		{
-			CandlesOrdered.Add(new CandleOrdered 
-				{ 
-					Id = candle.Id, 
-					Name = candle.Name, 
-					Price = candle.SellPrice, 
-					Quantity = 0, 
-					TotalSum = 0, 
+			CandlesOrdered.Add(new CandleOrdered
+				{
+					Id = candle.Id,
+					Name = candle.Name,
+					Price = candle.SellPrice,
+					Quantity = 0,
+					TotalSum = 0,
 					WaxNeededGramm = candle.WaxNeededGram,
 					WickDiameterCM = candle.WickDiameterCM
 				});
 		}
+
+
+		// key - candleId
+		// value - quantity of candle
+		foreach (var c in OrderModel.CandleIdAndQuantity)
+		{
+			var index = CandlesOrdered.FindIndex(o => o.Id == c.Key);
+			CandlesOrdered[index].Quantity = c.Value;
+			CandlesOrdered[index].TotalSum = CandlesOrdered[index].Quantity * CandlesOrdered[index].Price;
+		}
 	}
 
 
-	// functions for increasing/decreasing counter 
+	// functions for increasing/decreasing counter
 	public void IncreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
 	{
 		candle.Quantity++;
 		candle.TotalSum += candle.Price;
 		OrderModel.Price += candle.Price;
 	}
-	public void DecreaseCounterFoChosenCandle(MouseEventArgs args, CandleOrdered candle)
+	public void DecreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
 	{
-		if(candle.Quantity > 0 && candle.TotalSum >= candle.Price)
+		if (candle.Quantity > 0 && candle.TotalSum >= candle.Price)
 		{
 			candle.Quantity--;
 			candle.TotalSum -= candle.Price;
 			OrderModel.Price -= candle.Price;
 
+			// price could not be less than 0
 			OrderModel.Price = OrderModel.Price < 0 ? 0 : OrderModel.Price;
 		}
 	}
@@ -155,7 +181,7 @@
 	// could be 10% or 10 (means -10 grn)
 	public void UsePromocode(MouseEventArgs args, string? promocodeValue)
 	{
-		if(promocodeValue is null)
+		if (promocodeValue is null)
 		{
 			return;
 		}
@@ -182,14 +208,6 @@
 		}
 	}
 
-	// public class CandleOrdered
-	// {
-	// 	public int Id { get; set; }
-	// 	public string Name { get; set; } = null!;
-	// 	public int Quantity { get; set; }
-	// 	public decimal Price { get; set; }
-	// 	public decimal TotalSum { get; set; }
-	// }
 }
 
 
