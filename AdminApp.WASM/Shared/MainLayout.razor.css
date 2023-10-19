@@ -1,7 +1,10 @@
+
 .page {
     position: relative;
     display: flex;
     flex-direction: column;
+    background-color: #f6e8e8;
+    height: 100vh;
 }
 
 main {
@@ -36,6 +39,8 @@ main {
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+
 
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {

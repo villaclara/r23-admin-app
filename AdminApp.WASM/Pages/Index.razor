@@ -6,16 +6,16 @@
 
 <PageTitle>Road23 Home</PageTitle>
 
-<article>
-	<div>
-		<NavLink class="nav-link" href="order">
-			<h3 class="h3-last-title">
-				Останні замовлення
-			</h3>
+<article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark">
+	<div class="container-lg">
+		<NavLink href="order" class="container-lg btn btn-lg border border-3 order-last1">
+			<span class="h3 text-bold">
+				Замовлення
+				</span>
 		</NavLink>
 	</div>
 	<div class="container">
-		<table class="table">
+		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
 					<th>Id</th>
@@ -28,7 +28,8 @@
 				@if (!LastOrders.Any())
 				{
 					<tr>
-						<td colspan="5">@OrdersLoadingMessage</td>
+						<td colspan="5">@OrdersLoadingMessage
+							</td>
 					</tr>
 				}
 				else
@@ -53,16 +54,20 @@
 	</div>
 </article>
 
-<article>
+<div> </div>
+
+<article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark pt-3">
 	<div>
-		<NavLink class="nav-link" href="/candle">
-			<h3 class="h3-last-title">
-				Свічки
-			</h3>
-		</NavLink>
+		<div class="container-lg">
+			<NavLink href="candle" class="container-lg btn btn-lg border border-3 ">
+				<span class="h3 text-bold">
+					Свічки
+				</span>
+			</NavLink>
+		</div>
 	</div>
 	<div class="container">
-		<table class="table">
+		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
 					<th>Id</th>
@@ -95,8 +100,8 @@
 	</div>
 </article>
 
-<h3> status code - @OrdersLoadingMessage</h3>
-<h3> status code2 - @CandlesLoadingMessage</h3>
+
+
 
 @code {
 	public IEnumerable<OrderVM> LastOrders { get; set; } = Enumerable.Empty<OrderVM>();

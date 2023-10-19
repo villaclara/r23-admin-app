@@ -2,6 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    background-color: #868f74;
 }
 
 main {
@@ -10,7 +11,9 @@ main {
 
 .sidebar {
     /*background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%); */
-    background-color: #085c2e;
+    /* #e7d5c6 - bezhevui */
+    /* #868f73 - zelenui */
+    background-color: #a3745a;
     color: black;
 }
 
