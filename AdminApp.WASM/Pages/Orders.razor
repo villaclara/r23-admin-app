@@ -31,7 +31,7 @@
 			@foreach (var order in OrdersExpanded)
 			{
 				<tr @onclick="() => order.Expanded = !order.Expanded">
-					<td>@order.OrderVM.OrderDate.ToString("dd/MM/yy")</td>
+					<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
 					<td>
 						@foreach (var detail in order.OrderVM.OrderDetails)
 						{

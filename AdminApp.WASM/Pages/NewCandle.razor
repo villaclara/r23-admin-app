@@ -5,12 +5,16 @@
 @inject HttpClient hclient;
 @inject CandleHandlerService candleInteractor;
 
+<div>
+	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" />
+</div>
+
 <h3>Нова Свічка</h3>
 
 <EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 	<DataAnnotationsValidator />
 	<CascadingValue Value="NewCandleForm">
-		<CandleFieldsTemplate/>
+		<CandleAsInputFields/>
 	</CascadingValue>
 
 	<div>

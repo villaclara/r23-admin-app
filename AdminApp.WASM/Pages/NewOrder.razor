@@ -4,7 +4,11 @@
 @inject CandleHandlerService candleHandler;
 @inject ILogger<NewOrder> logger;
 
-<h3>NewOrder</h3>
+
+<div>
+	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order"/>
+</div>
+<h3>Нове замовлення (юхууу!)</h3>
 
 <EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />
