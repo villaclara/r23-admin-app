@@ -1,8 +1,15 @@
-﻿.page {
+﻿html, body {
+    background-color: #868f74;
+}
+
+.page {
     position: relative;
     display: flex;
     flex-direction: column;
     background-color: #868f74;
+    
+    /* to set the full height. if uesd 'height' then when content are larger that screen the height is not working */
+    min-height: 100vh;
 }
 
 main {
@@ -40,6 +47,10 @@ main {
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+
+
+
 
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {

@@ -4,42 +4,49 @@
 @inject NavigationManager navmanager;
 @inject CandleHandlerService candleHandler;
 
-<body class="mainbody">
-<div class="container-fluid mainbody">
+<span></span>
+<div class="container">
 
-	<h3>Свічки</h3>
+	<div class="container">
+		<h1 class="display-4">Свічки</h1>
+	</div>
 
-	<div class="nav-item">
-		<NavLink class="nav-link" href="new-candle">
-			<span class="oi oi-list-rich" aria-hidden="true"></span> Додати свічку
-		</NavLink>
+	<div class="container">
+		<a href="new-candle" class="add-candle btn">
+			<span class="oi oi-plus" aria-hidden="true"></span> Додати свічку
+		</a>
 	</div>
 
 	@if (CandlesExpanded is not null && CandlesExpanded.Any())
 	{
 		<div class="container-fluid">
-			<table class="table table-hover">
+			<table class="table table-hover align-middle">
 				<thead>
 					<tr>
-						<th scope="col">Id</th>
-						<th scope="col">Name </th>
-						<th scope="col"></th>
+						<th scope="col" class="col-2">Id</th>
+						<th scope="col" class="col-7">Назва </th>
+						<th scope="col" class="col-3"></th>
 					</tr>
-
 				</thead>
 
 				<tbody>
 					@foreach (var can in CandlesExpanded)
 					{
-						<tr style="cursor:pointer">
-							<td> @can.CandleItem.Id </td>
-							<td @onclick="() => can.Expanded = !can.Expanded"> @can.CandleItem.Name </td>
-							<td> <button type="button" @onclick="() => EditCandle(can.CandleItem.Id)">Edit</button></td>
+						<tr style="cursor:pointer" @onclick="() => can.Expanded = !can.Expanded">
+							<td class="col-2"> @can.CandleItem.Id </td>
+							<td class="col-7"> @can.CandleItem.Name </td>
+							<td class="col-3">
+								<div class="d-grid gap-2">
+								<button type="button" class="btn btn-secondary" @onclick="() => EditCandle(can.CandleItem.Id)">
+									<span class="oi oi-pencil" aria-hidden="true"></span>
+								</button>
+								</div>
+							</td>
 						</tr>
 						@if (can.Expanded)
 						{
 							<tr>
-								<td colspan="3">
+								<td colspan="3" class="col-12 lighter-back">
 									<CascadingValue Value="can.CandleItem">
 										<CandleFullInfoAsTable />
 									</CascadingValue>
@@ -60,7 +67,7 @@
 
 </div>
 
-</body>	
+
 @code {
 	private string path = $"api/Candle?view=full";
 

@@ -1,10 +1,18 @@
 ﻿@inject NavigationManager navManager;
 
-<button type="button" @onclick="PerformNavigation">&#8592 Назад </button>
+<div class="container">
+	<button type="button" class="btn btn-lg btn-outline-light rounded-pill" @onclick="PerformNavigation">
+		<span class="oi oi-caret-left"></span>
+		@Text
+	</button>
+</div>
 
 @code {
 	[Parameter]
 	public string FromPageReached { get; set; } = "";
+
+	[Parameter]
+	public string Text { get; set; } = "";
 
 	public void PerformNavigation()
 	{
