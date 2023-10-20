@@ -5,14 +5,17 @@
 @inject NavigationManager navManager;
 
 <div class="container-fluid" style="padding-left: 0px">
-<h3>Замовлення</h3>
 
-
-<div class="nav-item px-3">
-	<NavLink class="nav-link" href="new-order">
-		<span class="oi oi-list-rich" aria-hidden="true"></span> Додати замовлення
-	</NavLink>
+	<div class="container">
+<h1 class="display-4">Замовлення</h1>
 </div>
+
+
+	<div class="container">
+		<a href="/order/new-order" class="btn btn-lg btn-light">
+			<span class="bi bi-plus-square" aria-hidden="true"></span> Замовлення
+		</a>
+	</div>
 
 @if (OrdersExpanded is not null && OrdersExpanded.Any())
 {

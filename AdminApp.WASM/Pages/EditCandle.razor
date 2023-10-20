@@ -9,7 +9,7 @@
 
 <h3>Змінити свічку</h3>
 
-<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" />
+<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
 
 
 <EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
@@ -18,11 +18,11 @@
 		<CandleAsInputFields />
 	</CascadingValue>
 
-	<div>
-
-		<button>Зберегти</button>
+	<div class="container-fluid d-grid d-md-block">
+		<button class="btn btn-lg btn-success rounded-1">Зберегти</button>
 	</div>
 </EditForm>
+
 <div> div to not missclick </div>
 		<button @onclick="(() => DeleteCandle())"> Видалити</button>
 <p> @MessageResponse</p>
