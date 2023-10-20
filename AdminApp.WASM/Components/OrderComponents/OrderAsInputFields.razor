@@ -81,7 +81,7 @@
 		</label>
 		<div class="col-6 col-lg-6">
 			<button type="button" class="btn btn-sm btn-primary" @onclick="() => CandlesExpanded = !CandlesExpanded">
-				<i class="bi bi-bag-plus"/> 
+				<i class="bi bi-check-circle"/> 
 				Вибрати
 			</button>
 		</div>
@@ -91,22 +91,18 @@
 			<br />
 			@foreach (var candle in CandlesOrdered)
 			{
-				<div class="row">
-					<div class="col-5">
-						<label>@candle.Name </label>
-					</div>
-					<div class="col-2">
-						<button type="button" class="btn btn-sm btn-success" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">- </button>
-					</div>
-					<label class="col-1">
-						@candle.Quantity
-					</label>
-					<div class="col-1">
-						<button type="button" class="btn btn-sm btn-success" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">+</button>
-					</div>
-					<div class="col-1">
-						<label class="col-1">@candle.TotalSum</label>
-					</div>
+				<div class="row mb-2 input-group">
+					<div class="input-group-text col-6 col-lg-3 text-wrap text-start ">@candle.Name </div>
+					<div class="input-group-text col-1">
+					<button type="button" class="btn" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">
+							<i class="bi bi-dash-square-fill" />
+						</button>
+						</div>
+					<div class="col-1 input-group-text">@candle.Quantity</div>
+					<button type="button" class="input-group-text btn col-1" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">
+						<i class="bi-plus-square-fill"/>
+					</button>
+					<div class="col-auto input-group-text">@candle.TotalSum грн.</div>
 					<br />
 				</div>
 			}
