@@ -6,9 +6,12 @@
 
 
 <div>
-	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order"/>
+	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" Text="Всі замовлення" ButtonClass="btn-outline-dark"/>
 </div>
-<h3>Нове замовлення (юхууу!)</h3>
+
+<div class="container">
+	<h3>Нове замовлення (юхууу!)</h3>
+</div>
 
 <EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />

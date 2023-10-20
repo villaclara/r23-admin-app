@@ -1,108 +1,139 @@
-﻿@using AdminApp.WASM.Models.FormModels;
+﻿
 
+@using AdminApp.WASM.Models.FormModels;
+
+<style>
+.hr-line{
+	border: 1px solid black;
+}
+</style>
 
 <div class="container">
 	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+		<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
 			Назва
 		</label>
-		<div class="col-9">
+		<div class="col-9 col-lg-6">
 			<InputText @bind-Value="NewCandleForm.Name" class="form-control" />
 			<ValidationMessage For="() => NewCandleForm.Name" />
 		</div>
 	</div>
 
 	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+		<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
 			Опис
 		</label>
-		<div class="col-9">
+		<div class="col-9 col-lg-6">
 			<InputText @bind-Value="NewCandleForm.Description" class="form-control" />
 			<ValidationMessage For="() => NewCandleForm.Description" />
 		</div>
 	</div>
 
 	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+		<label class="form-label col-4 col-lg-2 col-form-label fs-5 fw-lighter">
 			Категорія
 		</label>
-		<div class="col-9">
+		<div class="col-8 col-lg-6">
 			<InputText @bind-Value="NewCandleForm.Category" class="form-control"/>
 		<ValidationMessage For="() => NewCandleForm.Category" />
 			</div>
 	</div>
 
 	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+		<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
 			Фото
 		</label>
-		<div class="col-9">
+		<div class="col-9 col-lg-6">
 			<!-- until photo is not supported, later change-->
 			<InputText @bind-Value="NewCandleForm.PhotoLink" class="form-control" placeholder="поки недоступно" readonly />
 		<ValidationMessage For="() => NewCandleForm.PhotoLink" />
 	</div>
 		</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+	<hr class="hr-line"/>
+
+	<div class="pb-2 row input-group">
+		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Собівартість
 		</label>
-		<div class="col-9">
+		<div class="col-3 col-lg-1">
 			<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control"/>
-		<ValidationMessage For="() => NewCandleForm.RealCost" />
 			</div>
+		<label class="col-1 col-form-label-sm px-0 fw-lighter">
+			грн.
+		</label>
+		<ValidationMessage For="() => NewCandleForm.RealCost" />
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+	<div class="pb-2 row input-group">
+		<label class="form-label col-5 col-lg-2 col-form-label pe-0 me-0 fw-lighter">
 			Ціна продажу
 		</label>
-		<div class="col-9">
+		<div class="col-3 col-lg-1">
 			<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control"/>
-		<ValidationMessage For="() => NewCandleForm.SellPrice" />
 			</div>
+		<label class="col-1 col-form-label-sm px-0 fw-lighter">
+			грн.
+		</label>
+		<ValidationMessage For="() => NewCandleForm.SellPrice" />
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
+	<hr class="hr-line" />
+
+	<div class="pb-2 row input-group">
+		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Час горіння
 		</label>
-		<div class="col-9">
+		<div class="col-3 col-lg-1">
 			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control"/>
+			</div>
+		<label class="col-1 col-form-label-sm px-0 fw-lighter">
+			хв.
+		</label>
 		<ValidationMessage For="() => NewCandleForm.BurningTimeMins" />
-			</div>
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
-			Висота (см)
+	<div class="pb-2 row input-group">
+		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+			Висота
 		</label>
-		<div class="col-9">
+		<div class="col-3 col-lg-1">
 			<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control"/>
-		<ValidationMessage For="() => NewCandleForm.HeightCM" />
 			</div>
+		<label class="col-1 col-form-label-sm px-0 fw-lighter">
+			см.
+		</label>
+		<ValidationMessage For="() => NewCandleForm.HeightCM" />
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
-			Гніт діаметр (см)
+	<div class="pb-2 row input-group">
+		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+			Гніт діаметр
 		</label>
-		<div class="col-9">
+		<div class="col-3 col-lg-1">
 			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control"/>
-		<ValidationMessage For="() => NewCandleForm.WickDiameterCM" />
 			</div>
+			<div class="col-1 px-0">
+			<label class="col-1 col-form-label-sm px-0 mx-0 fw-lighter">
+			ниток
+		</label>
+		</div>
+		<ValidationMessage For="() => NewCandleForm.WickDiameterCM" />
 	</div>
 	
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-form-label">
-			Воску потрібно (г)
+	<div class="pb-2 row input-group">
+		<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+			Воску потрібно
 		</label>
-		<div class="col-9">
+		<div class="col-3 col-lg-1">
 			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control"/>
-		<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
 			</div>
+		<label class="col-1 col-form-label-sm px-0 fw-lighter">
+			г.
+		</label>
+		<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
+	
 	</div>
-
 </div>
 
 @code {

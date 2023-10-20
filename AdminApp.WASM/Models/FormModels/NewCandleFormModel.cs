@@ -13,7 +13,6 @@ namespace AdminApp.WASM.Models.FormModels
         [Required(ErrorMessage = "Має бути категорія")]
         public string Category { get; set; } = null!;
 
-        [Required]
         public string? PhotoLink { get; set; }
 
         [Required(ErrorMessage = "Собівартість не встановлена")]

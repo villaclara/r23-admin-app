@@ -1,7 +1,7 @@
 ﻿@inject NavigationManager navManager;
 
 <div class="container">
-	<button type="button" class="btn btn-lg btn-outline-light rounded-pill" @onclick="PerformNavigation">
+	<button type="button" class="btn @ButtonClass rounded-pill" @onclick="PerformNavigation">
 		<span class="oi oi-caret-left"></span>
 		@Text
 	</button>
@@ -9,10 +9,13 @@
 
 @code {
 	[Parameter]
-	public string FromPageReached { get; set; } = "";
+	public string FromPageReached { get; set; } = "/";
 
 	[Parameter]
-	public string Text { get; set; } = "";
+	public string Text { get; set; } = "Назад";
+
+	[Parameter]
+	public string ButtonClass { get; set; } = "btn-outline-light";
 
 	public void PerformNavigation()
 	{
