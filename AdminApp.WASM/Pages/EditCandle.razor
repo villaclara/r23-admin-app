@@ -13,7 +13,7 @@
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
 </div>
 
-@if (_selectedCandle != default && _selectedCandle.Id != 0)
+@if (_selectedCandle == default && _selectedCandle.Id == 0)
 {
 	<div class="container">
 		<p>Немає свічки з таким id.</p>

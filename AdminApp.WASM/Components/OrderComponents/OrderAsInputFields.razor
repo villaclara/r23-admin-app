@@ -204,35 +204,33 @@
 	// called after received parameters from parent
 	protected override void OnParametersSet()
 	{
-		// // assigning each candle to CandlesOrdered model with default Quantity and Totalsum
-		// foreach (var candle in Candles)
-		// {
-		// 	CandlesOrdered.Add(new CandleOrdered
-		// 		{
-		// 			Id = candle.Id,
-		// 			Name = candle.Name,
-		// 			Price = candle.SellPrice,
-		// 			Quantity = 0,
-		// 			TotalSum = 0,
-		// 			WaxNeededGramm = candle.WaxNeededGram,
-		// 			WickDiameterCM = candle.WickDiameterCM
-		// 		});
-		// }
+		// assigning each candle to CandlesOrdered model with default Quantity and Totalsum
+		foreach (var candle in Candles)
+		{
+			CandlesOrdered.Add(new CandleOrdered
+				{
+					Id = candle.Id,
+					Name = candle.Name,
+					Price = candle.SellPrice,
+					Quantity = 0,
+					WaxNeededGramm = candle.WaxNeededGram,
+					WickDiameterCM = candle.WickDiameterCM
+				});
+		}
 
 
-		// // this needed when editing order and it already has candles ordered
-		// // key - candleId
-		// // value - quantity of candle
-		// foreach (var c in OrderModel.CandleIdAndQuantity)
-		// {
-		// 	var index = CandlesOrdered.FindIndex(o => o.Id == c.Key);
-		// 	CandlesOrdered[index].Quantity = c.Value;
-		// 	CandlesOrdered[index].TotalSum = CandlesOrdered[index].Quantity * CandlesOrdered[index].Price;
-		// }
+		// this needed when editing order and it already has candles ordered
+		// key - candleId
+		// value - quantity of candle
+		foreach (var c in OrderModel.CandleIdAndQuantity)
+		{
+			var index = CandlesOrdered.FindIndex(o => o.Id == c.Key);
+			CandlesOrdered[index].Quantity = c.Value;
+		}
 
 
 		// SEEDING WHILE DEBUGGING
-		SeedCandlesOrdered();
+		//SeedCandlesOrdered();
 
 
 	}

@@ -6,7 +6,7 @@
 
 <AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" ButtonClass="btn-outline-dark" Text="Всі замовлення" />
 
-@if (OrderModel.Id != 0)
+@if (OrderModel.Id == 0)
 {
 	<div class="container">
 		<p>Немає замовлення з таким id.</p>

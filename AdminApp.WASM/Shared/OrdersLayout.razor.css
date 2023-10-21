@@ -3,6 +3,8 @@
     display: flex;
     flex-direction: column;
     background-color: #e7d5c6;
+
+    min-height: 100vh;
 }
 
 main {
