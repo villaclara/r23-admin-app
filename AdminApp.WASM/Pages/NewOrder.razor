@@ -9,20 +9,24 @@
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" Text="Всі замовлення" ButtonClass="btn-outline-dark"/>
 </div>
 
+<MessageResponseComponent MessageResponse="@MessageResponse"/>
+
+
 <div class="container">
 	<h3>Нове замовлення (юхууу!)</h3>
 </div>
+
 
 <EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 	<DataAnnotationsValidator />
 	<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered"/>
 	
-	<div>
-		<button>Додати замовлення</button>
+	<div class="container d-grid d-md-block p-3">
+		<button class="btn btn-success">Додати замовлення</button>
 	</div>
 </EditForm>
 
-@MessageResponse
+
 
 @code {
 	public NewOrderFormModel OrderModel { get; set; } = new();

@@ -3,29 +3,52 @@
 @using AdminApp.WASM.Application.Utility;
 @using AdminApp.WASM.Models.FormModels;
 @using AdminApp.WASM.Models.ViewModels;
+@using AdminApp.WASM.Components.Misc;
 @inject NavigationManager navmanager;
 @inject HttpClient hclient;
 @inject CandleHandlerService candleHandler;
 
-<h3>Змінити свічку</h3>
 
-<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+<div>
+	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+</div>
 
-
-<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
-	<DataAnnotationsValidator />
-	<CascadingValue Value="NewCandleForm">
-		<CandleAsInputFields />
-	</CascadingValue>
-
-	<div class="container-fluid d-grid d-md-block">
-		<button class="btn btn-lg btn-success rounded-1">Зберегти</button>
+@if (_selectedCandle != default && _selectedCandle.Id != 0)
+{
+	<div class="container">
+		<p>Немає свічки з таким id.</p>
 	</div>
-</EditForm>
+}
+else
+{
+	<MessageResponseComponent MessageResponse="@MessageResponse"/>
 
-<div> div to not missclick </div>
-		<button @onclick="(() => DeleteCandle())"> Видалити</button>
-<p> @MessageResponse</p>
+	<p></p>
+	<div class="container text-center">
+		<h3>
+			Свічка - @_selectedCandle?.Id
+		</h3>
+	</div>
+
+	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+		<DataAnnotationsValidator />
+		<CascadingValue Value="NewCandleForm">
+			<CandleAsInputFields />
+		</CascadingValue>
+
+		<div class="container-fluid d-grid d-md-block">
+			<button class="btn btn-lg btn-success rounded-1">Зберегти</button>
+		</div>
+	</EditForm>
+
+	<hr />
+	<hr />
+	<div class="container">
+		<button type="button" class="btn btn-danger btn-sm" @onclick="(() => DeleteCandle())"> Видалити</button>
+	</div>
+	
+}
+
 
 @code {
 	[Parameter]
@@ -72,7 +95,7 @@
 		_selectedCandle.Id = Id;
 
 		var result = await candleHandler.UpdateCandleAsync($"api/candle/cid={Id}", _selectedCandle);
-		if(result)
+		if (result)
 		{
 			MessageResponse = $"Свічка оновлена.";
 			NewCandleForm = new();
@@ -95,7 +118,7 @@
 
 
 		var result = await candleHandler.DeleteCandleAsync($"api/candle/cid={Id}");
-		if(result)
+		if (result)
 		{
 			MessageResponse = "Свічка видалена.";
 			NewCandleForm = new();

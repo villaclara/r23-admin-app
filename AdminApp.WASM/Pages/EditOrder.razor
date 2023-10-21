@@ -1,42 +1,57 @@
 ﻿@page "/order/{Id:int}"
 @using AdminApp.WASM.Models;
+@using AdminApp.WASM.Components.Misc;
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
 
+<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" ButtonClass="btn-outline-dark" Text="Всі замовлення" />
 
-
-<h3>Редагувати замовлення</h3>
-
-<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order"/>
-
-
-<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
-	<DataAnnotationsValidator />
-	<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
-
-	<div>
-		<button>Зберегти зміни</button>
+@if (OrderModel.Id != 0)
+{
+	<div class="container">
+		<p>Немає замовлення з таким id.</p>
 	</div>
-</EditForm>
+}
+else
+{
+	<MessageResponseComponent MessageResponse="@MessageResponse"/>
+
+	<p></p>
+	<div class="container text-center">
+		<h3>
+			Замовлення - @OrderModel.Id
+		</h3>
+	</div>
+
+	<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+		<DataAnnotationsValidator />
+		<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
+
+		<div class="container d-grid d-md-block p-3">
+			<button class="btn btn-success">Зберегти зміни</button>
+		</div>
+	</EditForm>
 
 
-<p> indentation between buttons </p>
+	<hr />
+	<hr />
 
-<div>
-	<button type="button" @onclick="() => DeleteOrderById(Id)">Видалити замовлення</button>
-</div>
+	<div class="container">
+		<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteOrderById(Id)">Видалити замовлення</button>
+	</div>
 
 
-<p>@MessageResponse</p>
+
+}
 @code {
 
 	[Parameter]
 	public int Id { get; set; }
 
-	public string MessageResponse { get; set; } = "";
+	public string MessageResponse { get; set; } = "adsada";
 
 	// new fixes the rendering error because in OnInitializedAsync it is later initialized, not at the start of rendering page
-	public NewOrderFormModel OrderModel { get; set; } = new();
+	public NewOrderFormModel OrderModel { get; set; } = new NewOrderFormModel();
 
 	// needed to display them when adding new candle to order
 	public IEnumerable<CandleFullVM> Candles { get; set; } = new List<CandleFullVM>();
@@ -58,7 +73,7 @@
 		OrderModel = _orderVM?.ConvertToOrderModel_FromFullVM() ?? new NewOrderFormModel();
 
 		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
-		
+
 
 	}
 

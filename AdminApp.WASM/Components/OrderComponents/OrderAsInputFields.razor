@@ -4,64 +4,57 @@
 
 <style>
 	.hr-line {
-		border: 1px black;
+		border: 1px solid purple;
 	}
 </style>
 
-<h3>
-	@if (OrderModel.Id != 0)
-	{
-		<span>Замовлення -</span> @OrderModel.Id
-	}
-</h3>
 
 <div class="container">
 	<div class="pb-2 row">
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Дата замовлення
 		</label>
-		<div class="col-7 col-lg-6">
+		<div class="col-7 col-lg-2">
 			<InputDate @bind-Value="OrderModel.DateOrdered" @bind-Value:format="dd/MM/yyyy" class="form-control" />
 		</div>
 	</div>
-	<div class="pb-2 row">
-		<label class="form-label col-2 col-lg-2 col-form-label fw-lighter">
+
+	
+	<!-- PIB and Phone number are grouped into one row in big screens, two rows on phone screen -->
+	<div class="row row-cols-lg-4 gy-2 pb-2">
+		<label class="form-label col-2 col-lg-1 col-form-label fw-lighter">
 			ПІБ
 		</label>
-		<div class="col-10 col-lg-6">
+		<div class="col-10 col-lg-4">
 			<InputText @bind-Value="OrderModel.Name" class="form-control" />
 			<ValidationMessage For="() => OrderModel.Name" />
 		</div>
-	</div>
-
-	<div class="pb-2 row">
+	
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Номер телефону
 		</label>
-		<div class="col-7 col-lg-6">
-			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" />
+		<div class="col-7 col-lg-2">
+			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" placeholder="09811122233"/>
 		</div>
 		<ValidationMessage For="() => OrderModel.PhoneNumber" />
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-lg-2 col-form-label fw-lighter">
+	<!-- City and Delivery adress are grouped into one row in big screens, two rows on phone screen -->
+	<div class="row row-cols-lg-4 gy-2 pb-2">
+		<label class="form-label col-3 col-lg-1 col-form-label fw-lighter">
 			Місто
 		</label>
-		<div class="col-9 col-lg-6">
+		<div class="col-9 col-lg-4">
 			<InputText @bind-Value="OrderModel.City" class="form-control" />
 			<ValidationMessage For="() => OrderModel.City" />
 		</div>
-	</div>
-
-	<div class="pb-2 row">
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Адреса доставки
 		</label>
-		<div class="col-7 col-lg-6">
+		<div class="col-7 col-lg-5">
 			<InputText @bind-Value="OrderModel.Adress" class="form-control" />
-			<ValidationMessage For="() => OrderModel.Adress" />
 		</div>
+			<ValidationMessage For="() => OrderModel.Adress" />
 	</div>
 
 	<div class="pb-2 row">
@@ -75,12 +68,12 @@
 
 	<hr class="hr-line" />
 
-	<div class="pb-2 row">
-		<label class="form-label col-5 col-lg-12 col-form-label fw-lighter" @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
-			Вибрані свічки
+	<div class="row">
+		<label class="text-center form-label col-5 col-lg-2 col-form-label fw-lighter" @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
+			Свічки:
 		</label>
-		<div class="col-6 col-lg-6">
-			<button type="button" class="btn btn-sm btn-primary" @onclick="() => CandlesExpanded = !CandlesExpanded">
+		<div class="col-6 col-lg-6 m-auto">
+			<button type="button" class="btn btn-sm btn-primary m-auto" @onclick="() => CandlesExpanded = !CandlesExpanded">
 				<i class="bi bi-check-circle" />
 				Вибрати
 			</button>
@@ -92,16 +85,16 @@
 			@foreach (var candle in CandlesOrdered)
 			{
 				<div class="input-group input-group-sm mb-1 border border-secondary border-top-0 border-start-0 border-end-0">
-					<span class="col-5 ps-0 m-auto ">@candle.Name</span>
+					<span class="col-5 col-lg-3 ps-0 m-auto ">@candle.Name</span>
 					<button type="button" class="btn shadow-none pe-0" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">
 						<span class="bi-dash-square-fill m-auto" style="font-size:25px"></span>
 					</button>
+
 					<InputNumber class="form-control text-center" style="height: 30px; width: 20px; margin:auto" @bind-Value="candle.Quantity" />
 					<button type="button" class="btn shadow-none ps-0" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">
 						<span class="bi-plus-square-fill m-auto" style="font-size: 25px" aria-hidden="true"></span>
-
 					</button>
-					<label class="col-3 m-auto">@candle.TotalSum грн.</label>
+					<label class="col-3 col-lg m-auto">@candle.TotalSum грн.</label>
 				</div>
 				<br />
 			}
@@ -113,53 +106,76 @@
 
 	<div class="pb-2 row">
 		<div class="input-group">
-
-		<label class="input-group-text bg-secondarycol-8 col-lg-2  fw-lighter">
+		<label class="input-group-text col-8 col-lg-3  fw-lighter">
 			Промокод 
-			<small style="font-size: 11px;"> (% або знижка в грн)</small>
+			<small style="font-size: 11px;"> &nbsp;(% або знижка в грн)</small>
 		</label>
-		<div class="col-2 col-lg-6">
-			<InputText class="form-control" @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
+		<div class="col-2 col-lg-2">
+			<InputText class="form-control text-end" @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
 		</div>
 		<div class="col-2 ps-0">
-			<button class="btn btn-secondary" type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
+			<button class="btn btn-outline-secondary" type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">use</button>
 		</div>
 		</div>
 	</div>
 
-	<div>
-		Вибрані свічки:
-		@{
-			int totalgram = 0;
-			@foreach (var candle in CandlesOrdered)
-			{
-				@if (candle.Quantity > 0)
-				{
-					<br />
 
-					<span>@candle.Name - @candle.Quantity шт - @(candle.WaxNeededGramm * candle.Quantity) г</span>
-					totalgram += candle.WaxNeededGramm * candle.Quantity;
+	<!-- check if we have already selected any candle -->
+	@if(CandlesOrdered.Any(c => c.Quantity > 0))
+	{
+	<div class="row">
+	Вибрані свічки:
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Q</th>
+					<th>Gramm</th>
+				</tr>
+			</thead>
+			<tbody>
+		@foreach (var candle in CandlesOrdered)
+		{
+					@if (candle.Quantity > 0)
+					{
+						<tr>
+							<td>
+								<span>@candle.Name </span>
+							</td>
+							<td>
+								@candle.Quantity шт
+							</td>
+							<td>
+								@(candle.WaxNeededGramm * candle.Quantity) г
+							</td>
+						</tr>
+					}
 				}
-			}
-			<br>
+			</tbody>
+		</table>
 
-			<span>Воску потрібно: </span>
-
-			@totalgram
-
-			<span> г.</span>
-		}
+	</div>
+	}
+	
+	<hr/>
+	
+	<div class="pb-1 row">
+		<label class="col-6 col-lg-2 text-end">Воску потрібно:</label>
+		<label class="col-6 col-lg-2">@_totalGramm<span>&nbsp;г.</span></label>
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+	<div class="pb-2 row me-1">
+		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
 			Сума
 		</label>
-		<div class="col-6 col-lg-6">
-			<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
-			<ValidationMessage For="() => OrderModel.Price" />
+		<div class="col-5 col-lg-2">
+			<InputNumber @bind-Value="OrderModel.Price" class="form-control text-end" @onclick="() => CandlesExpanded = false" />
 		</div>
+		<div class="col-1 col-lg-1 ps-0 my-auto">грн.</div>
+		<ValidationMessage For="() => OrderModel.Price" />
 	</div>
+
+
 
 </div>
 
@@ -181,6 +197,8 @@
 
 	// expand/hide candles to add them
 	private bool CandlesExpanded { get; set; } = false;
+
+	private int _totalGramm;
 
 
 	// called after received parameters from parent
@@ -224,19 +242,22 @@
 	public void IncreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
 	{
 		candle.Quantity++;
-		//candle.TotalSum += candle.Price;
 		OrderModel.Price += candle.Price;
+
+		_totalGramm += candle.WaxNeededGramm;
 	}
 	public void DecreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
 	{
 		if (candle.Quantity > 0 && candle.TotalSum >= candle.Price)
 		{
 			candle.Quantity--;
-			//candle.TotalSum -= candle.Price;
 			OrderModel.Price -= candle.Price;
 
 			// price could not be less than 0
 			OrderModel.Price = OrderModel.Price < 0 ? 0 : OrderModel.Price;
+
+			_totalGramm -= candle.WaxNeededGramm;
+			_totalGramm = _totalGramm < 0 ? 0 : _totalGramm;
 		}
 	}
 

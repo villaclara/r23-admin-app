@@ -10,23 +10,25 @@
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Всі свічки" />
 </div>
 
+<MessageResponseComponent MessageResponse="@MessageResponse" />
+
+
 <div class="container">
 	<h3 class="display-4">Нова Свічка</h3>
 </div>
 
 <div class="container">
-<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
-	<DataAnnotationsValidator />
-	<CascadingValue Value="NewCandleForm">
-		<CandleAsInputFields/>
-	</CascadingValue>
+	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+		<DataAnnotationsValidator />
+		<CascadingValue Value="NewCandleForm">
+			<CandleAsInputFields />
+		</CascadingValue>
 
-	<div class="container-fluid d-grid d-md-block">
-		<button class="btn btn-lg btn-success rounded-1">Додати</button>
-	</div>
-</EditForm>
+		<div class="container-fluid d-grid d-md-block">
+			<button class="btn btn-lg btn-success rounded-1">Додати</button>
+		</div>
+	</EditForm>
 </div>
-<p> @MessageResponse</p>
 
 @code {
 	public NewCandleFormModel NewCandleForm { get; set; } = new();
@@ -46,20 +48,21 @@
 		// 	//navmanager.NavigateTo("candles");
 		// }
 
-		// else 
+		// else
 		// {
 		// 	MessageResponse = "вдалось додати свічку.";
 		// }
 
 		var result = await candleInteractor.CreateCandleAsync("api/candle", candleToAdd);
-		if(result)
+		if (result)
 		{
 			MessageResponse = "Свічка успішно додана.";
 			NewCandleForm = new();
 		}
 		else
 		{
-			MessageResponse = "Не вдалось додати свічку";	}
+			MessageResponse = "Не вдалось додати свічку";
+		}
 	}
 
 	public void HandleInvalidSubmit()
