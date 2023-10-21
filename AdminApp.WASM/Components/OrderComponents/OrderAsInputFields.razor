@@ -21,7 +21,7 @@
 			Дата замовлення
 		</label>
 		<div class="col-7 col-lg-6">
-			<InputDate @bind-Value="OrderModel.DateOrdered" @bind-Value:format="dd/MM/yyyy" class="form-control"/>
+			<InputDate @bind-Value="OrderModel.DateOrdered" @bind-Value:format="dd/MM/yyyy" class="form-control" />
 		</div>
 	</div>
 	<div class="pb-2 row">
@@ -30,7 +30,7 @@
 		</label>
 		<div class="col-10 col-lg-6">
 			<InputText @bind-Value="OrderModel.Name" class="form-control" />
-		<ValidationMessage For="() => OrderModel.Name" />
+			<ValidationMessage For="() => OrderModel.Name" />
 		</div>
 	</div>
 
@@ -40,7 +40,7 @@
 		</label>
 		<div class="col-7 col-lg-6">
 			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" />
-			</div>
+		</div>
 		<ValidationMessage For="() => OrderModel.PhoneNumber" />
 	</div>
 
@@ -50,8 +50,8 @@
 		</label>
 		<div class="col-9 col-lg-6">
 			<InputText @bind-Value="OrderModel.City" class="form-control" />
-		<ValidationMessage For="() => OrderModel.City" />
-			</div>
+			<ValidationMessage For="() => OrderModel.City" />
+		</div>
 	</div>
 
 	<div class="pb-2 row">
@@ -60,9 +60,9 @@
 		</label>
 		<div class="col-7 col-lg-6">
 			<InputText @bind-Value="OrderModel.Adress" class="form-control" />
-		<ValidationMessage For="() => OrderModel.Adress" />
-	</div>
+			<ValidationMessage For="() => OrderModel.Adress" />
 		</div>
+	</div>
 
 	<div class="pb-2 row">
 		<label class="form-label col-3 col-lg-2 col-form-label fw-lighter">
@@ -70,7 +70,7 @@
 		</label>
 		<div class="col-9 col-lg-6">
 			<InputText @bind-Value="OrderModel.Comment" class="form-control" />
-			</div>
+		</div>
 	</div>
 
 	<hr class="hr-line" />
@@ -81,43 +81,50 @@
 		</label>
 		<div class="col-6 col-lg-6">
 			<button type="button" class="btn btn-sm btn-primary" @onclick="() => CandlesExpanded = !CandlesExpanded">
-				<i class="bi bi-check-circle"/> 
+				<i class="bi bi-check-circle" />
 				Вибрати
 			</button>
 		</div>
-		
-		@if (CandlesExpanded)
-		{
-			<br />
+	</div>
+	@if (CandlesExpanded)
+	{
+		<div class="row">
 			@foreach (var candle in CandlesOrdered)
 			{
-				<div class="row mb-2 input-group">
-					<div class="input-group-text col-6 col-lg-3 text-wrap text-start ">@candle.Name </div>
-					<div class="input-group-text col-1">
-					<button type="button" class="btn" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">
-							<i class="bi bi-dash-square-fill" />
-						</button>
-						</div>
-					<div class="col-1 input-group-text">@candle.Quantity</div>
-					<button type="button" class="input-group-text btn col-1" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">
-						<i class="bi-plus-square-fill"/>
+				<div class="input-group input-group-sm mb-1 border border-secondary border-top-0 border-start-0 border-end-0">
+					<span class="col-5 ps-0 m-auto ">@candle.Name</span>
+					<button type="button" class="btn shadow-none pe-0" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">
+						<span class="bi-dash-square-fill m-auto" style="font-size:25px"></span>
 					</button>
-					<div class="col-auto input-group-text">@candle.TotalSum грн.</div>
-					<br />
-				</div>
-			}
-		}
-	</div>
+					<InputNumber class="form-control text-center" style="height: 30px; width: 20px; margin:auto" @bind-Value="candle.Quantity" />
+					<button type="button" class="btn shadow-none ps-0" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">
+						<span class="bi-plus-square-fill m-auto" style="font-size: 25px" aria-hidden="true"></span>
 
+					</button>
+					<label class="col-3 m-auto">@candle.TotalSum грн.</label>
+				</div>
+				<br />
+			}
+
+		</div>
+	}
+
+	<hr class="hr-line" />
 
 	<div class="pb-2 row">
-		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
-			Промокод (% або знижка грн)
+		<div class="input-group">
+
+		<label class="input-group-text bg-secondarycol-8 col-lg-2  fw-lighter">
+			Промокод 
+			<small style="font-size: 11px;"> (% або знижка в грн)</small>
 		</label>
-		<div class="col-6 col-lg-6">
-			<InputText @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
-			<button type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
-			</div>
+		<div class="col-2 col-lg-6">
+			<InputText class="form-control" @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
+		</div>
+		<div class="col-2 ps-0">
+			<button class="btn btn-secondary" type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">Use</button>
+		</div>
+		</div>
 	</div>
 
 	<div>
@@ -150,8 +157,8 @@
 		</label>
 		<div class="col-6 col-lg-6">
 			<InputNumber @bind-Value="OrderModel.Price" @onclick="() => CandlesExpanded = false" />
-		<ValidationMessage For="() => OrderModel.Price" />
-			</div>
+			<ValidationMessage For="() => OrderModel.Price" />
+		</div>
 	</div>
 
 </div>
@@ -217,7 +224,7 @@
 	public void IncreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
 	{
 		candle.Quantity++;
-		candle.TotalSum += candle.Price;
+		//candle.TotalSum += candle.Price;
 		OrderModel.Price += candle.Price;
 	}
 	public void DecreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
@@ -225,7 +232,7 @@
 		if (candle.Quantity > 0 && candle.TotalSum >= candle.Price)
 		{
 			candle.Quantity--;
-			candle.TotalSum -= candle.Price;
+			//candle.TotalSum -= candle.Price;
 			OrderModel.Price -= candle.Price;
 
 			// price could not be less than 0
@@ -273,7 +280,7 @@
 				Name = "first",
 				Price = 100,
 				Quantity = 0,
-				TotalSum = 0,
+				//TotalSum = 0,
 				WaxNeededGramm = 10,
 				WickDiameterCM = 10
 			});
@@ -284,7 +291,7 @@
 				Name = "second",
 				Price = 200,
 				Quantity = 0,
-				TotalSum = 0,
+				//TotalSum = 0,
 				WaxNeededGramm = 20,
 				WickDiameterCM = 20
 			});
@@ -295,7 +302,7 @@
 				Name = "third candle big",
 				Price = 300,
 				Quantity = 0,
-				TotalSum = 0,
+				//TotalSum = 0,
 				WaxNeededGramm = 30,
 				WickDiameterCM = 30
 			});
@@ -306,7 +313,7 @@
 				Name = "mega long name fourth canlde",
 				Price = 400,
 				Quantity = 0,
-				TotalSum = 0,
+				//TotalSum = 0,
 				WaxNeededGramm = 40,
 				WickDiameterCM = 40
 			});
