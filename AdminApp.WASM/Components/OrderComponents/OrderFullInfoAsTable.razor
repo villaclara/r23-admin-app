@@ -1,38 +1,43 @@
 ﻿@inject NavigationManager navManager;
+@layout OrdersLayout;
 
 @if (Order is not null)
 {
-	<table class="table table-bordered">
+	<table class="table mt-0 mb-3 table-bordered border border-dark" style="border-spacing: 5px 5px; border-collapse:separate">
 		<tr>
-			<th scope="row">Id</th>
-			<td colspan="4">@Order.Id</td>
-			<td>
-				<button type="button" @onclick="() => EditOrder(Order.Id)">Edit</button>
+			<th scope="row" class="col-5 col-lg-2">Id</th>
+			<td colspan="2" class="col-5 col-lg-5">@Order.Id</td>
+			<td class="col-2 col-lg-1">
+				<div class="d-grid p-0">
+					<button type="button" class="btn btn-secondary" @onclick="() => EditOrder(Order.Id)">
+						<span class="oi oi-pencil" aria-hidden="true"></span>
+					</button>
+				</div>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row">Дата замовлення:</th>
-			<td colspan="5">@Order.OrderDate.ToString("dd/MM/yy")</td>
+			<th scope="row" class="col-5 col-lg-2">Дата замовлення:</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.OrderDate.ToString("dd/MM/yy")</td>
 		</tr>
 		<tr>
-			<th scope="row">Отримувач</th>
-			<td>@Order.Receiver.FullName</td>
+			<th scope="row" class="col-5 col-lg-2">Отримувач</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.Receiver.FullName</td>
 		</tr>
 		<tr>
-			<th scope="row">Телефон</th>
-			<td>@Order.Receiver.PhoneNumber</td>
+			<th scope="row" class="col-5 col-lg-2">Телефон</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.Receiver.PhoneNumber</td>
 		</tr>
 		<tr>
-			<th scope="row">Місто</th>
-			<td>@Order.Receiver.City</td>
+			<th scope="row" class="col-5 col-lg-2">Місто</th>
+			<td colspan="5" class="col-5 col-lg-2">@Order.Receiver.City</td>
 		</tr>
 		<tr>
-			<th scope="row">Адреса НП</th>
-			<td>@Order.Receiver.DeliveryAdress</td>
+			<th scope="row" class="col-5 col-lg-2">Адреса НП</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.Receiver.DeliveryAdress</td>
 		</tr>
 		<tr>
-			<th scope="row">Свічка</th>
-			<td colspan="4">
+			<th scope="row" class="col-5 col-lg-2">Свічка</th>
+			<td colspan="5" class="col-7 col-lg-2">
 				@foreach (var detail in Order.OrderDetails)
 				{
 					<CandleOrderedNameAndQuantity CandleName="@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name"
@@ -41,8 +46,8 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row">Воску потрібно</th>
-			<td colspan="4">
+			<th scope="row" class="col-5 col-lg-2">Воску потрібно</th>
+			<td colspan="5" class="col-7 col-lg-2">
 				@{
 					int totalgrams = 0;
 					foreach (var detail in Order.OrderDetails)
@@ -50,23 +55,22 @@
 						int aa = (int)CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.WaxNeededGram!;
 						int grams = aa * detail.CandleQuantity;
 						totalgrams += grams;
-						
 					}
 					@totalgrams<span> г.</span>
 				}
 			</td>
 		</tr>
 		<tr>
-			<th scope="row">Сума</th>
-			<td>@Order.TotalSum</td>
+			<th scope="row" class="col-5 col-lg-2">Сума</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.TotalSum</td>
 		</tr>
 		<tr>
-			<th scope="row">Промокод</th>
-			<td>@Order.Promocode</td>
+			<th scope="row" class="col-5 col-lg-2">Промокод</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.Promocode</td>
 		</tr>
 		<tr>
-			<th scope="row">Коментар</th>
-			<td>@Order.Comments</td>
+			<th scope="row" class="col-5 col-lg-2">Коментар</th>
+			<td colspan="5" class="col-7 col-lg-2">@Order.Comments</td>
 		</tr>
 	</table>
 }

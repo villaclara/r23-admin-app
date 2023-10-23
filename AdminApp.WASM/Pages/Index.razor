@@ -18,10 +18,10 @@
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
-					<th>Id</th>
-					<th>Дата</th>
-					<th>Свічки</th>
-					<th>Сума</th>
+					<th class="text-center">Id</th>
+					<th class="text-center">Дата</th>
+					<th class="text-center">Свічки</th>
+					<th class="text-center">Сума</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -42,9 +42,10 @@
 							<td>
 							@foreach(var detail in order.OrderDetails)
 							{
-								<CandleOrderedNameAndQuantity CandleName="bruh" CandleQuantity="@detail.CandleQuantity"	/>							
+								<CandleOrderedNameAndQuantity CandleName="@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)!.Name" CandleQuantity="@detail.CandleQuantity"	/>							
 							}
 							</td>
+						
 							<td>@order.TotalSum</td>
 						</tr>
 					}
@@ -107,6 +108,8 @@
 	public IEnumerable<OrderVM> LastOrders { get; set; } = Enumerable.Empty<OrderVM>();
 	public IEnumerable<CandleFullVM> LastCandles { get; set; } = Enumerable.Empty<CandleFullVM>();
 
+	public IEnumerable<CandleFullVM> CandleNames { get; set; } = Enumerable.Empty<CandleFullVM>();
+
 	// Message 'Loading...' or 'No {item}' displayed in the Table
 	public string OrdersLoadingMessage { get; set; } = "Loading...";
 	public string CandlesLoadingMessage { get; set; } = "Loading...";
@@ -131,6 +134,8 @@
 			true => "",
 			false => "Сталась помилка або свічки відсутні."
 		};
+
+		CandleNames = await candleHandler.GetAllCandlesListAsync(_candlesPath);
 	}
 
 	

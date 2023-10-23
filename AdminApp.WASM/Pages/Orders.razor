@@ -4,11 +4,13 @@
 @inject CandleHandlerService candleHandler;
 @inject NavigationManager navManager;
 
-<div class="container-fluid" style="padding-left: 0px">
+
+
+<div class="container">
 
 	<div class="container">
-<h1 class="display-4">Замовлення</h1>
-</div>
+		<h1 class="display-4">Замовлення</h1>
+	</div>
 
 
 	<div class="container">
@@ -17,54 +19,55 @@
 		</a>
 	</div>
 
-@if (OrdersExpanded is not null && OrdersExpanded.Any())
-{
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Дата</th>
-				<th>Свічка</th>
-				<th>Шт</th>
-				<th>Сума</th>
-				<th>Коментар</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var order in OrdersExpanded)
-			{
-				<tr @onclick="() => order.Expanded = !order.Expanded">
-					<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
-					<td>
-						@foreach (var detail in order.OrderVM.OrderDetails)
-						{
-							@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
-							<br />
-						}
-					</td>
-					<td>
-						@foreach (var detail in order.OrderVM.OrderDetails)
-						{
-							@detail.CandleQuantity
-							<br />
-						}
-					</td>
-					<td>@order.OrderVM.TotalSum</td>
-					<td>@order.OrderVM.Comments</td>
-				</tr>
-				@if(order.Expanded)
-				{
+	@if (OrdersExpanded is not null && OrdersExpanded.Any())
+	{
+		<div class="container px-0">
+			<table class="table align-middle">
+				<thead>
 					<tr>
-						<td colspan="5">
-								<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames"/>
-						</td>
+						<th>Дата</th>
+						<th>Свічка</th>
+						<th>Шт</th>
+						<th>Сума</th>
+						<th>Комент</th>
 					</tr>
-				}
-			}
-		</tbody>
-	</table>
+				</thead>
 
-}
+				<tbody>
+					@foreach (var order in OrdersExpanded)
+					{
+						<tr @onclick="() => order.Expanded = !order.Expanded">
+							<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
+							<td>
+								@foreach (var detail in order.OrderVM.OrderDetails)
+								{
+									@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
+									<br />
+								}
+							</td>
+							<td>
+								@foreach (var detail in order.OrderVM.OrderDetails)
+								{
+									@detail.CandleQuantity
+									<br />
+								}
+							</td>
+							<td>@order.OrderVM.TotalSum</td>
+							<td>@order.OrderVM.Comments</td>
+						</tr>
+						@if (order.Expanded)
+						{
+							<tr>
+								<td colspan="5" class="col-12 lighter-back" style="background-color: lightyellow">
+									<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
+								</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
+		</div>
+	}
 
 </div>
 @OrdersExistMessage
@@ -91,13 +94,13 @@
 		};
 
 
-		foreach(var o in OrdersList)
+		foreach (var o in OrdersList)
 		{
 			OrdersExpanded.Add(new OrderWithExpanded(o, false));
 		}
 	}
 
-	
+
 	public class OrderWithExpanded
 	{
 		public OrderVM OrderVM { get; set; } = null!;
