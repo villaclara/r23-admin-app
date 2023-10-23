@@ -1,8 +1,10 @@
 ﻿@page "/candle"
+@using AdminApp.WASM.Application.IndexedDB;
 @layout CandlesLayout
 @inject HttpClient client;
 @inject NavigationManager navmanager;
 @inject CandleHandlerService candleHandler;
+@inject IndexedDBAccessor indexedDBAccessor;
 
 <span></span>
 <div class="container">
@@ -67,6 +69,8 @@
 
 </div>
 
+<p>@MessageIndexedDB</p>
+
 
 @code {
 	private string path = $"api/Candle?view=full";
@@ -80,10 +84,23 @@
 
 	public ICollection<CandleWithExpanded> CandlesExpanded { get; set; } = new List<CandleWithExpanded>();
 
+	public string MessageIndexedDB { get; set; } = "no candles retrieved";
+
 	protected override async Task OnInitializedAsync()
 	{
-		CandleList = await candleHandler.GetAllCandlesListAsync(path);
 
+		var candlesFromIndexedDB = await indexedDBAccessor.GetAllValuesAsync<IEnumerable<CandleFullVM>>("candles");
+
+		if (candlesFromIndexedDB.Any())
+		{
+			CandleList = candlesFromIndexedDB;
+			MessageIndexedDB = "candles retrieved from indexed db";
+		}
+		else
+		{
+			CandleList = await candleHandler.GetAllCandlesListAsync(path);
+			MessageIndexedDB = "candles from web api";
+		}
 		foreach (var c in CandleList)
 		{
 			CandlesExpanded.Add(new CandleWithExpanded(c, false));

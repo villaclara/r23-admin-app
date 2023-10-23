@@ -1,8 +1,10 @@
 ﻿@page "/"
+@using AdminApp.WASM.Application.IndexedDB;
 @using AdminApp.WASM.Application.Interfaces;
 @using AdminApp.WASM.Models.ViewModels;
 @inject CandleHandlerService candleHandler;
 @inject OrderHandlerService orderHandler;
+@inject IndexedDBAccessor indexedDBAccessor;
 
 <PageTitle>Road23 Home</PageTitle>
 
@@ -131,6 +133,14 @@
 			true => "",
 			false => "Сталась помилка або свічки відсутні."
 		};
+
+
+
+		foreach(var candle in LastCandles)
+		{
+			await indexedDBAccessor.SetValueAsync("candles", candle);
+		}
+
 	}
 
 	

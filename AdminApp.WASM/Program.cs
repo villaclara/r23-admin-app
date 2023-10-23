@@ -1,4 +1,5 @@
 using AdminApp.WASM;
+using AdminApp.WASM.Application.IndexedDB;
 using AdminApp.WASM.Application.Interfaces;
 using AdminApp.WASM.Application.Services;
 using AdminApp.WASM.Models.ViewModels;
@@ -44,5 +45,19 @@ builder.Services.AddScoped<CandleHandlerService>();
 builder.Services.AddScoped<ICRUDService<OrderVM>, CRUDService<OrderVM>>();
 builder.Services.AddScoped<OrderHandlerService>();
 
+builder.Services.AddScoped<IndexedDBAccessor>();
 
-await builder.Build().RunAsync();
+
+var host = builder.Build();
+
+// check if the indexeddb was initialized
+using var scope = host.Services.CreateScope();
+await using var indexedDB = scope.ServiceProvider.GetService<IndexedDBAccessor>();
+
+if(indexedDB is not null)
+{
+	await indexedDB.InitializeAsync();
+}
+
+	
+await host.RunAsync();
