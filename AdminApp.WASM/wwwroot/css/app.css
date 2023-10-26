@@ -23,6 +23,8 @@ html, body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size: 22px;
     }
+
+   
 }
 
 
@@ -122,3 +124,38 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+.loading-road23 {
+    position: relative;
+    width: 8rem;
+    height: auto;
+    margin: 20vh auto 1rem auto;
+
+}
+
+
+/* filling text */
+h3::before {
+    content: attr(data-text);
+    position: absolute;
+    /*    color: #e7d5c6;
+*/
+    color: #e7d5c6;
+    overflow: hidden;
+    /*    font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+*/
+    margin: 20vh auto 1rem auto;
+    width: calc(var(--blazor-load-percentage, 0%));
+    /*width: 0%;*/
+
+    font-family: Brush Script MT, Brush Script Std, cursive;
+    font-stretch: 150%;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-size: 2rem;
+    text-decoration: underline;
+}
+
+
+
+
