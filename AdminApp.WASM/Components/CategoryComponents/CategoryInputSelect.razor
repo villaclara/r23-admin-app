@@ -1,0 +1,17 @@
+﻿
+@if(CategoryNames.Any())
+{
+	@foreach(var name in CategoryNames)
+	{
+		<option value="@name">@name</option>
+	}
+}
+
+@code {
+	List<string> CategoryNames = new List<string>();
+
+	void AddCategories()
+	{
+		
+	}
+}

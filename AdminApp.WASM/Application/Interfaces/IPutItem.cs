@@ -2,6 +2,6 @@
 {
 	public interface IPutItem<T> where T : class
 	{
-		Task<bool> PutItem(string url, T item);
+		Task<bool> PutItemAsync(string url, T item);
 	}
 }

@@ -38,17 +38,17 @@ namespace AdminApp.WASM.Application.Services
 
         public async Task<bool> CreateOrder(string url, OrderVM orderVM)
         {
-            return await _orderService.PostItem(url, orderVM);
+            return await _orderService.PostItemAsync(url, orderVM);
         }
 
 		public async Task<bool> UpdateOrderAsync(string url, OrderVM orderToUpd)
 		{
-			return await _orderService.PutItem(url, orderToUpd);
+			return await _orderService.PutItemAsync(url, orderToUpd);
 		}
 
 		public async Task<bool> DeleteOrderAsync(string url)
 		{
-			return await _orderService.DeleteItemFromURL(url);
+			return await _orderService.DeleteItemFromURLAsync(url);
 		}
 	}
 }

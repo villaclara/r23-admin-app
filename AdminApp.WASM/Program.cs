@@ -44,5 +44,8 @@ builder.Services.AddScoped<CandleHandlerService>();
 builder.Services.AddScoped<ICRUDService<OrderVM>, CRUDService<OrderVM>>();
 builder.Services.AddScoped<OrderHandlerService>();
 
+builder.Services.AddScoped<ICRUDService<CategoryVM>, CRUDService<CategoryVM>>();
+builder.Services.AddScoped<CategoryHandlerService>();
+
 
 await builder.Build().RunAsync();

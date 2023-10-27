@@ -1,11 +1,11 @@
-﻿
+﻿@inject CategoryHandlerService categoryHandler;
 
 @using AdminApp.WASM.Models.FormModels;
 
 <style>
-.hr-line{
-	border: 1px solid black;
-}
+	.hr-line {
+		border: 1px solid black;
+	}
 </style>
 
 <div class="container">
@@ -34,9 +34,31 @@
 			Категорія
 		</label>
 		<div class="col-8 col-lg-6">
-			<InputText @bind-Value="NewCandleForm.Category" class="form-control"/>
-		<ValidationMessage For="() => NewCandleForm.Category" />
+			<!-- display all categories as select list.
+				also last should be "..." which means new category will be added
+			-->
+			<InputSelect @bind-Value="NewCandleForm.Category" class="form-select">
+				@if (Categories.Any())
+				{
+					@foreach (var cat in Categories)
+					{
+						<option value="@cat">@cat</option>
+					}
+				}
+			</InputSelect>
+			<ValidationMessage For="() => NewCandleForm.Category" />
+		</div>
+
+		<!-- If user wants to add new category we use NewCategoryToAdd string field to save new cateogry name -->
+		@if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION)
+		{
+			<label class="form-label col-5 col-lg-2 col-form-label fs-5 fw-lighter">
+				Нова категорія
+			</label>
+			<div class="col-7 col-lg-6">
+				<InputText @bind-Value="NewCategoryToAdd" class="form-control" @onfocusout="FocusOutFromNewCategoryInput" />
 			</div>
+		}
 	</div>
 
 	<div class="pb-2 row">
@@ -46,19 +68,19 @@
 		<div class="col-9 col-lg-6">
 			<!-- until photo is not supported, later change-->
 			<InputText @bind-Value="NewCandleForm.PhotoLink" class="form-control" placeholder="поки недоступно" readonly />
-		<ValidationMessage For="() => NewCandleForm.PhotoLink" />
-	</div>
+			<ValidationMessage For="() => NewCandleForm.PhotoLink" />
 		</div>
+	</div>
 
-	<hr class="hr-line"/>
+	<hr class="hr-line" />
 
 	<div class="pb-2 row input-group">
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Собівартість
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control"/>
-			</div>
+			<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control" />
+		</div>
 		<label class="col-1 col-form-label-sm px-0 fw-lighter">
 			грн.
 		</label>
@@ -70,8 +92,8 @@
 			Ціна продажу
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control"/>
-			</div>
+			<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control" />
+		</div>
 		<label class="col-1 col-form-label-sm px-0 fw-lighter">
 			грн.
 		</label>
@@ -85,8 +107,8 @@
 			Час горіння
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control"/>
-			</div>
+			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control" />
+		</div>
 		<label class="col-1 col-form-label-sm px-0 fw-lighter">
 			хв.
 		</label>
@@ -98,8 +120,8 @@
 			Висота
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control"/>
-			</div>
+			<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control" />
+		</div>
 		<label class="col-1 col-form-label-sm px-0 fw-lighter">
 			см.
 		</label>
@@ -111,28 +133,28 @@
 			Гніт діаметр
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control"/>
-			</div>
-			<div class="col-1 px-0">
+			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control" />
+		</div>
+		<div class="col-1 px-0">
 			<label class="col-1 col-form-label-sm px-0 mx-0 fw-lighter">
-			ниток
-		</label>
+				ниток
+			</label>
 		</div>
 		<ValidationMessage For="() => NewCandleForm.WickDiameterCM" />
 	</div>
-	
+
 	<div class="pb-2 row input-group">
 		<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
 			Воску потрібно
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control"/>
-			</div>
+			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control" />
+		</div>
 		<label class="col-1 col-form-label-sm px-0 fw-lighter">
 			г.
 		</label>
 		<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
-	
+
 	</div>
 </div>
 
@@ -141,5 +163,28 @@
 	[CascadingParameter]
 	public NewCandleFormModel NewCandleForm { get; set; } = null!;
 
+	[Parameter]
+	public List<string> Categories { get; set; } = null!;
+
+
+	// Possible new category to add
+	[Parameter]
+	public string NewCategoryToAdd { get; set; } = null!;
+
+	[Parameter]
+	public EventCallback<string> NewCategoryToAddChanged { get; set; }
+
+	// On Focus Out from NewCategoryToAdd input field we notify the Parent that string has changed so the parent knows the string
+	public void FocusOutFromNewCategoryInput()
+	{
+		NewCategoryToAddChanged.InvokeAsync(NewCategoryToAdd);
+	}
+
+
+	// api/CandleCategory
+	// api/CandleCategory/{id}
+	// api/CandleCategory - post
+	// api/CandleCateogry/{id} - delete
+	// api CandleCategory/{id} - edit
 
 }

@@ -7,13 +7,13 @@
 @inject NavigationManager navmanager;
 @inject HttpClient hclient;
 @inject CandleHandlerService candleHandler;
-
+@inject CategoryHandlerService categoryService;
 
 <div>
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
 </div>
 
-@if (_selectedCandle == default && _selectedCandle.Id == 0)
+@if (_selectedCandle == default || _selectedCandle.Id == 0)
 {
 	<div class="container">
 		<p>Немає свічки з таким id.</p>
@@ -21,8 +21,8 @@
 }
 else
 {
-	<MessageResponseComponent MessageResponse="@MessageResponse"/>
 
+	<MessageResponseComponent MessageResponse="@MessageResponse"/>
 	<p></p>
 	<div class="container text-center">
 		<h3>
@@ -33,7 +33,7 @@ else
 	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 		<DataAnnotationsValidator />
 		<CascadingValue Value="NewCandleForm">
-			<CandleAsInputFields />
+			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
 		</CascadingValue>
 
 		<div class="container-fluid d-grid d-md-block">
@@ -62,21 +62,40 @@ else
 
 	private bool isFunctionDone = false;
 
+	public IEnumerable<CategoryVM> Categories { get; set; } = new List<CategoryVM>(10);
+	public List<string> CatNames { get; set; } = new List<string>();
+
+	public string PossibleNewCategoryName { get; set; } = string.Empty;
+
+
 	protected override async Task OnInitializedAsync()
 	{
 		if (!isFunctionDone)
 		{
 			//_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
 
-			_selectedCandle = await candleHandler.GetCanlde($"api/candle/cid={Id}?view=full");
+			_selectedCandle = await candleHandler.GetCanldeAsync($"api/candle/cid={Id}?view=full");
 			NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
 			MessageResponse = "";
 		}
+
+		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
+		// Categories.Add(new CategoryVM { Name = "..." });
+
+		CatNames = Categories.Select(c => c.Name).ToList();
+		CatNames.Add(Constants.NEW_CATEGORY_TO_ADD_OPTION);
 	}
 
 
 	public async Task HandleValidSubmit()
 	{
+
+		// checking if the possible new category has any value
+		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
+		{
+			NewCandleForm.Category = PossibleNewCategoryName;
+		}
+
 		//_selectedCandle = CandleFormModel.ConvertToFullVM_FromFormModel();
 		//_selectedCandle = _selectedCandle?.UpdateValues_FromFormModel(CandleFormModel);
 
@@ -98,8 +117,9 @@ else
 		if (result)
 		{
 			MessageResponse = $"Свічка оновлена.";
-			NewCandleForm = new();
-			_selectedCandle = null;
+			await Task.Delay(2000);
+
+			navmanager.NavigateTo("candle");
 		}
 		else
 		{
