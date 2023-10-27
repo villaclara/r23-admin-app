@@ -1,4 +1,5 @@
-﻿@layout CandlesLayout
+﻿@using System.Globalization;
+@layout CandlesLayout
 
 @if (Candle is not null)
 {
@@ -41,7 +42,7 @@
 					Собівартість
 				</th>
 				<td class="col-8">
-					@Candle.RealCost
+					@Candle.RealCost.ToString("C")
 				</td>
 			</tr>
 			<tr>
@@ -49,7 +50,7 @@
 					Ціна продажу
 				</th>
 				<td class="col-8">
-					@Candle.SellPrice
+					@Candle.SellPrice.ToZeroNumbersAfterComma() грн.
 				</td>
 			</tr>
 			<tr>
@@ -101,4 +102,5 @@
 	[CascadingParameter]
 	public CandleFullVM Candle { get; set; } = null!;
 
+	private CultureInfo ua = CultureInfo.GetCultureInfo("uk-UA");
 }
