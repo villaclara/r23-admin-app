@@ -2,6 +2,6 @@
 {
 	public interface IDeleteItem<T> where T : class
 	{
-		Task<bool> DeleteItemFromURL(string url);
+		Task<bool> DeleteItemFromURLAsync(string url);
 	}
 }

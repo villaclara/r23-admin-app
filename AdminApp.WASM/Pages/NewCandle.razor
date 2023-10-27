@@ -5,6 +5,7 @@
 @inject NavigationManager navmanager;
 @inject HttpClient hclient;
 @inject CandleHandlerService candleInteractor;
+@inject CategoryHandlerService categoryService;
 
 <div>
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Всі свічки" />
@@ -12,7 +13,7 @@
 
 <MessageResponseComponent MessageResponse="@MessageResponse" />
 
-
+1
 <div class="container">
 	<h3 class="display-4">Нова Свічка</h3>
 </div>
@@ -21,7 +22,7 @@
 	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 		<DataAnnotationsValidator />
 		<CascadingValue Value="NewCandleForm">
-			<CandleAsInputFields />
+			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
 		</CascadingValue>
 
 		<div class="container-fluid d-grid d-md-block">
@@ -35,29 +36,26 @@
 
 	public string MessageResponse { get; set; } = "";
 
+	public IEnumerable<CategoryVM> Categories { get; set; } = new List<CategoryVM>(10);
+	public List<string> CatNames { get; set; } = new List<string>();
+
+	public string PossibleNewCategoryName { get; set; } = string.Empty;
+
 	public async Task HandleValidSubmit()
 	{
+		// checking if the possible new category has any value
+		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
+		{
+			NewCandleForm.Category = PossibleNewCategoryName;
+		}
+
+
 		CandleFullVM candleToAdd = NewCandleForm.ConvertToFullVM_FromFormModel();
-
-		//var result = await hclient.PostAsJsonAsync<CandleFullVM>("api/candle?categoryId=1", candleToAdd);
-
-		// if (result.IsSuccessStatusCode)
-		// {
-		// 	MessageResponse = "Свічка успішно додана.";
-		// 	NewCandleForm = new();
-		// 	//navmanager.NavigateTo("candles");
-		// }
-
-		// else
-		// {
-		// 	MessageResponse = "вдалось додати свічку.";
-		// }
 
 		var result = await candleInteractor.CreateCandleAsync("api/candle", candleToAdd);
 		if (result)
 		{
 			MessageResponse = "Свічка успішно додана.";
-			NewCandleForm = new();
 		}
 		else
 		{
@@ -68,6 +66,16 @@
 	public void HandleInvalidSubmit()
 	{
 		MessageResponse = "Invalid entry";
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
+		// Categories.Add(new CategoryVM { Name = "..." });
+
+		CatNames = Categories.Select(c => c.Name).ToList();
+		CatNames.Add(Constants.NEW_CATEGORY_TO_ADD_OPTION);
+
 	}
 
 }

@@ -12,7 +12,7 @@ namespace AdminApp.WASM.Application.Services
 			_httpClient = httpClient;
 		}
 
-		public async Task<bool> DeleteItemFromURL(string url)
+		public async Task<bool> DeleteItemFromURLAsync(string url)
 		{
 			var result = await _httpClient.DeleteAsync(url);
 			return result.IsSuccessStatusCode;
@@ -42,13 +42,13 @@ namespace AdminApp.WASM.Application.Services
 			}
 		}
 
-		public async Task<bool> PostItem(string url, T item)
+		public async Task<bool> PostItemAsync(string url, T item)
 		{
 			var result = await _httpClient.PostAsJsonAsync(url, item);
 			return result.IsSuccessStatusCode;
 		}
 
-		public async Task<bool> PutItem(string url, T item)
+		public async Task<bool> PutItemAsync(string url, T item)
 		{
 			var result = await _httpClient.PutAsJsonAsync(url, item);
 			return result.IsSuccessStatusCode;

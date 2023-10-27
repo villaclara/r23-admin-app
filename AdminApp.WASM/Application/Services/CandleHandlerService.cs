@@ -18,7 +18,7 @@ namespace AdminApp.WASM.Application.Services
             return await _candleService.GetItemsAsListAsync(url);
         }
 
-        public async Task<CandleFullVM?> GetCanlde(string url)
+        public async Task<CandleFullVM?> GetCanldeAsync(string url)
         {
             return await _candleService.GetItemAsync(url);
         }
@@ -37,17 +37,17 @@ namespace AdminApp.WASM.Application.Services
 
         public async Task<bool> CreateCandleAsync(string url, CandleFullVM newCandle)
         {
-            return await _candleService.PostItem(url, newCandle);
+            return await _candleService.PostItemAsync(url, newCandle);
         }
 
         public async Task<bool> UpdateCandleAsync(string url, CandleFullVM candleToUpd)
         {
-            return await _candleService.PutItem(url, candleToUpd);
+            return await _candleService.PutItemAsync(url, candleToUpd);
         }
 
         public async Task<bool> DeleteCandleAsync(string url)
         {
-            return await _candleService.DeleteItemFromURL(url);
+            return await _candleService.DeleteItemFromURLAsync(url);
         }
 
     }
