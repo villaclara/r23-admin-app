@@ -204,6 +204,9 @@
 	// called after received parameters from parent
 	protected override void OnParametersSet()
 	{
+		// if not cleared then after validation error the list will be doubled
+		CandlesOrdered.Clear();
+
 		// assigning each candle to CandlesOrdered model with default Quantity and Totalsum
 		foreach (var candle in Candles)
 		{

@@ -17,3 +17,7 @@ h3 {
 .lighter-back {
     background-color: #919A7E;
 }
+
+.animate-display-to-down {
+    transition: ease 1s;
+}

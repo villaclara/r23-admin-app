@@ -17,11 +17,11 @@ namespace AdminApp.WASM.Models.FormModels
 
         [Required(ErrorMessage = "Собівартість не встановлена")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
-        public decimal? RealCost { get; set; }
+        public int? RealCost { get; set; }
 
         [Required(ErrorMessage = "Ціна продажу не встановлена")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
-        public decimal? SellPrice { get; set; }
+        public int? SellPrice { get; set; }
 
         [Required(ErrorMessage = "Висота не встановлена")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]

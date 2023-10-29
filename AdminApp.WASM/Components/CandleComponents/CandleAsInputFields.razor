@@ -1,6 +1,7 @@
 ﻿@inject CategoryHandlerService categoryHandler;
 
 @using AdminApp.WASM.Models.FormModels;
+@using AdminApp.WASM.Application.Utility;
 
 <style>
 	.hr-line {
@@ -79,7 +80,7 @@
 			Собівартість
 		</label>
 		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control" />
+			<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control" step="1"/>
 		</div>
 		<label class="col-1 col-form-label-sm px-0 fw-lighter">
 			грн.
