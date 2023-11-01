@@ -94,7 +94,7 @@
 		<!-- if the All Notes were loaded then we are ready to go through notes -->
 		@if (_allowedToDoForLoop)
 		{
-			@for (DateOnly d = DateOnly.FromDateTime(DateTime.Now); d < _maxDate; d = d.AddDays(1))
+			@for (DateOnly d = DateOnly.FromDateTime(DateTime.Now); d <= _maxDate; d = d.AddDays(1))
 			{
 				@if (AllNotes.Any(n => n.NoteDate == d))
 				{
