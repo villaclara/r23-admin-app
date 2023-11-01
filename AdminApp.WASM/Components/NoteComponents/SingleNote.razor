@@ -1,25 +1,48 @@
 ﻿@inject NoteHandlerService noteHandler;
 
-<div class="row">
-		@if(Note.IsDone)
-		{
-			<div class="col-3">
-			<button @onclick="UpdateNote">
+<div class="row pt-2 border border-0 border-bottom border-dark">
+
+	@if (Note.IsDone)
+	{
+		<div class="col-2 m-auto ps-0">
+			<button class="btn btn-outline-success btn-lg border border-0" @onclick="UpdateNoteAndDoneAsync">
+				<span class="bi bi-check-square-fill"></span>
+			</button>
+		</div>
+	}
+	else
+	{
+		<div class="col-2 m-auto ps-0">
+			<button class="btn btn-outline-dark btn-lg border border-0" @onclick="UpdateNoteAndDoneAsync">
+				<span class="bi bi-app"></span>
+			</button>
+		</div>
+	}
+
+	@if (EditModeActive)
+	{
+		<div class="col-9 p-0">
+			<InputText class="form-control" @bind-Value="Note.NoteText" />
+		</div>
+		<div class="col-1 p-0 m-auto">
+			<button class="btn btn-outline-dark border border-0" type="button" @onclick="() => UpdateNoteAndEditAsync()">
 				<span class="oi oi-check"></span>
 			</button>
-			</div>
-			<label class="col-9"><s>@Note.NoteText</s></label>
-		}
-		else
-		{
-			<div class="col-3">
-			<button @onclick="UpdateNote">
-				<span class="oi oi-circle-check"></span>
+		</div>
+	}
+	else
+	{
+		<div class="col-9 p-0">
+			<label class="col-form-label">@Note.NoteText</label>
+		</div>
+		<div class="col-1 p-0 m-auto">
+			<button class="btn btn-outline-dark border border-0" type="button" @onclick="() => EditModeActive = !EditModeActive">
+				<span class="oi oi-pencil"></span>
 			</button>
-			</div>
-			<label class="col-9">@Note.NoteText</label>
-		}
+		</div>
+	}
 </div>
+
 
 
 @code {
@@ -29,10 +52,25 @@
 
 	public bool Checked { get; set; }
 
-	public async Task UpdateNote()
+	[Parameter]
+	public bool EditModeActive { get; set; } = false;
+
+	public async Task UpdateNoteAndDoneAsync()
 	{
 		Note.IsDone = !Note.IsDone;
-		var result = await noteHandler.UpdateNote($"api/note/nid={Note.Id}", Note);
 
+		await UpdateNoteAsync();
+
+	}
+
+	public async Task UpdateNoteAndEditAsync()
+	{
+		EditModeActive = !EditModeActive;
+		await UpdateNoteAsync();
+	}
+
+	private async Task UpdateNoteAsync()
+	{
+		await noteHandler.UpdateNote($"api/note/nid={Note.Id}", Note);
 	}
 }
