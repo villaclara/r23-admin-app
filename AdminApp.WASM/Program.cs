@@ -47,5 +47,8 @@ builder.Services.AddScoped<OrderHandlerService>();
 builder.Services.AddScoped<ICRUDService<CategoryVM>, CRUDService<CategoryVM>>();
 builder.Services.AddScoped<CategoryHandlerService>();
 
+builder.Services.AddScoped<ICRUDService<NoteVM>, CRUDService<NoteVM>>();
+builder.Services.AddScoped<NoteHandlerService>();
+
 
 await builder.Build().RunAsync();

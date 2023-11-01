@@ -1,0 +1,38 @@
+﻿@inject NoteHandlerService noteHandler;
+
+<div class="row">
+		@if(Note.IsDone)
+		{
+			<div class="col-3">
+			<button @onclick="UpdateNote">
+				<span class="oi oi-check"></span>
+			</button>
+			</div>
+			<label class="col-9"><s>@Note.NoteText</s></label>
+		}
+		else
+		{
+			<div class="col-3">
+			<button @onclick="UpdateNote">
+				<span class="oi oi-circle-check"></span>
+			</button>
+			</div>
+			<label class="col-9">@Note.NoteText</label>
+		}
+</div>
+
+
+@code {
+
+	[Parameter]
+	public NoteVM Note { get; set; } = new();
+
+	public bool Checked { get; set; }
+
+	public async Task UpdateNote()
+	{
+		Note.IsDone = !Note.IsDone;
+		var result = await noteHandler.UpdateNote($"api/note/nid={Note.Id}", Note);
+
+	}
+}

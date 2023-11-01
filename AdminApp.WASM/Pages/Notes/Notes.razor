@@ -1,9 +1,123 @@
-﻿@page "/note"
+﻿@page "/note/overview"
+@inject NoteHandlerService noteHandler;
+@inject NavigationManager navManager;
 
-<h3> Notes </h3>
 
-<h3> Today @DateOnly.FromDateTime(DateTime.Now)</h3>
+
+
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<button @onclick="NewNoteClicked">Додати новий запис</button>
+		</div>
+	</div>
+
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<a href="">> Single Date</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			Date
+		</div>
+		<div class="col">
+			<InputDate @bind-Value=ActiveDate class="form-control" />
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			Notes for date - @ActiveDate.ToShortDateString()
+		</div>
+	</div>
+
+		@foreach (var note in AllNotes)
+		{
+			@if (note.NoteDate == DateOnly.FromDateTime(ActiveDate))
+			{
+				<div>
+					<SingleNote Note="note"/>
+				</div>
+			}
+		}
+
+
+	<div class="row">
+		<div class="col">
+			<a href="">> All</a>
+		</div>
+	</div>
+
+
+	<!-- if the All Notes were loaded then we are ready to go through notes -->
+	@if (_allowedToDoForLoop)
+	{
+		@for (DateOnly d = DateOnly.FromDateTime(DateTime.Now); d < _maxDate; d = d.AddDays(1))
+		{
+			@if (AllNotes.Any(n => n.NoteDate == d))
+			{
+				<div class="row">
+					<div class="col">
+						Date  - @d
+					</div>
+				</div>
+				foreach (var note in AllNotes.Where(n => n.NoteDate == d))
+				{
+					<div class="row">
+						<div class="col">
+							<SingleNote Note="note"/>
+						</div>
+					</div>
+				}
+			}
+		}
+	}
+
+
+</div>
+
+<p> max date - @GetMaxDateFromNotes(AllNotes)</p>
+
+
+
+
 
 @code {
+	public ICollection<NoteVM> AllNotes { get; set; } = new List<NoteVM>();
 
+	private string _url = "api/note";
+
+	public DateTime ActiveDate { get; set; } = DateTime.Now;
+
+	private DateOnly _maxDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1));
+
+	private bool _allowedToDoForLoop = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		AllNotes = await noteHandler.GetAllNotes(_url);
+		_maxDate = GetMaxDateFromNotes(AllNotes);
+		_allowedToDoForLoop = true;
+	}
+
+	public void NewNoteClicked()
+	{
+		navManager.NavigateTo("/note/new");
+	}
+
+	public DateOnly GetMaxDateFromNotes(ICollection<NoteVM> notes)
+	{
+		if (notes.Any())
+		{
+			List<DateOnly> dates = notes.Select(x => x.NoteDate).ToList();
+			return dates.Max();
+		}
+
+		return DateOnly.FromDateTime(DateTime.Now.AddYears(1));
+	}
 }

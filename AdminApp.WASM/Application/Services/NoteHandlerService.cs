@@ -3,31 +3,36 @@ using AdminApp.WASM.Models.ViewModels;
 
 namespace AdminApp.WASM.Application.Services
 {
-    public class NoteHandlerService : ICRUDService<NoteVM>
+    public class NoteHandlerService
     {
-        public Task<bool> DeleteItemFromURLAsync(string url)
-        {
-            throw new NotImplementedException();
+        private readonly ICRUDService<NoteVM> _noteService;
+        public NoteHandlerService(ICRUDService<NoteVM> noteService)
+        { 
+            _noteService = noteService; 
         }
 
-        public Task<NoteVM?> GetItemAsync(string url)
+        public async Task<ICollection<NoteVM>> GetAllNotes(string url)
         {
-            throw new NotImplementedException();
+            return (ICollection<NoteVM>)await _noteService.GetItemsAsListAsync(url) ?? new List<NoteVM>();
         }
 
-        public Task<IEnumerable<NoteVM>> GetItemsAsListAsync(string url)
+        public async Task<ICollection<NoteVM>> GetAllNotesByDateAsync(DateOnly dateOnly, string url)
         {
-            throw new NotImplementedException();
+            var allNotes = await _noteService.GetItemsAsListAsync(url);
+            var notes = new List<NoteVM>();
+            notes = allNotes.Where(n => n.NoteDate == dateOnly).ToList();
+            return notes;
         }
 
-        public Task<bool> PostItemAsync(string url, NoteVM item)
+        public async Task<bool> AddNewNote(string url, NoteVM newNote)
         {
-            throw new NotImplementedException();
+            return await _noteService.PostItemAsync(url, newNote);
         }
 
-        public Task<bool> PutItemAsync(string url, NoteVM item)
+        public async Task<bool> UpdateNote(string url, NoteVM noteVM)
         {
-            throw new NotImplementedException();
+            return await _noteService.PutItemAsync(url, noteVM);
         }
+       
     }
 }

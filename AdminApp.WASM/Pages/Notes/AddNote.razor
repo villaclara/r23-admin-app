@@ -1,0 +1,36 @@
+﻿@page "/note/new";
+@using AdminApp.WASM.Models;
+@inject NoteHandlerService noteHandler;
+
+<EditForm Model="NoteFormModel" OnInvalidSubmit="HandleInvalidSubmit" OnValidSubmit="HandleValidSubmit">
+
+	<AdminApp.WASM.Components.NoteComponents.NoteAsInputFields NoteFormModel="NoteFormModel" />
+
+	<div class="container">
+		<button>Додати</button>
+	</div>
+
+</EditForm>
+
+@code {
+	public NewNoteFormModel NoteFormModel { get; set; } = new();
+	private string _url = "api/note";
+
+	public async Task HandleValidSubmit()
+	{
+		var noteToAdd = new NoteVM()
+			{
+				IsDone = false,
+				NoteDate = DateOnly.FromDateTime(NoteFormModel.NoteDate),
+				NoteText = NoteFormModel.NoteText,
+			};
+
+
+		await noteHandler.AddNewNote(_url, noteToAdd);
+	}
+
+	public void HandleInvalidSubmit()
+	{
+
+	}
+}
