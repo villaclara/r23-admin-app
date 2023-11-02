@@ -1,20 +1,26 @@
 ﻿@inject NoteHandlerService noteHandler;
 
+<style>
+	.btn:focus{
+		box-shadow: none;
+	}
+</style>
+
 <div class="row pt-2 border border-0 border-bottom border-dark">
 
 	@if (Note.IsDone)
 	{
 		<div class="col-2 m-auto ps-0">
-			<button class="btn btn-outline-success btn-lg border border-0" @onclick="UpdateNoteAndDoneAsync">
-				<span class="bi bi-check-square-fill"></span>
+			<button class="btn btn-lg border border-0 btn-success " @onclick="UpdateNoteAndDoneAsync">
+				<span class="bi bi-check-square-fill" style="font-size:20px !important"></span>
 			</button>
 		</div>
 	}
 	else
 	{
 		<div class="col-2 m-auto ps-0">
-			<button class="btn btn-outline-dark btn-lg border border-0" @onclick="UpdateNoteAndDoneAsync">
-				<span class="bi bi-app"></span>
+			<button class="btn btn-lg border border-0 btn-secondary shadow-none" @onclick="UpdateNoteAndDoneAsync">
+				<span class="bi bi-app" style="font-size:20px !important"></span>
 			</button>
 		</div>
 	}
@@ -25,7 +31,7 @@
 			<InputText class="form-control" @bind-Value="Note.NoteText" />
 		</div>
 		<div class="col-1 p-0 m-auto">
-			<button class="btn btn-outline-dark border border-0" type="button" @onclick="() => UpdateNoteAndEditAsync()">
+			<button class="btn border border-0 shadow-none" type="button" @onclick="() => UpdateNoteAndEditAsync()">
 				<span class="oi oi-check"></span>
 			</button>
 		</div>
@@ -36,13 +42,14 @@
 			<label class="col-form-label">@Note.NoteText</label>
 		</div>
 		<div class="col-1 p-0 m-auto">
-			<button class="btn btn-outline-dark border border-0" type="button" @onclick="() => EditModeActive = !EditModeActive">
+			<button class="btn border border-0 shadow-none" type="button" @onclick="() => EditModeActive = !EditModeActive">
 				<span class="oi oi-pencil"></span>
 			</button>
 		</div>
 	}
 </div>
 
+<p>@MessageResponse</p>
 
 
 @code {
@@ -55,22 +62,39 @@
 	[Parameter]
 	public bool EditModeActive { get; set; } = false;
 
+	public string MessageResponse { get; set; } = "";
+
 	public async Task UpdateNoteAndDoneAsync()
 	{
 		Note.IsDone = !Note.IsDone;
-
-		await UpdateNoteAsync();
-
+		var result = await UpdateNoteAsync();
+		if(!result)
+		{
+			MessageResponse = "Помилка.";
+			Note.IsDone = !Note.IsDone;
+		}
+		else
+		{
+			MessageResponse = "";
+		}
 	}
 
 	public async Task UpdateNoteAndEditAsync()
 	{
 		EditModeActive = !EditModeActive;
-		await UpdateNoteAsync();
+		var result = await UpdateNoteAsync();
+		if(result)
+		{
+			MessageResponse = "";
+		}
+		else
+		{
+			MessageResponse = "Помилка";
+		}
 	}
 
-	private async Task UpdateNoteAsync()
+	private async Task<bool> UpdateNoteAsync()
 	{
-		await noteHandler.UpdateNote($"api/note/nid={Note.Id}", Note);
+		return await noteHandler.UpdateNote($"api/note/nid={Note.Id}", Note);
 	}
 }

@@ -2,29 +2,36 @@
 @inject NoteHandlerService noteHandler;
 @inject NavigationManager navManager;
 
+<style>
+	.btn:focus {
+		box-shadow: none;
+		outline: none;
+	}
 
+	.transition-visible {
 
+		overflow: hidden;
+		transition: transform 0.3s ease-out;
+		height: auto;
+		transform: scaleY(1);
+		transform-origin: top;
+	}
 
-<div class="container">
-	<div class="row">
-		<div class="col">
-			<div class="d-grid d-flex gap-2 mx-lg-1">
-				<button class="btn btn-secondary" @onclick="NewNoteClicked">Додати новий запис</button>
-				<button class="btn" type="button" @onclick="() => {}">
-					<span class="bi bi-gear-wide"></span>
-				</button>
-			</div>
-		</div>
-	</div>
+		.transition-visible.transition-collapsed {
+			transform: scaleY(0);
 
-</div>
+		}
+</style>
+
 
 <hr />
+
+<!-- FIRST SECTION WITH SINGLE DATE -->
 
 <div class="container">
 	<div class="row">
 		<div class="d-grid">
-			<button class="text-start btn border border-dark" @onclick="(e) => ChangeSectionOpened(e, true)">
+			<a class="text-start btn border border-dark" @onclick="(e) => ChangeSectionOpened(e, true)">
 				@if (FirstSectionOpened)
 				{
 					<span class="bi bi-chevron-down"></span>
@@ -34,13 +41,14 @@
 					<span class="bi bi-chevron-right"></span>
 				}
 				Дата
-			</button>
+			</a>
 		</div>
 	</div>
 </div>
 
-@if (FirstSectionOpened)
-{
+
+<div class="transition-visible @_dropdownCssClass" id="collapse">
+
 
 	<div class="container">
 
@@ -50,80 +58,111 @@
 			</div>
 		</div>
 
-		@foreach (var note in AllNotes)
+		@foreach (var note in AllNotes.OrderBy(n => n.IsDone))
 		{
 			@if (note.NoteDate == DateOnly.FromDateTime(ActiveDate))
 			{
 				<div class="row m-auto">
 					<div class="col">
-						<SingleNote Note="note"/>
+						<SingleNote Note="note" />
 					</div>
-					
+
 				</div>
 			}
 		}
+
+		<!-- ADD NEW NOTE SECTION -->
+
+		<div class="row m-auto pt-2">
+			<div class="col-1 ps-0">
+				<button class="btn shadow-none" type="button" @onclick="() => _newNoteWantToAdd = !_newNoteWantToAdd">
+					<i class="bi bi-plus-circle h3"></i>
+				</button>
+			</div>
+
+			@if (_newNoteWantToAdd)
+			{
+				<div class="col">
+					<EditForm Model="NewNoteFormModel" OnSubmit="AddNewNote">
+						<div class="row m-auto">
+							<div class="col-11 mx-0 p-0">
+								<InputText @bind-Value="NewNoteFormModel.NoteText" class="form-control" />
+							</div>
+							<div class="col-1 ps-0">
+								<button class="btn shadow-none" type="submit">
+									<i class="oi oi-check"></i>
+								</button>
+							</div>
+						</div>
+					</EditForm>
+				</div>
+			}
+		</div>
+		<p>@MessageResponse</p>
+
+		<!-- END OF ADD NEW NOTE -->
 	</div>
-}
+</div>
+<!-- END OF FIRST SECTION WITH SINGLE DATE -->
 
 <hr />
 
+
+<!-- SECTION WITH ALL DATES NOTES LIST -->
 <div class="container">
 	<div class="row">
 		<div class="d-grid">
-			<button class="text-start btn border border-dark" @onclick="(e) => ChangeSectionOpened(e, false)"> 
-				@if(SecondSectionOpened)
-				{	
+			<button class="text-start btn border border-dark" @onclick="(e) => ChangeSectionOpened(e, false)">
+				@if (SecondSectionOpened)
+				{
 					<span class="bi bi-chevron-down"></span>
 				}
 				else
 				{
 					<span class="bi bi-chevron-right"></span>
 				}
-				Всі записи</button>
+				Всі записи
+			</button>
 		</div>
 	</div>
 </div>
 
-@if (SecondSectionOpened)
-{
+<div class="transition-visible @_2dropdownCssClass" id="collapse2">
+
 	<div class="container">
 		<div class="row" style="margin: auto">
 			<div class="col">
 
-
-		<!-- if the All Notes were loaded then we are ready to go through notes -->
-		@if (_allowedToDoForLoop)
-		{
-			@for (DateOnly d = DateOnly.FromDateTime(DateTime.Now); d <= _maxDate; d = d.AddDays(1))
-			{
-				@if (AllNotes.Any(n => n.NoteDate == d))
+				<!-- if the All Notes were loaded then we are ready to go through notes -->
+				@if (_allowedToDoForLoop)
 				{
-					<div class="row pt-2">
-						<div class="col fw-bold bg-body bg-opacity-10">
-							@d.ToLongDateString()
-						</div>
-					</div>
-
-
-					foreach (var note in AllNotes.Where(n => n.NoteDate == d))
+					@for (DateOnly d = DateOnly.FromDateTime(DateTime.Now); d <= _maxDate; d = d.AddDays(1))
 					{
-						<div class="row">
-							<div class="col">
-								<SingleNote Note="note" />
+						@if (AllNotes.Any(n => n.NoteDate == d))
+						{
+							<div class="row pt-2">
+								<div class="col fw-bold bg-body bg-opacity-10">
+									@d.ToLongDateString()
+								</div>
 							</div>
-						</div>
+
+							foreach (var note in AllNotes.Where(n => n.NoteDate == d))
+							{
+								<div class="row">
+									<div class="col">
+										<SingleNote Note="note" />
+									</div>
+								</div>
+							}
+						}
 					}
-
 				}
-			}
-		}
 			</div>
-
 		</div>
-
 	</div>
-}
+</div>
 
+<!-- END OF ALL DATES NOTES SECTION -->
 @code {
 	public ICollection<NoteVM> AllNotes { get; set; } = new List<NoteVM>();
 
@@ -135,11 +174,21 @@
 
 	private bool _allowedToDoForLoop = false;
 
+	private bool _newNoteWantToAdd = false;
 	// sections to be expanded
 	// first - With main calendar and chosen date
 	// second - all notes
 	public bool FirstSectionOpened { get; set; } = true;
 	public bool SecondSectionOpened { get; set; } = false;
+
+	public NewNoteFormModel NewNoteFormModel { get; set; } = new();
+
+	public string MessageResponse { get; set; } = "";
+
+
+
+	private string _dropdownCssClass => FirstSectionOpened ? "show" : "transition-collapsed";
+	private string _2dropdownCssClass => SecondSectionOpened ? "show" : "transition-collapsed";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -148,10 +197,8 @@
 		_allowedToDoForLoop = true;
 	}
 
-	public void NewNoteClicked()
-	{
-		navManager.NavigateTo("/note/new");
-	}
+
+
 
 	public DateOnly GetMaxDateFromNotes(ICollection<NoteVM> notes)
 	{
@@ -168,11 +215,11 @@
 	// to display single day or all notes depending on what button pressed
 	private void ChangeSectionOpened(MouseEventArgs args, bool first)
 	{
-		// called at first section 
-		if(first)
+		// called at first section
+		if (first)
 		{
 			FirstSectionOpened = !FirstSectionOpened;
-			if(SecondSectionOpened)
+			if (SecondSectionOpened)
 			{
 				SecondSectionOpened = !SecondSectionOpened;
 			}
@@ -182,10 +229,38 @@
 		else
 		{
 			SecondSectionOpened = !SecondSectionOpened;
-			if(FirstSectionOpened)
+			if (FirstSectionOpened)
 			{
 				FirstSectionOpened = !FirstSectionOpened;
 			}
+		}
+	}
+
+
+	//
+	public async Task AddNewNote()
+	{
+		if (string.IsNullOrEmpty(NewNoteFormModel.NoteText))
+		{
+			MessageResponse = "Запис пустий";
+			return;
+		}
+
+		var note = new NoteVM()
+			{
+				IsDone = false,
+				NoteDate = DateOnly.FromDateTime(ActiveDate),
+				NoteText = NewNoteFormModel.NoteText
+			};
+
+		var result = await noteHandler.AddNewNote("api/note", note);
+		if (result)
+		{
+			// hide newnote input field + MessageResponse clear + formModel clear + update notes list
+			_newNoteWantToAdd = false;
+			MessageResponse = "";
+			NewNoteFormModel = new();
+			AllNotes = await noteHandler.GetAllNotes(_url);
 		}
 	}
 }
