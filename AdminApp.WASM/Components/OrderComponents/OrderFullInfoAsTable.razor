@@ -36,6 +36,10 @@
 			<td colspan="5" class="col-7 col-lg-2">@Order.Receiver.DeliveryAdress</td>
 		</tr>
 		<tr>
+			<th scope="row" class="col-5 col-lg-2">Тип оплати</th>
+			<td colspan="5" class="col-7 col-lg-2">@Payment</td>
+		</tr>
+		<tr>
 			<th scope="row" class="col-5 col-lg-2">Свічка</th>
 			<td colspan="5" class="col-7 col-lg-2">
 				@foreach (var detail in Order.OrderDetails)
@@ -87,4 +91,17 @@
 		navManager.NavigateTo($"order/{orderId}");
 	}
 
+	public string Payment { get; set; } = "";
+	
+	
+	protected override void OnParametersSet()
+	{
+		Payment = Order.PaymentType switch
+		{
+			0 => "Готівка",
+			1 => "Картка",
+			2 => "ЗД",
+			_ => "Готівка"
+		};
+	}
 }

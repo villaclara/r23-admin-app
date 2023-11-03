@@ -1,9 +1,43 @@
 ﻿@page "/expense"
 @inject ExpenseHandlerService expenseHandler;
 
-<h3>Expense</h3>
+<div class="container">
+	<div class="container">
 
-<table>
+		<h3>Витрати</h3>
+	</div>
+
+
+	<div class="row mb-2">
+		<div class="form-floating">
+			<InputText class="form-control" @bind-Value="NewExpenseForm.Description" placeholder="Опис" id="floatingDescription" />
+			<label for="floatingDescription">Опис</label>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="input-group mb-2">
+			<InputDate class="form-control text-center" @bind-Value="NewExpenseForm.Date" />
+			<span class="input-group-text">Сума</span>
+			<div class="col-3">
+				<InputNumber class="form-control text-end" @bind-Value="NewExpenseForm.Cost" />
+			</div>
+			<span class="input-group-text">₴</span>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<div class="d-grid">
+				<button class="btn btn-sm btn-secondary" @onclick="AddExpenseClick">Додати витрату</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<hr />
+
+<table class="table">
 	<thead>
 		<tr>
 			<th>Id</th>
@@ -13,24 +47,21 @@
 		</tr>
 	</thead>
 </table>
-@foreach(var expense in Expenses)
-{
-	<tr>
-		<td>@expense.Id</td>
-		<td>@expense.Date</td>
-		<td>@expense.Description</td>
-		<td>@expense.Cost</td>
-	</tr>
-}
+<tbody>
+
+	@foreach (var expense in Expenses)
+	{
+		<tr>
+			<td>@expense.Id</td>
+			<td>@expense.Date</td>
+			<td>@expense.Description</td>
+			<td>@expense.Cost</td>
+		</tr>
+	}
+
+</tbody>
 
 
-<label>Description</label>
-<InputText @bind-Value="NewExpenseForm.Description" />
-<label>Cost</label>
-<InputNumber @bind-Value="NewExpenseForm.Cost" />
-<label>Date</label>
-<InputDate @bind-Value="NewExpenseForm.Date" />
-<button @onclick="AddExpenseClick">Add expense</button>
 
 @code {
 
@@ -51,11 +82,11 @@
 	public async Task AddExpenseClick()
 	{
 		var expense = new ExpenseVM()
-		{
-			Cost = NewExpenseForm.Cost,
-			Date = NewExpenseForm.Date,
-			Description = NewExpenseForm.Description
-		};
+			{
+				Cost = NewExpenseForm.Cost,
+				Date = NewExpenseForm.Date,
+				Description = NewExpenseForm.Description
+			};
 
 		await expenseHandler.AddExpenseAsync(_url, expense);
 		Expenses.Add(expense);
