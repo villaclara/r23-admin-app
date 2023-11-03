@@ -8,8 +8,12 @@
 		outline: none;
 	}
 
-	.transition-visible {
 
+	/* for animation when expanding section 
+
+	Works only on expanding, on collapsing it is done immediately
+	*/
+	.transition-visible {
 		overflow: hidden;
 		transition: transform 0.3s ease-out;
 		height: auto;
@@ -17,10 +21,13 @@
 		transform-origin: top;
 	}
 
+	/* if height is missing here, then will be collapsed smoothly, but height of div will be busy*/
 		.transition-visible.transition-collapsed {
 			transform: scaleY(0);
-
+			height: 0;
 		}
+
+	
 </style>
 
 
@@ -47,14 +54,14 @@
 </div>
 
 
-<div class="transition-visible @_dropdownCssClass" id="collapse">
+<div class="transition-visible @_dropdownCssClass">
 
 
 	<div class="container">
 
 		<div class="row pt-2" style="margin: auto">
 			<div class="d-grid mx-auto col-auto">
-				<InputDate @bind-Value=ActiveDate class="form-control" />
+				<InputDate @bind-Value=ActiveDate class="form-control" placeholder="@ActiveDate"/>
 			</div>
 		</div>
 
@@ -66,23 +73,21 @@
 					<div class="col">
 						<SingleNote Note="note" />
 					</div>
-
 				</div>
 			}
 		}
 
 		<!-- ADD NEW NOTE SECTION -->
-
 		<div class="row m-auto pt-2">
 			<div class="col-1 ps-0">
-				<button class="btn shadow-none" type="button" @onclick="() => _newNoteWantToAdd = !_newNoteWantToAdd">
+				<button role="button" id="new-note-button" title="newnote" class="btn shadow-none" type="button" @onclick="() => _newNoteWantToAdd = !_newNoteWantToAdd">
 					<i class="bi bi-plus-circle h3"></i>
 				</button>
 			</div>
 
 			@if (_newNoteWantToAdd)
 			{
-				<div class="col">
+				<div class="col @_newNoteDiv">
 					<EditForm Model="NewNoteFormModel" OnSubmit="AddNewNote">
 						<div class="row m-auto">
 							<div class="col-11 mx-0 p-0">
@@ -127,7 +132,7 @@
 	</div>
 </div>
 
-<div class="transition-visible @_2dropdownCssClass" id="collapse2">
+<div class="transition-visible @_2dropdownCssClass">
 
 	<div class="container">
 		<div class="row" style="margin: auto">
@@ -163,10 +168,13 @@
 </div>
 
 <!-- END OF ALL DATES NOTES SECTION -->
+
 @code {
-	public ICollection<NoteVM> AllNotes { get; set; } = new List<NoteVM>();
 
 	private string _url = "api/note";
+
+
+	public ICollection<NoteVM> AllNotes { get; set; } = new List<NoteVM>();
 
 	public DateTime ActiveDate { get; set; } = DateTime.Now;
 
@@ -174,21 +182,30 @@
 
 	private bool _allowedToDoForLoop = false;
 
-	private bool _newNoteWantToAdd = false;
+
 	// sections to be expanded
 	// first - With main calendar and chosen date
 	// second - all notes
 	public bool FirstSectionOpened { get; set; } = true;
 	public bool SecondSectionOpened { get; set; } = false;
 
+
+	// assiging CSS class to display animation depending on what we doing
+	private string _dropdownCssClass => FirstSectionOpened ? "show" : "transition-collapsed";
+	private string _2dropdownCssClass => SecondSectionOpened ? "show" : "transition-collapsed";
+
+
+	private string _newNoteDiv => _newNoteWantToAdd ? "fade-show" : "fade-collapse";
+
+	// NEW NOTE RELATED stuff
+	private bool _newNoteWantToAdd = false;
+
 	public NewNoteFormModel NewNoteFormModel { get; set; } = new();
 
 	public string MessageResponse { get; set; } = "";
 
 
-
-	private string _dropdownCssClass => FirstSectionOpened ? "show" : "transition-collapsed";
-	private string _2dropdownCssClass => SecondSectionOpened ? "show" : "transition-collapsed";
+	/* METHODS */
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -198,8 +215,8 @@
 	}
 
 
-
-
+	// maximum date from AllNotes list 
+	// used in loop when displaying all notes
 	public DateOnly GetMaxDateFromNotes(ICollection<NoteVM> notes)
 	{
 		if (notes.Any())
@@ -237,7 +254,7 @@
 	}
 
 
-	//
+	// adding new note shit
 	public async Task AddNewNote()
 	{
 		if (string.IsNullOrEmpty(NewNoteFormModel.NoteText))
