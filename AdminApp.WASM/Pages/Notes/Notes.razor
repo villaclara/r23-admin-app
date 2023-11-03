@@ -1,4 +1,4 @@
-﻿@page "/note/overview"
+﻿@page "/note"
 @inject NoteHandlerService noteHandler;
 @inject NavigationManager navManager;
 
@@ -209,7 +209,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		AllNotes = await noteHandler.GetAllNotes(_url);
+		AllNotes = await noteHandler.GetAllNotesAsync(_url);
 		_maxDate = GetMaxDateFromNotes(AllNotes);
 		_allowedToDoForLoop = true;
 	}
@@ -270,14 +270,14 @@
 				NoteText = NewNoteFormModel.NoteText
 			};
 
-		var result = await noteHandler.AddNewNote("api/note", note);
+		var result = await noteHandler.AddNewNoteAsync("api/note", note);
 		if (result)
 		{
 			// hide newnote input field + MessageResponse clear + formModel clear + update notes list
 			_newNoteWantToAdd = false;
 			MessageResponse = "";
 			NewNoteFormModel = new();
-			AllNotes = await noteHandler.GetAllNotes(_url);
+			AllNotes = await noteHandler.GetAllNotesAsync(_url);
 		}
 	}
 }

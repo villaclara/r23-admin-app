@@ -1,7 +1,63 @@
-﻿@page "/expense/overview"
+﻿@page "/expense"
+@inject ExpenseHandlerService expenseHandler;
 
 <h3>Expense</h3>
 
+<table>
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Date</th>
+			<th>Sho</th>
+			<th>Sum</th>
+		</tr>
+	</thead>
+</table>
+@foreach(var expense in Expenses)
+{
+	<tr>
+		<td>@expense.Id</td>
+		<td>@expense.Date</td>
+		<td>@expense.Description</td>
+		<td>@expense.Cost</td>
+	</tr>
+}
+
+
+<label>Description</label>
+<InputText @bind-Value="NewExpenseForm.Description" />
+<label>Cost</label>
+<InputNumber @bind-Value="NewExpenseForm.Cost" />
+<label>Date</label>
+<InputDate @bind-Value="NewExpenseForm.Date" />
+<button @onclick="AddExpenseClick">Add expense</button>
+
 @code {
 
+	private string _url = "api/expense";
+
+	public List<ExpenseVM> Expenses { get; set; } = new List<ExpenseVM>();
+
+	public List<ExpenseVM> AllExpenses { get; set; } = new List<ExpenseVM>();
+
+	public NewExpenseFormModel NewExpenseForm { get; set; } = new NewExpenseFormModel { Date = DateOnly.FromDateTime(DateTime.Now) };
+
+	protected override async Task OnInitializedAsync()
+	{
+		AllExpenses = (List<ExpenseVM>)await expenseHandler.GetExpensesAsync(_url);
+		Expenses = AllExpenses;
+	}
+
+	public async Task AddExpenseClick()
+	{
+		var expense = new ExpenseVM()
+		{
+			Cost = NewExpenseForm.Cost,
+			Date = NewExpenseForm.Date,
+			Description = NewExpenseForm.Description
+		};
+
+		await expenseHandler.AddExpenseAsync(_url, expense);
+		Expenses.Add(expense);
+	}
 }

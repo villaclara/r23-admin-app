@@ -95,6 +95,6 @@
 
 	private async Task<bool> UpdateNoteAsync()
 	{
-		return await noteHandler.UpdateNote($"api/note/nid={Note.Id}", Note);
+		return await noteHandler.UpdateNoteAsync($"api/note/nid={Note.Id}", Note);
 	}
 }

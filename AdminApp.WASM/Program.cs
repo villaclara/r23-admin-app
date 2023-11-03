@@ -50,5 +50,8 @@ builder.Services.AddScoped<CategoryHandlerService>();
 builder.Services.AddScoped<ICRUDService<NoteVM>, CRUDService<NoteVM>>();
 builder.Services.AddScoped<NoteHandlerService>();
 
+builder.Services.AddScoped<ICRUDService<ExpenseVM>, CRUDService<ExpenseVM>>();
+builder.Services.AddScoped<ExpenseHandlerService>();
+
 
 await builder.Build().RunAsync();

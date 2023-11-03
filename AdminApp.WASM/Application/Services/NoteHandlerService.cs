@@ -11,7 +11,7 @@ namespace AdminApp.WASM.Application.Services
             _noteService = noteService; 
         }
 
-        public async Task<ICollection<NoteVM>> GetAllNotes(string url)
+        public async Task<ICollection<NoteVM>> GetAllNotesAsync(string url)
         {
             return (ICollection<NoteVM>)await _noteService.GetItemsAsListAsync(url) ?? new List<NoteVM>();
         }
@@ -24,15 +24,19 @@ namespace AdminApp.WASM.Application.Services
             return notes;
         }
 
-        public async Task<bool> AddNewNote(string url, NoteVM newNote)
+        public async Task<bool> AddNewNoteAsync(string url, NoteVM newNote)
         {
             return await _noteService.PostItemAsync(url, newNote);
         }
 
-        public async Task<bool> UpdateNote(string url, NoteVM noteVM)
+        public async Task<bool> UpdateNoteAsync(string url, NoteVM noteVM)
         {
             return await _noteService.PutItemAsync(url, noteVM);
         }
        
+        public async Task<bool> DeleteNoteAsync(string url)
+        {
+            return await _noteService.DeleteItemFromURLAsync(url);
+        }
     }
 }
