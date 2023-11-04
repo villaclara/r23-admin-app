@@ -16,7 +16,7 @@
 	</div>
 
 	<div class="row">
-		<div class="input-group mb-2">
+		<div class="input-group mb-3">
 			<InputDate class="form-control text-center" @bind-Value="NewExpenseForm.Date" />
 			<span class="input-group-text">Сума</span>
 			<div class="col-3">
@@ -38,28 +38,27 @@
 <hr />
 
 <table class="table">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Date</th>
-			<th>Sho</th>
-			<th>Sum</th>
-		</tr>
-	</thead>
+	<tbody>
+		@foreach (var month in MonthList)
+		{
+			<tr>
+				<td colspan="3">@CastMonthIdToUAMonthName(month.Month) @month.Year</td>
+			</tr>
+			@foreach (var expense in Expenses.OrderByDescending(e => e.Date))
+			{
+				if(expense.Date.Month == month.Month)
+				{
+					
+				<tr>
+					<td class="col-2">@expense.Date.ToString("dd/MM")</td>
+					<td class="col-8">@expense.Description</td>
+					<td class="col-2">@expense.Cost</td>
+				</tr>
+				}
+			}
+		}
+	</tbody>
 </table>
-<tbody>
-
-	@foreach (var expense in Expenses)
-	{
-		<tr>
-			<td>@expense.Id</td>
-			<td>@expense.Date</td>
-			<td>@expense.Description</td>
-			<td>@expense.Cost</td>
-		</tr>
-	}
-
-</tbody>
 
 
 
@@ -73,10 +72,16 @@
 
 	public NewExpenseFormModel NewExpenseForm { get; set; } = new NewExpenseFormModel { Date = DateOnly.FromDateTime(DateTime.Now) };
 
+	// to have each month where expense was added as separate object
+	public List<DateOnly> MonthList { get; set; } = new List<DateOnly>();
+
 	protected override async Task OnInitializedAsync()
 	{
 		AllExpenses = (List<ExpenseVM>)await expenseHandler.GetExpensesAsync(_url);
 		Expenses = AllExpenses;
+
+		// getting only distinct months from all expenses and ordering by descending
+		MonthList = AllExpenses.Select(e => new DateOnly(e.Date.Year, e.Date.Month, 1)).Distinct().OrderDescending().ToList();
 	}
 
 	public async Task AddExpenseClick()
@@ -88,7 +93,19 @@
 				Description = NewExpenseForm.Description
 			};
 
-		await expenseHandler.AddExpenseAsync(_url, expense);
-		Expenses.Add(expense);
+		var result = await expenseHandler.AddExpenseAsync(_url, expense);
+		if(result)
+		{
+			Expenses.Add(expense);
+			NewExpenseForm = new();
+		}	
+	}
+
+
+
+	public string CastMonthIdToUAMonthName(int monthId)
+	{
+		UAMonthNames month = (UAMonthNames)monthId;
+		return month.ToString();
 	}
 }
