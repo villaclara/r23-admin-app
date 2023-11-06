@@ -9,26 +9,128 @@
 @inject CandleHandlerService candleHandler;
 @inject CategoryHandlerService categoryService;
 
+<style>
+	.lightgreencolor {
+		background-color: lightgrey;
+	}
+</style>
+
+
 <div>
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
 </div>
 
-@if (_selectedCandle == default || _selectedCandle.Id == 0)
+@if (_selectedCandle == default)
 {
 	<div class="container">
 		<p>Немає свічки з таким id.</p>
 	</div>
 }
+else if (_selectedCandle.Id == 0)
+{
+	<div class="container text-center pb-2" aria-hidden="true">
+			<div class="placeholder placeholder-wave lightgreencolor col-6" style="height: 40px">
+			</div>
+	</div>
+
+	<div class="container" aria-hidden="true">
+		<div class="container">
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
+					Назва
+				</label>
+				<div class="placeholder placeholder-wave col-9 lightgreencolor">
+
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
+					Опис
+				</label>
+				<div class="placeholder placeholder-wave col-9 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-4 col-lg-2 col-form-label fs-5 fw-lighter">
+					Категорія
+				</label>
+				<div class="placeholder placeholder-wave col-8 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
+					Фото
+				</label>
+				<div class="placeholder placeholder-wave col-9 lightgreencolor">
+				</div>
+			</div>
+			
+
+			<hr class="hr-line" />
+
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Собівартість
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Ціна продажу
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+
+			<hr class="hr-line"/>
+
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Час горіння
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Висота
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Гніт діаметр
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Воску потрібно
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="p-2 row">
+
+			<a href="#" tabindex="-1" class="btn btn-success disabled placeholder col-4" aria-hidden="true"></a>
+			</div>
+
+		</div>
+	</div>
+}
 else
 {
-
-	<MessageResponseComponent MessageResponse="@MessageResponse"/>
-	<p></p>
 	<div class="container text-center">
-		<h3>
+		<h3 class="display-4">
 			Свічка - @_selectedCandle?.Id
 		</h3>
 	</div>
+
+	<div class="container">
 
 	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 		<DataAnnotationsValidator />
@@ -41,6 +143,7 @@ else
 		</div>
 	</EditForm>
 
+	</div>
 	<hr />
 	<hr />
 	<div class="container">
@@ -58,9 +161,7 @@ else
 
 	public string MessageResponse { get; set; } = "";
 
-	private CandleFullVM? _selectedCandle = new CandleFullVM();
-
-	private bool isFunctionDone = false;
+	private CandleFullVM? _selectedCandle = new CandleFullVM() { Id = 0 };
 
 	public IEnumerable<CategoryVM> Categories { get; set; } = new List<CategoryVM>(10);
 	public List<string> CatNames { get; set; } = new List<string>();
@@ -70,14 +171,11 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (!isFunctionDone)
-		{
-			//_selectedCandle = await hclient.GetFromJsonAsync<CandleFullVM>($"api/candle/cid={Id}?view=full");
 
-			_selectedCandle = await candleHandler.GetCanldeAsync($"api/candle/cid={Id}?view=full");
-			NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
-			MessageResponse = "";
-		}
+		_selectedCandle = await candleHandler.GetCanldeAsync($"api/candle/cid={Id}?view=full");
+		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+		MessageResponse = "";
+
 
 		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
 		// Categories.Add(new CategoryVM { Name = "..." });

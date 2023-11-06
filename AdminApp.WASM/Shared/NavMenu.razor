@@ -1,4 +1,12 @@
-﻿<div class="top-row ps-3 navbar navbar-light">
+﻿<style>
+  
+
+
+
+</style>
+
+
+<div class="top-row ps-3 navbar navbar-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Road23.Admin</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -7,7 +15,9 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+<div class="wrapper1">
+
+<div class="nav-scrollable @NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -36,11 +46,12 @@
         </div>
     </nav>
 </div>
+</div>
 
 @code {
     private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse1" : "show";
 
     private void ToggleNavMenu()
     {

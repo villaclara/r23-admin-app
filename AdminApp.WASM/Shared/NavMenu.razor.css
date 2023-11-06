@@ -53,6 +53,8 @@
     color: black;
 }
 
+
+
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;
@@ -69,3 +71,45 @@
         overflow-y: auto;
     }
 }
+
+
+
+
+.nav-scrollable.show {
+    margin-top: 0;
+    transition: 0.2s all 0s;
+}
+
+
+@keyframes anim {
+    0% {
+        margin-top: -100%;
+    }
+
+    100% {
+        margin-top: 0%;
+    }
+}
+
+.wrapper1 {
+    overflow: hidden;
+}
+
+
+.nav-scrollable.collapse1 {
+    /*animation: animcol 0.2s ease both;
+    display: none;*/
+    margin-top: -100%;
+    transition: 0.2s all 0s;
+}
+
+@keyframes animcol {
+    0% {
+        margin-top: 0%;
+    }
+
+    100% {
+        margin-top: -100%;
+    }
+}
+

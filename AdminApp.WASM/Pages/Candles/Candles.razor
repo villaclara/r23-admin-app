@@ -4,13 +4,9 @@
 @inject NavigationManager navmanager;
 @inject CandleHandlerService candleHandler;
 
-<script>
-	$(document).ready(function () {
-		$("#expandme").click(function () {
-			$("#toexpand").animate({ down: '200px' });
-		});
-	});
-</script>
+<style>
+	
+</style>
 
 <span></span>
 <div class="container">
@@ -40,7 +36,7 @@
 				<tbody>
 					@foreach (var can in CandlesExpanded)
 					{
-						<tr style="cursor:pointer" @onclick="() => can.Expanded = !can.Expanded" id="expandme">
+						<tr style="cursor:pointer" @onclick="() => can.Expanded = !can.Expanded">
 							<td class="col-2"> @can.CandleItem.Id </td>
 							<td class="col-7"> @can.CandleItem.Name </td>
 							<td class="col-3">
@@ -55,9 +51,13 @@
 						{
 							<tr id="toexpand">
 								<td colspan="3" class="col-12 lighter-back">
-									<CascadingValue Value="can.CandleItem">
-										<CandleFullInfoAsTable />
-									</CascadingValue>
+									<div class="wrapper">
+										<div class="expandable">
+											<CascadingValue Value="can.CandleItem">
+												<CandleFullInfoAsTable />
+											</CascadingValue>
+										</div>
+									</div>
 								</td>
 							</tr>
 						}
@@ -85,6 +85,10 @@
 	//{
 	//	CandleList = await client.GetFromJsonAsync<IEnumerable<CandleBasicVM>>(path);
 	//}
+
+	public bool Expanded { get; set; } = false;
+
+	public string? expandedClass => Expanded ? "open" : null;
 
 	public ICollection<CandleWithExpanded> CandlesExpanded { get; set; } = new List<CandleWithExpanded>();
 

@@ -21,3 +21,25 @@ h3 {
 .animate-display-to-down {
     transition: ease 1s;
 }
+
+
+/* ANIMATION */
+/* HIDDEN - to not display from the top when moving */
+.wrapper {
+    overflow: hidden;
+}
+
+.expandable {
+    animation: display-down 0.3s ease;
+}
+
+@keyframes display-down {
+    0% {
+        margin-top: -100%;
+    }
+
+    100% {
+        margin-top: 0;
+    }
+
+}

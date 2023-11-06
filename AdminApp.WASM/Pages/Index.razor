@@ -3,17 +3,105 @@
 @using AdminApp.WASM.Models.ViewModels;
 @inject CandleHandlerService candleHandler;
 @inject OrderHandlerService orderHandler;
+@inject NoteHandlerService noteHandler;
 
 <PageTitle>Road23 Home</PageTitle>
+
+<article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark">
+	<div class="container-lg">
+		<NavLink href="note" class="container-lg btn btn-lg order-last1 shadow">
+			<span class="h3">
+				Ту ду @DateTime.Now.ToString("dd/MM/yy")
+			</span>
+		</NavLink>
+	</div>
+
+	<div class="container">
+		<table class="table table-striped table-sm">
+			<thead>
+				<tr>
+					<th class="text-center"></th>
+					<th class="text-center"></th>
+				</tr>
+			</thead>
+			<tbody>
+				@if(TodayNotes is null)
+				{
+					<tr>
+						<td colspan="2">
+							Немає туду на сьогодні
+						</td>
+					</tr>
+				}
+				else if(!TodayNotes.Any())
+				{
+					<tr>
+						<td colspan="2">
+							<div class="placeholder-wave">
+								<span class="placeholder col-1" ></span>
+								<span class="placeholder col-10"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-1" ></span>
+								<span class="placeholder col-10"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-1"></span>
+								<span class="placeholder col-10"></span>
+							</div>
+						</td>
+					</tr>
+				}
+				else
+				{
+					foreach(var note in TodayNotes.OrderBy(n => n.IsDone))
+					{
+						<tr>
+							@if(note.IsDone)
+							{
+								<td class="col-1">
+									- &nbsp;
+								</td>
+								<td>
+
+								<span class="text-decoration-line-through">
+									@note.NoteText
+								</span>
+								</td>
+							}
+							else
+							{
+								<td class="col-1">
+									- &nbsp;
+								</td>
+
+								<td>
+									<span class="text-decoration-none">
+										@note.NoteText
+									</span>
+								</td>
+							}
+
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+
+
+</article>
+
 
 <article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark">
 	<div class="container-lg">
 		<NavLink href="order" class="container-lg btn btn-lg border border-3 order-last1 shadow">
 			<span class="h3 text-bold">
 				Замовлення
-				</span>
+			</span>
 		</NavLink>
 	</div>
+
 	<div class="container">
 		<table class="table table-striped table-sm">
 			<thead>
@@ -28,8 +116,40 @@
 				@if (!LastOrders.Any())
 				{
 					<tr>
-						<td colspan="5">@OrdersLoadingMessage
-							</td>
+						@* <td colspan="5">@OrdersLoadingMessage
+					</td> *@
+						<td colspan="5" class="col">
+							<div class="placeholder-wave">
+								<span class="placeholder col-1" ></span>
+								<span class="placeholder col-2" ></span>
+								<span class="placeholder col-6" ></span>
+								<span class="placeholder col-2" ></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-1"></span>
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-6"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-1"></span>
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-6"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-1"></span>
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-6"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-1"></span>
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-6"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+						</td>
 					</tr>
 				}
 				else
@@ -40,12 +160,12 @@
 							<td>@order.Id</td>
 							<td>@order.OrderDate.ToString("dd/MM/yy")</td>
 							<td>
-							@foreach(var detail in order.OrderDetails)
-							{
-								<CandleOrderedNameAndQuantity CandleName="@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)!.Name" CandleQuantity="@detail.CandleQuantity"	/>							
-							}
+								@foreach (var detail in order.OrderDetails)
+								{
+									<CandleOrderedNameAndQuantity CandleName="@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)!.Name" CandleQuantity="@detail.CandleQuantity" />
+								}
 							</td>
-						
+
 							<td>@order.TotalSum</td>
 						</tr>
 					}
@@ -79,9 +199,39 @@
 			<tbody>
 				@if (!LastCandles.Any())
 				{
+					@* <tr>
+				<td colspan="4">
+				@CandlesLoadingMessage
+				</td>
+				</tr> *@
 					<tr>
-						<td colspan="4">
-							@CandlesLoadingMessage
+
+						<td colspan="5" class="col">
+							<div class="placeholder-wave">
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-7"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-7"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-7"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-7"></span>
+								<span class="placeholder col-2"></span>
+							</div>
+							<div class="placeholder-wave">
+								<span class="placeholder col-2"></span>
+								<span class="placeholder col-7"></span>
+								<span class="placeholder col-2"></span>
+							</div>
 						</td>
 					</tr>
 				}
@@ -107,6 +257,7 @@
 @code {
 	public IEnumerable<OrderVM> LastOrders { get; set; } = Enumerable.Empty<OrderVM>();
 	public IEnumerable<CandleFullVM> LastCandles { get; set; } = Enumerable.Empty<CandleFullVM>();
+	public IEnumerable<NoteVM>? TodayNotes { get; set; } = Enumerable.Empty<NoteVM>();
 
 	public IEnumerable<CandleFullVM> CandleNames { get; set; } = Enumerable.Empty<CandleFullVM>();
 
@@ -117,27 +268,41 @@
 	// strings to HttpChecker to get if the items exist by path
 	private string _ordersPath = "api/order";
 	private string _candlesPath = "api/candle?view=full";
+	private string _notePath = "api/note";
 
 
 	protected override async Task OnInitializedAsync()
 	{
-		LastOrders = await orderHandler.GetLastOrdersAsync(_ordersPath);
+		var noteTask = Task.Run(() => noteHandler.GetAllNotesByDateAsync(DateOnly.FromDateTime(DateTime.Now), _notePath));
+		var orderTask = Task.Run(() => orderHandler.GetLastOrdersAsync(_ordersPath));
+		var candleTask = Task.Run(() => candleHandler.GetLastCandlesListAsync(_candlesPath));
+
+
+		//LastOrders = await orderHandler.GetLastOrdersAsync(_ordersPath);
+		LastOrders = await orderTask;
 		OrdersLoadingMessage = LastOrders.Any() switch
 		{
 			true => "",
 			false => "Сталась помилка або замовлення відсутні."
 		};
 
-		LastCandles = await candleHandler.GetLastCandlesListAsync(_candlesPath);
+		//LastCandles = await candleHandler.GetLastCandlesListAsync(_candlesPath);
+		LastCandles = await candleTask;
 		CandlesLoadingMessage = LastCandles.Any() switch
 		{
 			true => "",
 			false => "Сталась помилка або свічки відсутні."
 		};
 
+		TodayNotes = await noteTask;
+		if(!TodayNotes.Any())
+		{
+			TodayNotes = null;
+		}
+
 		CandleNames = await candleHandler.GetAllCandlesListAsync(_candlesPath);
 	}
 
-	
+
 
 }
