@@ -4,18 +4,140 @@
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
 
+<style>
+	.lightpinkcolor {
+		background-color: lightgrey;
+	}
+</style>
+
 <AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" ButtonClass="btn-outline-dark" Text="Всі замовлення" />
 
-@if (OrderModel.Id == 0)
+@if (_orderVM == default)
 {
 	<div class="container">
 		<p>Немає замовлення з таким id.</p>
 	</div>
 }
+else if (_orderVM.Id == 0)
+{
+	<div class="container" aria-hidden="true">
+		<div class="container">
+			<div class="pb-2 row text-center">
+				<label class="form-label col-8 col-lg-2 col-form-label fs-5 fw-lighter">
+					Замовлення -
+				</label>
+				<div class="placeholder placeholder-wave col-2">
+				</div>
+			</div>
+
+
+			<div class="pb-2 row">
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+					Дата замовлення
+				</label>
+				<div class="placeholder placeholder-wave col-6 col-lg-2">
+				</div>
+			</div>
+
+
+			<!-- PIB and Phone number are grouped into one row in big screens, two rows on phone screen -->
+			<div class="row row-cols-lg-4 gy-2 pb-2">
+				<label class="form-label col-2 col-lg-1 col-form-label fw-lighter">
+					ПІБ
+				</label>
+				<div class="placeholder placeholder-wave col-10 col-lg-4 ">
+				</div>
+
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+					Номер телефону
+				</label>
+				<div class="placeholder placeholder-wave col-6 col-lg-2 ">
+				</div>
+			</div>
+
+			<!-- City and Delivery adress are grouped into one row in big screens, two rows on phone screen -->
+			<div class="row row-cols-lg-4 gy-2 pb-2">
+				<label class="form-label col-3 col-lg-1 col-form-label fw-lighter">
+					Місто
+				</label>
+				<div class="placeholder placeholder-wave col-9 col-lg-4 ">
+				</div>
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+					Адреса доставки
+				</label>
+				<div class="placeholder placeholder-wave col-6 col-lg-5 ">
+				</div>
+			</div>
+
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fw-lighter">
+					Коментар
+				</label>
+				<div class="placeholder placeholder-wave col-9 col-lg-6 ">
+				</div>
+			</div>
+
+			<hr class="hr-line" />
+
+			<div class="row">
+				<label class="text-center form-label col-5 col-lg-2 col-form-label fw-lighter">
+					Свічки:
+				</label>
+
+
+				<a href="#" tabindex="-1" class="btn btn-success disabled placeholder col-4" aria-hidden="true"></a>
+
+			</div>
+
+
+			<hr class="hr-line" />
+
+			<div class="pb-2 row">
+				<div class="input-group">
+					<label class="input-group-text col-8 col-lg-3  fw-lighter">
+						Промокод
+						<small style="font-size: 11px;"> &nbsp;(% або знижка в грн)</small>
+					</label>
+					<div class="placeholder placeholder-wave col-2 col-lg-2 ">
+					</div>
+					<div class="col-2 ps-0">
+						<button class="btn btn-outline-secondary" type="button">use</button>
+					</div>
+				</div>
+			</div>
+
+
+			<hr />
+
+			<div class="pb-1 row me-1">
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
+					Воску потрібно:
+				</label>
+				<div class="placeholder placeholder-wave col-5 col-lg-2 ">
+				</div>
+				<label class="col-1 col-lg-1 ps-0 my-auto"><span>&nbsp;г.</span></label>
+			</div>
+
+			<div class="pb-2 row me-1">
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
+					Сума
+				</label>
+				<div class="placeholder placeholder-wave col-5 col-lg-2 ">
+				</div>
+				<div class="col-1 col-lg-1 ps-0 my-auto">грн.</div>
+			</div>
+
+			<div class="container d-grid d-md-block p-3">
+
+				<a href="#" tabindex="-1" class="btn btn-success disabled placeholder" aria-hidden="true"></a>
+			</div>
+
+		</div>
+	</div>
+
+}
 else
 {
-	<MessageResponseComponent MessageResponse="@MessageResponse"/>
-
 	<p></p>
 	<div class="container text-center">
 		<h3>
@@ -64,7 +186,7 @@ else
 	private bool CandlesExpanded { get; set; } = false;
 
 
-	private OrderVM? _orderVM = new();
+	private OrderVM? _orderVM = new OrderVM() { Id = 0 };
 
 
 	protected override async Task OnInitializedAsync()

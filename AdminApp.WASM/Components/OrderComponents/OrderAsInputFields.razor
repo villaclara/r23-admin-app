@@ -19,7 +19,7 @@
 		</div>
 	</div>
 
-	
+
 	<!-- PIB and Phone number are grouped into one row in big screens, two rows on phone screen -->
 	<div class="row row-cols-lg-4 gy-2 pb-2">
 		<label class="form-label col-2 col-lg-1 col-form-label fw-lighter">
@@ -29,12 +29,12 @@
 			<InputText @bind-Value="OrderModel.Name" class="form-control" />
 			<ValidationMessage For="() => OrderModel.Name" />
 		</div>
-	
+
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Номер телефону
 		</label>
 		<div class="col-7 col-lg-2">
-			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" placeholder="09811122233"/>
+			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" placeholder="09811122233" />
 		</div>
 		<ValidationMessage For="() => OrderModel.PhoneNumber" />
 	</div>
@@ -54,7 +54,7 @@
 		<div class="col-7 col-lg-5">
 			<InputText @bind-Value="OrderModel.Adress" class="form-control" />
 		</div>
-			<ValidationMessage For="() => OrderModel.Adress" />
+		<ValidationMessage For="() => OrderModel.Adress" />
 	</div>
 
 	<div class="pb-2 row">
@@ -106,59 +106,59 @@
 
 	<div class="pb-2 row">
 		<div class="input-group">
-		<label class="input-group-text col-8 col-lg-3  fw-lighter">
-			Промокод 
-			<small style="font-size: 11px;"> &nbsp;(% або знижка в грн)</small>
-		</label>
-		<div class="col-2 col-lg-2">
-			<InputText class="form-control text-end" @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
-		</div>
-		<div class="col-2 ps-0">
-			<button class="btn btn-outline-secondary" type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">use</button>
-		</div>
+			<label class="input-group-text col-8 col-lg-3  fw-lighter">
+				Промокод
+				<small style="font-size: 11px;"> &nbsp;(% або знижка в грн)</small>
+			</label>
+			<div class="col-2 col-lg-2">
+				<InputText class="form-control text-end" @bind-Value="OrderModel.Promocode" @onclick="() => CandlesExpanded = false" />
+			</div>
+			<div class="col-2 ps-0">
+				<button class="btn btn-outline-secondary" type="button" @onclick="(args) => UsePromocode(args, OrderModel.Promocode)">use</button>
+			</div>
 		</div>
 	</div>
 
 
 	<!-- check if we have already selected any candle -->
-	@if(CandlesOrdered.Any(c => c.Quantity > 0))
+	@if (CandlesOrdered.Any(c => c.Quantity > 0))
 	{
-	<div class="row">
-	Вибрані свічки:
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Q</th>
-					<th>Gramm</th>
-				</tr>
-			</thead>
-			<tbody>
-		@foreach (var candle in CandlesOrdered)
-		{
-					@if (candle.Quantity > 0)
+		<div class="row">
+			Вибрані свічки:
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Q</th>
+						<th>Gramm</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var candle in CandlesOrdered)
 					{
-						<tr>
-							<td>
-								<span>@candle.Name </span>
-							</td>
-							<td>
-								@candle.Quantity шт
-							</td>
-							<td>
-								@(candle.WaxNeededGramm * candle.Quantity) г
-							</td>
-						</tr>
+						@if (candle.Quantity > 0)
+						{
+							<tr>
+								<td>
+									<span>@candle.Name </span>
+								</td>
+								<td>
+									@candle.Quantity шт
+								</td>
+								<td>
+									@(candle.WaxNeededGramm * candle.Quantity) г
+								</td>
+							</tr>
+						}
 					}
-				}
-			</tbody>
-		</table>
+				</tbody>
+			</table>
 
-	</div>
+		</div>
 	}
-	
-	<hr/>
-	
+
+	<hr />
+
 	<div class="pb-1 row">
 		<label class="col-6 col-lg-2 text-end">Воску потрібно:</label>
 		<label class="col-6 col-lg-2">@_totalGramm<span>&nbsp;г.</span></label>
