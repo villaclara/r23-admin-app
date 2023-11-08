@@ -60,7 +60,7 @@
         display: none;
     }
 
-    .collapse {
+    .collapse1 {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
@@ -74,6 +74,7 @@
 
 
 
+@media (max-width: 640.98px) {
 
 .nav-scrollable.show {
     margin-top: 0;
@@ -113,3 +114,5 @@
     }
 }
 
+
+}
