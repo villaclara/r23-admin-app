@@ -35,7 +35,7 @@
 				<tbody>
 					@foreach (var order in OrdersExpanded)
 					{
-						<tr @onclick="() => order.Expanded = !order.Expanded">
+						<tr @onclick="() => order.Expanded = !order.Expanded" style="background-color: @(HexColorFromPaidOrderOption(order.OrderVM.IsPaid))">
 							<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
 							<td>
 								@foreach (var detail in order.OrderVM.OrderDetails)
@@ -57,7 +57,7 @@
 						@if (order.Expanded)
 						{
 							<tr>
-								<td colspan="5" class="col-12" style="background-color: lightyellow">
+								<td colspan="5" class="col-12" style="background-color: #DBBAAF">
 									<div class="wrapper">
 										<div class="expandable">
 										<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
@@ -69,6 +69,29 @@
 					}
 				</tbody>
 			</table>
+		</div>
+
+		<div class="container px-0">
+
+
+			@foreach (var order in OrdersExpanded)
+			{
+				<div class="card">
+					<div class="card-body">
+						<div class="card-title">
+							<div class="row">
+								<div class="col-4">
+									@order.OrderVM.OrderDate.ToString("dd/MM/yy")
+								</div>
+								<div class="col-3">
+									@order.OrderVM.TotalSum	
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+
 		</div>
 	}
 
@@ -83,6 +106,7 @@
 	private IEnumerable<CandleFullVM> CandleNames { get; set; } = new List<CandleFullVM>();
 
 	public ICollection<OrderWithExpanded> OrdersExpanded { get; set; } = new List<OrderWithExpanded>();
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -115,4 +139,6 @@
 			Expanded = value;
 		}
 	}
+
+	public string HexColorFromPaidOrderOption(bool isPaid) => isPaid ? "#C8E6C9" : "#FFCDD2";
 }

@@ -12,12 +12,15 @@
 
 <AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" ButtonClass="btn-outline-dark" Text="Всі замовлення" />
 
+<!-- NOT FOUND -->
 @if (_orderVM == default)
 {
 	<div class="container">
 		<p>Немає замовлення з таким id.</p>
 	</div>
 }
+
+/* PLACEHOLDERS */
 else if (_orderVM.Id == 0)
 {
 	<div class="container" aria-hidden="true">
@@ -136,13 +139,27 @@ else if (_orderVM.Id == 0)
 	</div>
 
 }
+
+/* ACTUAL VALUES */
 else
 {
 	<p></p>
 	<div class="container text-center">
-		<h3>
+		<div class="row pb-2">
+			<div class="col-8">
+
+		<p class="display-6">
 			Замовлення - @OrderModel.Id
-		</h3>
+		</p>
+			</div>
+			<div class="col-3 ps-0 text-center">
+
+		<InputSelect @bind-Value="@OrderModel.IsPaid" class="form-control">
+			<option value="true">опл</option>
+			<option value="false">неопл</option>
+		</InputSelect>
+			</div>
+		</div>
 	</div>
 
 	<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
@@ -158,8 +175,11 @@ else
 	<hr />
 	<hr />
 
+	<div class="row pb-4">
+
 	<div class="container">
 		<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteOrderById(Id)">Видалити замовлення</button>
+	</div>
 	</div>
 
 
