@@ -4,6 +4,10 @@
 @inject CandleHandlerService candleHandler;
 @inject NavigationManager navManager;
 
+<style>
+	.border-space {
+	}
+</style>
 
 <div class="container">
 
@@ -21,21 +25,33 @@
 	@if (OrdersExpanded is not null && OrdersExpanded.Any())
 	{
 		<div class="container px-0">
-			<table class="table align-middle">
+			<table class="table align-middle border-space">
 				<thead>
 					<tr>
-						<th>Дата</th>
-						<th>Свічка</th>
-						<th>Шт</th>
-						<th>Сума</th>
-						<th>Комент</th>
+						<th class="col-2">Дата</th>
+						<th class="col-4">Свічка</th>
+						<th class="col-1">Шт</th>
+						<th class="col-2">Сума</th>
+						<th class="col-3">Комент</th>
 					</tr>
 				</thead>
 
-				<tbody>
-					@foreach (var order in OrdersExpanded)
-					{
-						<tr @onclick="() => order.Expanded = !order.Expanded" style="background-color: @(HexColorFromPaidOrderOption(order.OrderVM.IsPaid))">
+			</table>
+			@foreach (var order in OrdersExpanded)
+			{
+				<table class="table">
+					<thead>
+						<tr>
+							<th class="col-2"></th>
+							<th class="col-4"></th>
+							<th class="col-1"></th>
+							<th class="col-2"></th>
+							<th class="col-3"></th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<tr @onclick="() => order.Expanded = !order.Expanded" style="background-color: @HexColorFromPaidOrderOption(order.OrderVM.IsPaid)">
 							<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
 							<td>
 								@foreach (var detail in order.OrderVM.OrderDetails)
@@ -57,42 +73,21 @@
 						@if (order.Expanded)
 						{
 							<tr>
-								<td colspan="5" class="col-12" style="background-color: #DBBAAF">
+								<td colspan="5" class="col-12 border border-1 border-dark">
 									<div class="wrapper">
 										<div class="expandable">
-										<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
-									</div>
+											<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
+										</div>
 									</div>
 								</td>
 							</tr>
 						}
-					}
-				</tbody>
-			</table>
-		</div>
-
-		<div class="container px-0">
-
-
-			@foreach (var order in OrdersExpanded)
-			{
-				<div class="card">
-					<div class="card-body">
-						<div class="card-title">
-							<div class="row">
-								<div class="col-4">
-									@order.OrderVM.OrderDate.ToString("dd/MM/yy")
-								</div>
-								<div class="col-3">
-									@order.OrderVM.TotalSum	
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+					</tbody>
+				</table>
 			}
 
 		</div>
+
 	}
 
 </div>
