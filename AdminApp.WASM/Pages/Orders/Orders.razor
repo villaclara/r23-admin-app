@@ -1,4 +1,5 @@
 ﻿@page "/order"
+@using System.Globalization;
 @layout OrdersLayout
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
@@ -6,87 +7,211 @@
 
 <style>
 	.border-space {
+		border: 1px solid green;
+		border-radius: 10px;
 	}
 </style>
 
 <div class="container">
 
 	<div class="container">
-		<h1 class="display-4">Замовлення</h1>
-	</div>
+		<div class="row">
+			<div class="col-6">
 
+				<h1 class="display-6">Замовлення</h1>
+			</div>
+			<div class="col-3">
+				<a href="/order/new-order" class="btn btn-light">
+					<span class="bi bi-plus-square" aria-hidden="true"></span> N
+				</a>
+			</div>
 
-	<div class="container">
-		<a href="/order/new-order" class="btn btn-lg btn-light">
-			<span class="bi bi-plus-square" aria-hidden="true"></span> Замовлення
-		</a>
+			<div class="col-3">
+				<button type="button" class="btn btn-primary">
+					<span class="bi bi-search" aria-hidden="true"></span> S
+				</button>
+			</div>
+
+		</div>
 	</div>
 
 	@if (OrdersExpanded is not null && OrdersExpanded.Any())
 	{
-		<div class="container px-0">
-			<table class="table align-middle border-space">
-				<thead>
-					<tr>
-						<th class="col-2">Дата</th>
-						<th class="col-4">Свічка</th>
-						<th class="col-1">Шт</th>
-						<th class="col-2">Сума</th>
-						<th class="col-3">Комент</th>
-					</tr>
-				</thead>
+		@* <div class="container px-0">
+	<table class="table align-middle border-space">
+	<thead>
+	<tr>
+	<th class="col-2">Дата</th>
+	<th class="col-4">Свічка</th>
+	<th class="col-1">Шт</th>
+	<th class="col-2">Сума</th>
+	<th class="col-3">Комент</th>
+	</tr>
+	</thead>
 
-			</table>
-			@foreach (var order in OrdersExpanded)
-			{
-				<table class="table">
-					<thead>
-						<tr>
-							<th class="col-2"></th>
-							<th class="col-4"></th>
-							<th class="col-1"></th>
-							<th class="col-2"></th>
-							<th class="col-3"></th>
-						</tr>
-					</thead>
-					<tbody>
+	</table>
+	@foreach (var order in OrdersExpanded)
+	{
+	<table class="table mb-0">
+	<thead>
+	<tr>
+	<th class="col-2"></th>
+	<th class="col-4"></th>
+	<th class="col-1"></th>
+	<th class="col-2"></th>
+	<th class="col-3"></th>
+	</tr>
+	</thead>
+	<tbody>
 
-						<tr @onclick="() => order.Expanded = !order.Expanded" style="background-color: @HexColorFromPaidOrderOption(order.OrderVM.IsPaid)">
-							<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
-							<td>
-								@foreach (var detail in order.OrderVM.OrderDetails)
-								{
-									@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
-									<br />
-								}
-							</td>
-							<td>
-								@foreach (var detail in order.OrderVM.OrderDetails)
-								{
-									@detail.CandleQuantity
-									<br />
-								}
-							</td>
-							<td>@order.OrderVM.TotalSum</td>
-							<td>@order.OrderVM.Comments</td>
-						</tr>
-						@if (order.Expanded)
+	<tr @onclick="() => order.Expanded = !order.Expanded" style="background-color: @HexColorFromPaidOrderOption(order.OrderVM.IsPaid)">
+	<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
+	<td>
+	@foreach (var detail in order.OrderVM.OrderDetails)
+	{
+	@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
+	<br />
+	}
+	</td>
+	<td>
+	@foreach (var detail in order.OrderVM.OrderDetails)
+	{
+	@detail.CandleQuantity
+	<br />
+	}
+	</td>
+	<td>@order.OrderVM.TotalSum.ToZeroNumbersAfterComma() $</td>
+	<td>@order.OrderVM.Comments</td>
+	</tr>
+	@if (order.Expanded)
+	{
+	<tr>
+	<td colspan="5" class="col-12 border border-1 border-dark">
+	<div class="wrapper">
+	<div class="expandable">
+	<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
+	</div>
+	</div>
+	</td>
+	</tr>
+	}
+	</tbody>
+	</table>
+	}
+
+	</div> *@
+
+		foreach (var order in OrdersExpanded)
+		{
+			<div class="" @onclick="() => order.Expanded = !order.Expanded">
+
+				<div class="row bg-white border-space mt-2">
+					<div class="col-1 align-self-center">
+								@order.OrderVM.Id
+					</div>
+
+					<div class="col-6 align-self-center">
+						<div class="row">
+							<div class="col">
+								<span class="fw-bold">
+									@order.OrderVM.Receiver.FullName.ToOnlyFirstLastName()
+								</span>
+							</div>
+						</div>
+						
+					@* 	<div class="row">
+							<div class="col lh-sm">
+						@foreach (var detail in order.OrderVM.OrderDetails)
 						{
-							<tr>
-								<td colspan="5" class="col-12 border border-1 border-dark">
-									<div class="wrapper">
-										<div class="expandable">
-											<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
-										</div>
-									</div>
-								</td>
-							</tr>
+							
+									<span class="small">
+										@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name - @detail.CandleQuantity шт.<br/>
+									</span>
+							
 						}
-					</tbody>
-				</table>
-			}
+							</div>
+						</div> *@
 
+						<div class="row">
+							<div class="col lh-sm">
+								<span class="small">
+									@order.OrderVM.Receiver.PhoneNumber <br />
+									@order.OrderVM.Receiver.City - @order.OrderVM.Receiver.DeliveryAdress 
+								</span>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="col-1 align-self-center">
+						@order.OrderVM.ReceiverRepeat
+					</div>
+
+					<div class="col-4 text-center align-self-center ps-0">
+						<div class="row">
+							<div class="col">
+								@order.OrderVM.OrderDate.ToString("dd MMM yyyy", new CultureInfo("uk-UA"))
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col text-center">
+								<span class="fw-bolder">
+									&#8372 @order.OrderVM.TotalSum.ToZeroNumbersAfterComma()
+								</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col">
+								<span class="@SetImageForPaymentType(order.OrderVM.PaymentType) @SetColorImgIfOrderIsPaid(order.OrderVM.IsPaid)" style="font-size: 20px"></span>
+							</div>
+						</div>
+						
+					</div>
+
+
+				<div class="col">
+				<div class="row border border-1 border-bottom-0 border-end-0 border-start-0 border-dark">
+					<div class="col-4 pe-0">
+						@{
+							int totalgrams1 = 0;
+							foreach (var detail in order.OrderVM.OrderDetails)
+							{
+								int aa = (int)CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.WaxNeededGram!;
+								int grams = aa * detail.CandleQuantity;
+								totalgrams1 += grams;
+							}
+							<span>Воску - </span> @totalgrams1 <span> г.</span>
+						}
+					</div>
+
+					<div class="col-auto">
+						<span class="bi bi-chat-dots">&nbsp;@order.OrderVM.Comments</span>
+					</div>
+				</div>
+				</div>
+			</div>
 		</div>
+
+			@if (order.Expanded)
+			{
+				<div>
+					<div class="col-12 border border-1 border-dark">
+						<div class="wrapper">
+							<div class="expandable">
+								@* <OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" /> *@
+								@*<OrderReceiverInfoAsCard Receiver="@order.OrderVM.Receiver" />*@
+								<OrderOrderDetailsInfoAsCardTable Order="@order.OrderVM" CandleNames="CandleNames" />
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}
+
+		<div class="container" style="height: 10px; background-color: black">
+			</div>
 
 	}
 
@@ -122,7 +247,6 @@
 		}
 	}
 
-
 	public class OrderWithExpanded
 	{
 		public OrderVM OrderVM { get; set; } = null!;
@@ -136,4 +260,17 @@
 	}
 
 	public string HexColorFromPaidOrderOption(bool isPaid) => isPaid ? "#C8E6C9" : "#FFCDD2";
+	public string SetColorImgIfOrderIsPaid(bool isPaid) => isPaid ? "text-success" : "text-danger";
+
+	public string SetImageForPaymentType(int pType) 
+	{
+		return pType switch
+		{
+			0 => "bi bi-cash-coin", // cash
+			1 => "bi bi-credit-card-fill", // card
+			2 => "bi bi-mailbox2", // zvorotnya dostavka
+			_ => "bi bi-cash-coin" // default cash
+		};
+	}
+
 }

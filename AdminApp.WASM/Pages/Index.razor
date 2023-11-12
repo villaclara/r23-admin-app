@@ -7,12 +7,23 @@
 
 <PageTitle>Road23 Home</PageTitle>
 
-<article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark">
+<style>
+	.border-round {
+		background-color: rgba(0, 0, 0, 0.05) ;
+		/*background-color: #f6e8e8;*/
+		border-radius: 10px;
+	}
+</style>
+
+<div class="card m-2 border-round">
+	<div class="card-body  p-0">
+
+<article class="">
 	<div class="container-lg">
 		<NavLink href="note" class="container-lg btn btn-lg order-last1 shadow">
-			<span class="h3">
+			<p class="h3">
 				Ту ду @DateTime.Now.ToString("dd/MM/yy")
-			</span>
+			</p>
 		</NavLink>
 	</div>
 
@@ -92,8 +103,14 @@
 
 </article>
 
+	</div>
+</div>
 
-<article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark">
+
+<div class="card m-2 border-round">
+	<div class="card-body  p-0">
+
+		<article class="">
 	<div class="container-lg">
 		<NavLink href="order" class="container-lg btn btn-lg border border-3 order-last1 shadow">
 			<span class="h3 text-bold">
@@ -174,10 +191,15 @@
 		</table>
 	</div>
 </article>
+	</div>
+</div>
 
-<div> </div>
 
-<article class="border border-top-0 border-start-0 border-end-0 border-1 border-dark pt-3">
+
+<div class="card m-2 border-round">
+	<div class="card-body  p-0">
+
+		<article class="">
 	<div>
 		<div class="container-lg">
 			<NavLink href="candle" class="container-lg btn btn-lg border border-3 shadow">
@@ -251,6 +273,8 @@
 	</div>
 </article>
 
+	</div>
+</div>
 
 
 

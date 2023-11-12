@@ -1,0 +1,37 @@
+﻿<style>
+	.outside-border {
+		/* 		border: 1px solid green; */
+		border-radius: 10px;
+		background-color: white;
+	}
+</style>
+
+<table class="table outside-border mb-2">
+	<tbody>
+
+		<tr>
+			<th scope="row" class="col-5">Отримувач</th>
+			<td colspan="5" class="col-7">@Receiver.FullName</td>
+		</tr>
+
+		<tr>
+			<th scope="row" class="col-5">Телефон</th>
+			<td colspan="5" class="col-7">@Receiver.PhoneNumber</td>
+		</tr>
+
+		<tr>
+			<th scope="row" class="col-5">Місто</th>
+			<td colspan="5" class="col-5">@Receiver.City</td>
+		</tr>
+
+		<tr>
+			<th scope="row" class="col-5">Адреса НП</th>
+			<td colspan="5" class="col-7">@Receiver.DeliveryAdress</td>
+		</tr>
+
+	</tbody>
+</table>
+@code {
+	[Parameter]
+	public OrderReceiverVM Receiver { get; set; } = null!;
+}

@@ -17,8 +17,10 @@
 	[Parameter]
 	public string ButtonClass { get; set; } = "btn-outline-light";
 
-	public void PerformNavigation()
+	public async Task PerformNavigation()
 	{
+		// to show user that something happens
+		await Task.Delay(100);
 		navManager.NavigateTo(FromPageReached);
 	}
 }
