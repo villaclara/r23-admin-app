@@ -7,8 +7,8 @@
 
 <style>
 	.border-space {
-		border: 1px solid green;
-		border-radius: 10px;
+		border: 1px solid grey;
+		border-radius: 5px;
 	}
 
 	.transition-receiver.show11 {
@@ -20,6 +20,10 @@
 
 		margin-top: 0;
 		transition: 0.3s all 0s;
+
+
+		border-block-end: 1px solid;
+		writing-mode: horizontal-tb;
 	}
 
 	.transition-receiver.collapse11 {
@@ -30,14 +34,14 @@
 		height: 0; */
 
 		margin-top: -100%;
-		transition: 1s all 0s;
+		transition: 0.5s all 0s;
 	}
 </style>
 
 <div class="container">
 
 	<div class="container">
-		<div class="row">
+		<div class="row mb-3">
 			<div class="col-6">
 
 				<h1 class="display-6">Замовлення</h1>
@@ -127,15 +131,17 @@
 		{
 			<div class="">
 
-				<div class="row bg-white border-space mt-2">
+				<div class="row border-space py-2" style="background-color: #f7e6d7 /*#e7d5c6*/; color: black;">
 					<div class="col-1 align-self-center">
-						@order.OrderVM.Id
+						<span class="comfortaa fw-bold">
+							@order.OrderVM.Id
+						</span>
 					</div>
 
 					<div class="col-7">
 						<div class="row">
-							<div class="col" @onclick="() => order.Expanded = !order.Expanded">
-								<span class="fw-bold">
+							<div class="col ps-4" @onclick="() => order.Expanded = !order.Expanded">
+								<span class="play fw-bolder text-uppercase @SetBorderCssToFullNameDiv(order.Expanded)" style="color: #575655">
 									@order.OrderVM.Receiver.FullName.ToOnlyFirstLastName()
 									<span class="@SetArrowCssClassToOrder(order.Expanded)" style="font-size: 15px"></span>
 								</span>
@@ -146,11 +152,11 @@
 						@* @if(order.Expanded)
 				{ *@
 						<div class="row">
-							<div class="col">
+							<div class="col-auto ps-4">
 								<div class="overflow-hidden">
 									<div class="transition-receiver @SetAnimationCssClassForOrder(order.Expanded)">
-										<span class="small">
-											@order.OrderVM.Receiver.PhoneNumber <br />
+										<span class="small play fst-italic">
+											<span class="bi bi-telephone-fill"></span> @order.OrderVM.Receiver.PhoneNumber.DisplayPhoneNumberWithDashes() <br />
 											@order.OrderVM.Receiver.City - @order.OrderVM.Receiver.DeliveryAdress
 										</span>
 									</div>
@@ -159,42 +165,35 @@
 						</div>
 						@*}*@
 
+
 						<div class="row">
 							<div class="col lh-sm">
 								@foreach (var detail in order.OrderVM.OrderDetails)
 								{
 
-									<span class="small">
+									<span class="small ubuntu">
 										@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name - @detail.CandleQuantity шт.<br />
 									</span>
 
 								}
 							</div>
 						</div>
-
-						@* <div class="row">
-				<div class="col lh-sm">
-				<span class="small">
-				@order.OrderVM.Receiver.PhoneNumber <br />
-				@order.OrderVM.Receiver.City - @order.OrderVM.Receiver.DeliveryAdress
-				</span>
-				</div>
-				</div> *@
-
 					</div>
 
 
 
-					<div class="col-4 text-center align-self-center ps-0" @onclick="() => NavigateToOrder(order.OrderVM.Id)">
+					<div class="col-4 text-center align-self-top ps-0" @onclick="() => NavigateToOrder(order.OrderVM.Id)">
 						<div class="row">
 							<div class="col">
-								@order.OrderVM.OrderDate.ToString("dd MMM yyyy", new CultureInfo("uk-UA"))
+								<span class="opensans" style="color: black">
+									@order.OrderVM.OrderDate.ToString("dd MMM yyyy", new CultureInfo("uk-UA"))
+								</span>
 							</div>
 						</div>
 
 						<div class="row">
 							<div class="col text-center">
-								<span class="fw-bolder">
+								<span class="fw-bolder play" style="color: #575655; font-size: 18px;">
 									&#8372 @order.OrderVM.TotalSum.ToZeroNumbersAfterComma()
 								</span>
 							</div>
@@ -210,7 +209,10 @@
 
 
 					<div class="col">
-						<div class="row border border-1 border-bottom-0 border-end-0 border-start-0 border-dark">
+						<div class="row mt-1">
+							<div class="col-1">
+							
+							</div>
 							<div class="col-4 pe-0">
 								@{
 									int totalgrams1 = 0;
@@ -220,12 +222,12 @@
 										int grams = aa * detail.CandleQuantity;
 										totalgrams1 += grams;
 									}
-									<span>Воску - </span> @totalgrams1 <span> г.</span>
+									<span class="small ubuntu">Воску - @totalgrams1 г.</span>
 								}
 							</div>
 
 							<div class="col-auto">
-								<span class="bi bi-chat-dots">&nbsp;@order.OrderVM.Comments</span>
+								<span class="bi bi-chat-dots small opensans">&nbsp;@order.OrderVM.Comments</span>
 							</div>
 						</div>
 					</div>
@@ -235,7 +237,7 @@
 
 		}
 
-		<div class="container" style="height: 10px; background-color: black">
+		<div class="container" style="height: 40px;">
 		</div>
 
 	}
@@ -288,6 +290,7 @@
 	public string SetFontColorImgCssClassIfOrderIsPaid(bool isPaid) => isPaid ? "text-success" : "text-danger";
 	public string SetArrowCssClassToOrder(bool isExpanded) => isExpanded ? "bi bi-caret-up" : "bi bi-caret-down";
 	public string SetAnimationCssClassForOrder(bool isExpanded) => isExpanded ? "show11" : "collapse11";
+	public string SetBorderCssToFullNameDiv(bool isExpanded) => isExpanded ? "" : "border border-top-0 border-start-0 border-end-0 border-dark";
 
 	public string SetImageForPaymentType(int pType)
 	{

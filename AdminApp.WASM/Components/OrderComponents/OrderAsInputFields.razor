@@ -176,6 +176,20 @@
 		<ValidationMessage For="() => OrderModel.Price" />
 	</div>
 
+	<div class="pb-2 row me-1">
+		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
+			Сума
+		</label>
+		<div class="col-5 col-lg-2">
+			<InputSelect @bind-Value="OrderModel.PaymentType" class="form-control text-end" @onclick="() => CandlesExpanded = false" >
+				<option value="0">Готівка</option>
+				<option value="1">Картка</option>
+				<option value="2">ЗД</option>
+			</InputSelect>
+		</div>
+		<ValidationMessage For="() => OrderModel.PaymentType" />
+	</div>
+
 
 
 </div>
