@@ -15,7 +15,9 @@
     </div>
 </div>
 
-<div class="wrapper1">
+<!-- DELETE HEIGHT IF WANT TO BE AS BEFORE -->
+<div class="wrapper1" style="height: @HeightStyle">
+    <div class="subwrapper">
 
 <div class="nav-scrollable @NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
@@ -46,13 +48,18 @@
         </div>
     </nav>
 </div>
+    </div>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse1" : "show";
-
+    
+    
+    private string HeightStyle => collapseNavMenu ? "0" : "35%";
+    
+    
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;

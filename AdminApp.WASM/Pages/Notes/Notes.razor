@@ -13,7 +13,7 @@
 
 	Works only on expanding, on collapsing it is done immediately
 	*/
-	.transition-visible {
+	.transition-visible.show {
 		overflow: hidden;
 		transition: transform 0.3s ease-out;
 		height: auto;
@@ -25,6 +25,8 @@
 		.transition-visible.transition-collapsed {
 			transform: scaleY(0);
 			height: 0;
+			transition: transform 0.3s ease-out;
+			transform-origin: top;
 		}
 
 	
