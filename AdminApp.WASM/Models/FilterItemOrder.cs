@@ -1,4 +1,5 @@
 ﻿using AdminApp.WASM.Models.ViewModels;
+using System.Reflection;
 
 namespace AdminApp.WASM.Models
 {
@@ -20,49 +21,83 @@ namespace AdminApp.WASM.Models
 			EndPrice = endPrice;
 		}
 
-		public void ResetFields()
+		public void ResetFields(int endPrice = 10000)
 		{
 			StartDate = null;
 			EndDate = null;
 			PhoneNumber = "";
 			StartPrice = 0;
-			EndPrice = 0;
+			EndPrice = endPrice;
 		}
 
-		public ICollection<OrderWithExpandedBool> PerformSearch(ICollection<OrderWithExpandedBool> orders)
+		public List<OrderWithExpandedBool> PerformSearchByPhone(string phoneNumber, ICollection<OrderWithExpandedBool> orders)
 		{
+			return orders.Where(o => o.OrderVM.Receiver.PhoneNumber.StartsWith(phoneNumber)).ToList();
+		}
+
+		// general method with all conditions 
+		// calls the required filter method depending on parameters
+        public ICollection<OrderWithExpandedBool> PerformSearch(ICollection<OrderWithExpandedBool> orders)
+		{
+			ICollection<OrderWithExpandedBool> result = new List<OrderWithExpandedBool>();
+			if(!string.IsNullOrEmpty(this.PhoneNumber))
+			{
+				result = PerformSearchByPhone(PhoneNumber, orders);
+			}
+
+			else
+			{
+				result = orders;
+			}
+
+
+			// both StartDate and EndDate are set
 			if(this.StartDate != default && this.EndDate != default)
 			{
-				return PerformSearchByDateRange(this, orders);
+				result = PerformSearchByDateRange(this, result);
 			}
+
+			// only StartDate is set
 			else if(this.StartDate != default && this.EndDate == default)
 			{
-				return PerformSearchByOnlyDate(this, orders);
+				result = PerformSearchByStartDateOnly(this, result);
 			}
 
+			// only EndDate is set
+			else if(this.StartDate == default && this.EndDate != default)
+			{
+				result = PerformSearchByEndDateOnly(this, result);
+			}
+
+			// search by price
 			if (this.StartPrice >= 0 && this.EndPrice is not 0)
 			{
-				return PerformSearchByPriceRange(this, orders);
+				result = PerformSearchByPriceRange(this, result);
 			}
 			
-			
-			else 
-				return orders;
+
+
+			return result;
 		}
 
-		private static ICollection<OrderWithExpandedBool> PerformSearchByPriceRange(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
+		private static List<OrderWithExpandedBool> PerformSearchByEndDateOnly(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
+		{
+			return orders.Where(o => DateOnly.FromDateTime(o.OrderVM.OrderDate).CompareTo(DateOnly.FromDateTime((DateTime)filter.EndDate!)) <= 0).ToList();
+		}
+
+		private static List<OrderWithExpandedBool> PerformSearchByPriceRange(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
 		{
 			return orders.Where(o => (o.OrderVM.TotalSum >= filter.StartPrice && o.OrderVM.TotalSum <= filter.EndPrice)).ToList();
 
 		}
 
-		private static ICollection<OrderWithExpandedBool> PerformSearchByOnlyDate(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
+		private static List<OrderWithExpandedBool> PerformSearchByStartDateOnly(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
 		{
 			return orders.Where(o => DateOnly.FromDateTime(o.OrderVM.OrderDate).CompareTo(DateOnly.FromDateTime((DateTime)filter.StartDate!)) >= 0).ToList();
 
         }
 
-		private static ICollection<OrderWithExpandedBool> PerformSearchByDateRange(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
+		private static List<OrderWithExpandedBool> PerformSearchByDateRange(FilterItemOrder filter, ICollection<OrderWithExpandedBool> orders)
 		{
 			return orders.Where(o => DateOnly.FromDateTime(o.OrderVM.OrderDate).CompareTo(DateOnly.FromDateTime((DateTime)filter.StartDate!)) >= 0 
 									&& DateOnly.FromDateTime(o.OrderVM.OrderDate).CompareTo(DateOnly.FromDateTime((DateTime)filter.EndDate!)) <= 0).ToList();

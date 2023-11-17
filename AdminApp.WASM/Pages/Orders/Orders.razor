@@ -417,30 +417,29 @@
 		navManager.NavigateTo($"order/{id}");
 	}
 
+
+	// phone number in input changed
 	public void FilterOrdersByPhoneNumberInput(string phoneNumber)
 	{
-		if (string.IsNullOrEmpty(phoneNumber))
-		{
-			OrdersExpanded = _cachedOrdersOnPageLoad;
-		}
-
-		else
-		{
-			OrdersExpanded = _cachedOrdersOnPageLoad.Where(o => o.OrderVM.Receiver.PhoneNumber.StartsWith(phoneNumber)).ToList();
-		}
+		FilterOrder.PhoneNumber = phoneNumber;
+		OrdersExpanded = FilterOrder.PerformSearch(_cachedOrdersOnPageLoad);
 	}
 
+	// reset filter button clicked
 	public void ResetFilter()
 	{
-		FilterOrder.ResetFields();
+		int maxTotalSumOfOrders = (int)_cachedOrdersOnPageLoad.Max(o => o.OrderVM.TotalSum);
+		FilterOrder.ResetFields(endPrice: maxTotalSumOfOrders);
 		OrdersExpanded = _cachedOrdersOnPageLoad;
 	}
 
+	// search button clicked
 	public void PerformSearch()
 	{
 		OrdersExpanded = FilterOrder.PerformSearch(_cachedOrdersOnPageLoad);
 	}
 
+	// sort button clicked
 	public void OrderByChoosenIdField(int orderByWhat)
 	{
 
