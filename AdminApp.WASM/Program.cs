@@ -54,4 +54,7 @@ builder.Services.AddScoped<ICRUDService<ExpenseVM>, CRUDService<ExpenseVM>>();
 builder.Services.AddScoped<ExpenseHandlerService>();
 
 
-await builder.Build().RunAsync();
+var app = builder.Build();
+
+
+await app.RunAsync();
