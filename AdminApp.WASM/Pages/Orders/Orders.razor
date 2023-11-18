@@ -14,25 +14,23 @@
 
 	.transition-receiver.show11 {
 		/* overflow: hidden;
-		transform: scaleY(1);
-		transition: transform 0.3s ease;
-		transform-origin: top;
-		height: auto; */
+			transform: scaleY(1);
+			transition: transform 0.3s ease;
+			transform-origin: top;
+			height: auto; */
 
 		margin-top: 0;
 		transition: 0.3s all 0s;
-
-
 		border-block-end: 1px solid;
 		writing-mode: horizontal-tb;
 	}
 
 	.transition-receiver.collapse11 {
 		/* overflow: hidden;
-		transform: scaleY(0);
-		transition: transform 0.3s ease;
-		transform-origin: top;
-		height: 0; */
+			transform: scaleY(0);
+			transition: transform 0.3s ease;
+			transform-origin: top;
+			height: 0; */
 
 		margin-top: -100%;
 		transition: 0.5s all 0s;
@@ -69,7 +67,7 @@
 						<span>-</span>
 					</div>
 					<div class="col-5 px-1">
-						<InputDate @bind-Value="@FilterOrder.EndDate" @bind-Value:format="dd/MM/yy" class="form-control"/>
+						<InputDate @bind-Value="@FilterOrder.EndDate" @bind-Value:format="dd/MM/yy" class="form-control" />
 					</div>
 				</div>
 
@@ -78,7 +76,7 @@
 						Сума
 					</div>
 					<div class="col-3 px-1">
-						<InputNumber @bind-Value="@FilterOrder.StartPrice" class="form-control text-center" placeholder="0"/>
+						<InputNumber @bind-Value="@FilterOrder.StartPrice" class="form-control text-center" placeholder="0" />
 					</div>
 					<div class="col-1 align-self-center">
 						<span>-</span>
@@ -94,7 +92,6 @@
 
 				<div class="row gx-3 pb-1">
 					<div class="col-2 pe-0">
-
 					</div>
 					<div class="col-7">
 						<button type="button" class="btn btn-primary w-100" @onclick="@PerformSearch">
@@ -102,7 +99,6 @@
 						</button>
 					</div>
 					<div class="col-1">
-
 					</div>
 					<div class="col-2">
 						<button type="button" class="btn btn-danger w-100" @onclick="@ResetFilter">
@@ -111,47 +107,47 @@
 					</div>
 				</div>
 
-				
+
 			</div>
 
 		</div>
 
-		
 
 
-			
+
+
 	</div>
 	<div class="row px-0 mx-0 border border-1" style="height: 2px;"></div>
 
 
 	@if (OrdersExpanded is not null && OrdersExpanded.Any())
 	{
-	
 
-	<div class="row">
-		<div class="col ps-0">
-			<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(0)">
-			<span class="bi fw-bold fs-5 @SetFilterNameForId(Descending: DescendingOrderForId) @SortByIdIsActiveCss"></span>
-			</button>
-		</div>
-		<div class="col-6" >
+
+		<div class="row">
+			<div class="col ps-0">
+				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(0)">
+					<span class="bi fw-bold fs-5 @SetFilterNameForId(Descending: DescendingOrderForId) @SortByIdIsActiveCss"></span>
+				</button>
+			</div>
+			<div class="col-6">
 				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(1)">
-				<span class="bi fw-bold fs-5 @SetFilterNameForName(Descending: DescendingOrderForName) @SortByNameIsActiveCss"></span>
-			</button>
-		</div>
-			<div class="col-3" >
+					<span class="bi fw-bold fs-5 @SetFilterNameForName(Descending: DescendingOrderForName) @SortByNameIsActiveCss"></span>
+				</button>
+			</div>
+			<div class="col-3">
 				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(2)">
 					<span class="bi fw-bold fs-5 @SetFilterNameForSum(Descending: DescendingOrderForSum) @SortBySumIsActiveCss"></span>
 				</button>
+			</div>
 		</div>
-	</div>
 
 		foreach (var order in OrdersExpanded)
 		{
 			<div class="">
 
 				<div class="row border-space py-2" style="background-color: #f7ede4 /*#e7d5c6*/; color: black;">
-					<div class="col-1 align-self-center">
+					<div class="col-1 align-self-center ps-1 pe-0">
 						<span class="comfortaa fw-bold">
 							@order.OrderVM.Id
 						</span>
@@ -159,7 +155,7 @@
 
 					<div class="col-7">
 						<div class="row">
-							<div class="col ps-4" @onclick="() => order.Expanded = !order.Expanded">
+							<div class="col ps-4 text-nowrap" @onclick="() => order.Expanded = !order.Expanded">
 								<span class="play fw-bolder text-uppercase @SetBorderCssToFullNameDiv(order.Expanded)" style="color: #514538">
 									@order.OrderVM.Receiver.FullName.ToOnlyFirstLastName()
 									<span class="@SetArrowCssClassToOrder(order.Expanded)" style="font-size: 15px"></span>
@@ -168,21 +164,21 @@
 							</div>
 						</div>
 
-						@* @if(order.Expanded)
-				{ *@
 						<div class="row">
-							<div class="col-auto ps-4">
+							<div class="col ps-4">
 								<div class="overflow-hidden">
 									<div class="transition-receiver @SetAnimationCssClassForOrder(order.Expanded)">
 										<span class="small play fst-italic">
-											<span class="bi bi-telephone-fill"></span> @order.OrderVM.Receiver.PhoneNumber.DisplayPhoneNumberWithDashes() <br />
+											<span class="bi bi-telephone-fill"></span>
+											<span>
+												@order.OrderVM.Receiver.PhoneNumber.DisplayPhoneNumberWithDashes() - п.@order.OrderVM.ReceiverRepeat
+											</span><br />
 											@order.OrderVM.Receiver.City - @order.OrderVM.Receiver.DeliveryAdress
 										</span>
 									</div>
 								</div>
 							</div>
 						</div>
-						@*}*@
 
 
 						<div class="row">
@@ -230,7 +226,6 @@
 					<div class="col">
 						<div class="row">
 							<div class="col-1">
-							
 							</div>
 							<div class="col-4 pe-0">
 								@{
@@ -274,10 +269,10 @@
 	private IEnumerable<CandleFullVM> CandleNames { get; set; } = new List<CandleFullVM>();
 
 
-	/* 
-	 * OrdersExpanded = Orders to display
-	 * _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
-	 */
+	/*
+		* OrdersExpanded = Orders to display
+		* _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
+		*/
 	public ICollection<OrderWithExpandedBool> OrdersExpanded { get; set; } = new List<OrderWithExpandedBool>();
 	private ICollection<OrderWithExpandedBool> _cachedOrdersOnPageLoad = new List<OrderWithExpandedBool>();
 
@@ -285,18 +280,18 @@
 
 
 	/*
-	 * For sorting buttons for order Id, Name, Sum
-	 * Defines the direction of the sorting (descending => true, ascending => false)
-	 */
+		* For sorting buttons for order Id, Name, Sum
+		* Defines the direction of the sorting (descending => true, ascending => false)
+		*/
 	public bool DescendingOrderForId { get; set; } = true;
 	public bool DescendingOrderForName { get; set; } = false;
 	public bool DescendingOrderForSum { get; set; } = false;
 
 
 	/*
-	 * Instance of FilterOrdersService 
-	 * Performs advanced from filter submenu, including filtering by PhoneNumber
-	 */
+		* Instance of FilterOrdersService
+		* Performs advanced from filter submenu, including filtering by PhoneNumber
+		*/
 	public FilterOrdersService FilterOrder = new(DateTime.Now, endPrice: 0);
 
 
@@ -309,7 +304,7 @@
 	{
 		get
 		{
-			return _filterPhone; 
+			return _filterPhone;
 		}
 
 		set
@@ -409,7 +404,7 @@
 		// 1 - name
 		// 2 - price
 
-		if(orderByWhat == 0)
+		if (orderByWhat == 0)
 		{
 			DescendingOrderForId = !DescendingOrderForId;
 			SortByIdIsActiveCss = _textcolorfilter;
@@ -450,7 +445,7 @@
 		}
 
 
-		
+
 
 	}
 }

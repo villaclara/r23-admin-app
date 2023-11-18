@@ -24,3 +24,20 @@
         opacity: .9;
     }
 }
+
+
+@media (min-width: 641px) {
+
+    .index-page-image {
+        width: 40%;
+    }
+}
+
+
+
+@media (max-width: 640.98px) {
+
+    .index-page-image{
+        width: 100%;
+    }
+}
