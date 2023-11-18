@@ -1,4 +1,5 @@
 ﻿@page "/order/{Id:int}"
+@layout OrdersLayout
 @using AdminApp.WASM.Models;
 @using AdminApp.WASM.Components.Misc;
 @inject OrderHandlerService orderHandler;
@@ -11,6 +12,8 @@
 </style>
 
 <AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" ButtonClass="btn-outline-dark" Text="Всі замовлення" />
+
+<MessageResponseComponent MessageResponse="@MessageResponse" />
 
 <!-- NOT FOUND -->
 @if (_orderVM == default)
@@ -164,7 +167,8 @@ else
 
 	<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 		<DataAnnotationsValidator />
-		<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
+		@* <OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" /> *@
+		<OrderAsInputFieldsComponent OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
 
 		<div class="container d-grid d-md-block p-3">
 			<button class="btn btn-success">Зберегти зміни</button>
@@ -190,7 +194,7 @@ else
 	[Parameter]
 	public int Id { get; set; }
 
-	public string MessageResponse { get; set; } = "adsada";
+	public string MessageResponse { get; set; } = "";
 
 	// new fixes the rendering error because in OnInitializedAsync it is later initialized, not at the start of rendering page
 	public NewOrderFormModel OrderModel { get; set; } = new NewOrderFormModel();
@@ -258,7 +262,6 @@ else
 		if (result)
 		{
 			MessageResponse = "Замовлення збережено.";
-			OrderModel = new();
 		}
 		else
 		{

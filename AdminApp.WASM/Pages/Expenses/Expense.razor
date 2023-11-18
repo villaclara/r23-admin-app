@@ -4,13 +4,14 @@
 <div class="container">
 	<div class="container">
 
-		<h3>Витрати</h3>
+		<h3 class="montserat">Витрати</h3>
 	</div>
 
+	<MessageResponseComponent MessageResponse="@MessageResponse" />
 
 	<div class="row mb-2">
-		<div class="form-floating">
-			<InputText class="form-control" @bind-Value="NewExpenseForm.Description" placeholder="Опис" id="floatingDescription" />
+		<div class="form-floating gx-1">
+			<InputText class="form-control montserat" @bind-Value="NewExpenseForm.Description" placeholder="Опис" id="floatingDescription" />
 			<label for="floatingDescription">Опис</label>
 		</div>
 	</div>
@@ -18,17 +19,17 @@
 	<div class="row">
 		<div class="input-group mb-3">
 			<InputDate class="form-control text-center" @bind-Value="NewExpenseForm.Date" />
-			<span class="input-group-text">Сума</span>
+			<span class="input-group-text montserat">Сума</span>
 			<div class="col-3">
 				<InputNumber class="form-control text-end" @bind-Value="NewExpenseForm.Cost" />
 			</div>
-			<span class="input-group-text">₴</span>
+			<span class="input-group-text montserat">₴</span>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col">
-			<div class="d-grid">
+			<div class="d-grid montserat">
 				<button class="btn btn-sm btn-secondary" @onclick="AddExpenseClick">Додати витрату</button>
 			</div>
 		</div>
@@ -37,28 +38,36 @@
 
 <hr />
 
-<table class="table">
-	<tbody>
-		@foreach (var month in MonthList)
-		{
-			<tr>
-				<td colspan="3">@CastMonthIdToUAMonthName(month.Month) @month.Year</td>
+@foreach (var month in MonthList)
+{
+
+
+	<table class="table">
+		<thead>
+			<tr class="border-top border-dark">
+				<th class="montserat border border-top-0 border-bottom-0 border-start-0 border-end-0"></th>
+				<th class="montserat border border-top-0 border-bottom-0 border-start-0 border-end-0" colspan="2">@CastMonthIdToUAMonthName(month.Month) @month.Year</th>
 			</tr>
+		</thead>
+		<tbody>
+
+
 			@foreach (var expense in Expenses.OrderByDescending(e => e.Date))
 			{
-				if(expense.Date.Month == month.Month)
+				if (expense.Date.Month == month.Month)
 				{
-					
-				<tr>
-					<td class="col-2">@expense.Date.ToString("dd/MM")</td>
-					<td class="col-8">@expense.Description</td>
-					<td class="col-2">@expense.Cost</td>
-				</tr>
+
+					<tr class="ubuntu">
+						<td class="col-2">@expense.Date.ToString("dd/MM")</td>
+						<td class="col-7">@expense.Description</td>
+						<td class="col-3">&#8372 @expense.Cost</td>
+					</tr>
 				}
 			}
-		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+
+}
 
 
 
@@ -74,6 +83,8 @@
 
 	// to have each month where expense was added as separate object
 	public List<DateOnly> MonthList { get; set; } = new List<DateOnly>();
+
+	public string MessageResponse { get; set; } = "";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -97,8 +108,13 @@
 		if(result)
 		{
 			Expenses.Add(expense);
-			NewExpenseForm = new();
+			NewExpenseForm = new() { Date = DateOnly.FromDateTime(DateTime.Now) };
+			MessageResponse = "";
 		}	
+		else
+		{
+			MessageResponse = "Помилка при додаванні. Спробуйте ще.";
+		}
 	}
 
 

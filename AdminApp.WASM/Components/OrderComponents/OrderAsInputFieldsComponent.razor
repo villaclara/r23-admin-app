@@ -1,4 +1,4 @@
-@layout OrdersLayout
+﻿@layout OrdersLayout
 
 @using AdminApp.WASM.Models;
 
@@ -11,51 +11,45 @@
 
 <div class="container">
 
-	<div class="pb-2 row">
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
-			Дата замовлення
-		</label>
-		<div class="col-7 col-lg-2">
-			<InputDate @bind-Value="OrderModel.DateOrdered" @bind-Value:format="dd/MM/yyyy" class="form-control" />
+	<div class="card-body bg-danger">
+
+	<div class="pb-2 row input-group">
+		<div class="col-6 col-lg-2 form-floating">
+			<InputDate @bind-Value="OrderModel.DateOrdered" @bind-Value:format="dd/MM/yyyy" class="form-control" id="DateInput"/>
+			<label for="DateInput">Дата</label>
 		</div>
+
+		<div class="col-6 col-lg-2 form-floating gx-1">
+			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" placeholder="09811122233" id="PhoneInput" />
+			<label class="col-form-label text-secondary" for="PhoneInput">Номер телефону</label>
+		</div>
+		<ValidationMessage For="() => OrderModel.PhoneNumber" />
 	</div>
 
 
 	<!-- PIB and Phone number are grouped into one row in big screens, two rows on phone screen -->
 	<div class="row row-cols-lg-4 gy-2 pb-2">
-		<label class="form-label col-2 col-lg-1 col-form-label fw-lighter">
-			ПІБ
-		</label>
-		<div class="col-10 col-lg-4">
-			<InputText @bind-Value="OrderModel.Name" class="form-control" />
+		<div class="col-12 col-lg-4 form-floating">
+			<InputText @bind-Value="OrderModel.Name" class="form-control" id="NameInput"/>
+			<label for="NameInput"> ПІБ</label>
 			<ValidationMessage For="() => OrderModel.Name" />
 		</div>
 
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
-			Номер телефону
-		</label>
-		<div class="col-7 col-lg-2">
-			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" placeholder="09811122233" />
-		</div>
-		<ValidationMessage For="() => OrderModel.PhoneNumber" />
 	</div>
 
 	<!-- City and Delivery adress are grouped into one row in big screens, two rows on phone screen -->
-	<div class="row row-cols-lg-4 gy-2 pb-2">
-		<label class="form-label col-3 col-lg-1 col-form-label fw-lighter">
-			Місто
-		</label>
-		<div class="col-9 col-lg-4">
-			<InputText @bind-Value="OrderModel.City" class="form-control" />
+	<div class="row row-cols-lg-4 pb-2 input-group input-group text-secondary">
+		<div class="col-6 col-lg-4 form-floating">
+			<InputText @bind-Value="OrderModel.City" class="form-control" id="CityInput" placeholder="City"/>
+			<label for="CityInput">Місто</label>
+		</div>
+		<div class="col-6 form-floating">
+			<InputText @bind-Value="OrderModel.Adress" class="form-control" id="AdressInput" placeholder="NP 28"/>
+			<label for="AdressInput">Адреса доставки</label>
 			<ValidationMessage For="() => OrderModel.City" />
 		</div>
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
-			Адреса доставки
-		</label>
-		<div class="col-7 col-lg-5">
-			<InputText @bind-Value="OrderModel.Adress" class="form-control" />
-		</div>
 		<ValidationMessage For="() => OrderModel.Adress" />
+	</div>
 	</div>
 
 	<div class="pb-2 row">
@@ -178,10 +172,10 @@
 
 	<div class="pb-2 row me-1">
 		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
-			Спосіб оплати
+			Сума
 		</label>
 		<div class="col-5 col-lg-2">
-			<InputSelect @bind-Value="OrderModel.PaymentType" class="form-control text-end" @onclick="() => CandlesExpanded = false" >
+			<InputSelect @bind-Value="OrderModel.PaymentType" class="form-control text-end" @onclick="() => CandlesExpanded = false">
 				<option value="0">Готівка</option>
 				<option value="1">Картка</option>
 				<option value="2">ЗД</option>

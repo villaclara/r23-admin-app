@@ -3,11 +3,13 @@
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
 @inject ILogger<NewOrder> logger;
+@inject NavigationManager navManager;
 
 
 <div>
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" Text="Всі замовлення" ButtonClass="btn-outline-dark"/>
 </div>
+
 
 <MessageResponseComponent MessageResponse="@MessageResponse"/>
 
@@ -62,7 +64,9 @@
 		if(result)
 		{
 			MessageResponse = "Замовлення додано.";
-			OrderModel = new();
+
+			await Task.Delay(1000);
+			navManager.NavigateTo("/order");
 		}
 		else
 		{

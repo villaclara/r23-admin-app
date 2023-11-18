@@ -54,12 +54,12 @@
 				@* <input type="text" /> *@
 			</div>
 			<div class="col-2 pe-0 text-end">
-				<button type="button" class="btn btn-secondary" @onclick="() => FilterShown = !FilterShown">
+				<button type="button" class="btn btn-secondary" @onclick="() => FilterSubMenuShown = !FilterSubMenuShown">
 					<i class="bi bi-filter-circle"></i>
 				</button>
 			</div>
 
-			<div class="pt-1 col-12 bg-secondary" style="display: @SetFilterShowCss(FilterShown)">
+			<div class="pt-1 col-12 bg-secondary" style="display: @SetFilterShowCss(FilterSubMenuShown)">
 				<!-- FILTER SECTION -->
 				<div class="row pt-1">
 					<div class="col-5 px-1">
@@ -126,70 +126,7 @@
 
 	@if (OrdersExpanded is not null && OrdersExpanded.Any())
 	{
-		@* <div class="container px-0">
-	<table class="table align-middle border-space">
-	<thead>
-	<tr>
-	<th class="col-2">Дата</th>
-	<th class="col-4">Свічка</th>
-	<th class="col-1">Шт</th>
-	<th class="col-2">Сума</th>
-	<th class="col-3">Комент</th>
-	</tr>
-	</thead>
-
-	</table>
-	@foreach (var order in OrdersExpanded)
-	{
-	<table class="table mb-0">
-	<thead>
-	<tr>
-	<th class="col-2"></th>
-	<th class="col-4"></th>
-	<th class="col-1"></th>
-	<th class="col-2"></th>
-	<th class="col-3"></th>
-	</tr>
-	</thead>
-	<tbody>
-
-	<tr @onclick="() => order.Expanded = !order.Expanded" style="background-color: @HexColorFromPaidOrderOption(order.OrderVM.IsPaid)">
-	<td>@order.OrderVM.OrderDate.ToString("dd/MM")</td>
-	<td>
-	@foreach (var detail in order.OrderVM.OrderDetails)
-	{
-	@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name
-	<br />
-	}
-	</td>
-	<td>
-	@foreach (var detail in order.OrderVM.OrderDetails)
-	{
-	@detail.CandleQuantity
-	<br />
-	}
-	</td>
-	<td>@order.OrderVM.TotalSum.ToZeroNumbersAfterComma() $</td>
-	<td>@order.OrderVM.Comments</td>
-	</tr>
-	@if (order.Expanded)
-	{
-	<tr>
-	<td colspan="5" class="col-12 border border-1 border-dark">
-	<div class="wrapper">
-	<div class="expandable">
-	<OrderFullInfoAsTable Order="order.OrderVM" CandleNames="CandleNames" />
-	</div>
-	</div>
-	</td>
-	</tr>
-	}
-	</tbody>
-	</table>
-	}
-
-	</div> *@
-
+	
 
 	<div class="row">
 		<div class="col ps-0">
@@ -328,23 +265,45 @@
 @OrdersExistMessage
 
 @code {
+
+
 	public IEnumerable<OrderVM> OrdersList { get; set; } = new List<OrderVM>();
 
 	public string OrdersExistMessage { get; set; } = "Loading...";
 
 	private IEnumerable<CandleFullVM> CandleNames { get; set; } = new List<CandleFullVM>();
 
+
+	/* 
+	 * OrdersExpanded = Orders to display
+	 * _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
+	 */
 	public ICollection<OrderWithExpandedBool> OrdersExpanded { get; set; } = new List<OrderWithExpandedBool>();
 	private ICollection<OrderWithExpandedBool> _cachedOrdersOnPageLoad = new List<OrderWithExpandedBool>();
 
+
+
+
+	/*
+	 * For sorting buttons for order Id, Name, Sum
+	 * Defines the direction of the sorting (descending => true, ascending => false)
+	 */
 	public bool DescendingOrderForId { get; set; } = true;
 	public bool DescendingOrderForName { get; set; } = false;
 	public bool DescendingOrderForSum { get; set; } = false;
 
-	public FilterItemOrder FilterOrder = new(DateTime.Now, endPrice: 0);
 
-	public bool FilterShown { get; set; } = false;
+	/*
+	 * Instance of FilterOrdersService 
+	 * Performs advanced from filter submenu, including filtering by PhoneNumber
+	 */
+	public FilterOrdersService FilterOrder = new(DateTime.Now, endPrice: 0);
 
+
+	public bool FilterSubMenuShown { get; set; } = false;
+
+
+	// used for calling FilterOrders method on phoneNumber change
 	private string _filterPhone = "";
 	public string FilterPhoneNumber
 	{
@@ -367,6 +326,9 @@
 	public string SortByNameIsActiveCss { get; set; } = "";
 	public string SortBySumIsActiveCss { get; set; } = "";
 
+
+
+	/* Initializing method of the page */
 	protected override async Task OnInitializedAsync()
 	{
 		CandleNames = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");

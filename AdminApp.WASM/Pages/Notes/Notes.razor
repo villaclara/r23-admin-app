@@ -105,7 +105,8 @@
 				</div>
 			}
 		</div>
-		<p>@MessageResponse</p>
+		
+		<MessageResponseComponent MessageResponse="@MessageResponse" />
 
 		<!-- END OF ADD NEW NOTE -->
 	</div>
@@ -280,6 +281,10 @@
 			MessageResponse = "";
 			NewNoteFormModel = new();
 			AllNotes = await noteHandler.GetAllNotesAsync(_url);
+		}
+		else
+		{
+			MessageResponse = "Сталась помилка. Спробуйте ще";
 		}
 	}
 }
