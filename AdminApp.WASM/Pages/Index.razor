@@ -10,25 +10,24 @@
 
 <style>
 	.border-round {
-		background-color: rgba(0, 0, 0, 0.05);
+		background-color: rgba(0, 0, 0, 0.20);
 		/*background-color: #f6e8e8;*/
+		/* background-color: #a3745a; */
 		border-radius: 10px;
+		color: white;
 	}
 
 
-	.index-page-image {
-		width: 100%;
-	}
 </style>
 
-<div class="container-md">
+<div class="container-md text-center">
 
 	<img src="/img/4.png" alt="..." class="index-page-image" />
 </div>
 
 
-<div class="card m-2 border-round">
-	<div class="card-body  p-0">
+<div class="row">
+	<div class="col">
 
 		@* <article class="">
 			<div class="container-lg">
@@ -101,13 +100,24 @@
 		</article> *@
 
 		<article>
-			<div class="container text-center">
+			<div class="container">
 
-				<NavLink href="/note" class="btn text-center">
-					<span class="h3 opensans fw-bolder">
-						Ту ду @DateTime.Now.ToString("dd MMM yy")
+				<div class="row">
+					<div class="col">
+						<span class="h3 philosopher fw-bolder">
+						Ту ду сьогодні 
 					</span>
-				</NavLink>
+				
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col">
+						<span class="philosopher">
+							@DateTime.Now.ToString("dd MMM yyyy")
+						</span>
+					</div>
+				</div>
 
 
 			</div>
@@ -118,25 +128,27 @@
 
 					@if (TodayNotes is null)
 					{
-						<div class="col">
-
-							Немає туду на сьогодні
+						<div class="col-12 border-round my-1">
+							<div class="row montserat" style="height: 50px;">
+								<div class="col-auto my-auto">
+									<span class="">
+										Сьогодні чіл
+									</span>
+								</div>
+							</div>
 						</div>
 					}
 					else if (!TodayNotes.Any())
 					{
 
-						<div class="placeholder-wave">
-							<span class="placeholder col-1"></span>
-							<span class="placeholder col-10"></span>
+						<div class="placeholder placeholder-wave border-round my-1" style="height: 50px;">
+							<span class="placeholder col-12"></span>
 						</div>
-						<div class="placeholder-wave">
-							<span class="placeholder col-1"></span>
-							<span class="placeholder col-10"></span>
+						<div class="placeholder placeholder-wave border-round my-1" style="height: 50px;">
+							<span class="placeholder col-12"></span>
 						</div>
-						<div class="placeholder-wave">
-							<span class="placeholder col-1"></span>
-							<span class="placeholder col-10"></span>
+						<div class="placeholder placeholder-wave border-round my-1" style="height: 50px;">
+							<span class="placeholder col-12"></span>
 						</div>
 
 					}
@@ -144,12 +156,9 @@
 					{
 						foreach (var note in TodayNotes.OrderBy(n => n.IsDone))
 						{
-							<div class="col-12">
-								<div class="row opensans fw-bolder">
-									<div class="col-1">
-										- &nbsp;
-									</div>
-									<div class="col-auto">
+							<div class="col-12 border-round my-1">
+								<div class="row montserat" style="height: 50px;">
+									<div class="col-auto my-auto">
 										<span class="@SetTextDecorationCssNote(note.IsDone)">
 											@note.NoteText
 										</span>

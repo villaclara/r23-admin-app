@@ -30,6 +30,7 @@
 
     .index-page-image {
         width: 40%;
+        align-self: center;
     }
 }
 
