@@ -19,8 +19,7 @@ namespace AdminApp.WASM.Application.Services
         public async Task<ICollection<NoteVM>> GetAllNotesByDateAsync(DateOnly dateOnly, string url)
         {
             var allNotes = await _noteService.GetItemsAsListAsync(url);
-            var notes = new List<NoteVM>();
-            notes = allNotes.Where(n => n.NoteDate == dateOnly).ToList();
+            var notes = allNotes.Where(n => n.NoteDate == dateOnly).ToList() ?? new List<NoteVM>();
             return notes;
         }
 

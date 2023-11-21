@@ -3,9 +3,11 @@
 }
 
 .top-row {
+    position: relative;
     height: 3.5rem;
     border-bottom: 1px solid black;
-    background-color: lightgray;
+    /*background-color: #e7d5c6;*/
+    background-color: rgba(231, 213, 198, 0.7);
 }
 
 .navbar-brand {
@@ -42,14 +44,14 @@
         line-height: 3rem;
     }
 
-.nav-item ::deep a.active {
-    /*background-color: rgba(255,255,255,0.25);*/
-    background-color: lightgray;
-    color: black;
-}
+        .nav-item ::deep a.active {
+            /*background-color: rgba(255,255,255,0.25);*/
+            background-color: rgba(231, 213, 198, 0.7);
+            color: black;
+        }
 
 .nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(231, 213, 198, 0.8);
     color: black;
 }
 
@@ -70,6 +72,10 @@
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
+
+    .mobile-only {
+        display: none !important;
+    }
 }
 
 
@@ -79,8 +85,8 @@
 
     /* UNCOMMENT IF WANT NAVBAR BEFORE */
     .nav-scrollable.show {
-        /* margin-top: 0;
-    transition: 0.2s all 0s;*/
+         margin-top: 0;
+    transition: all 0.5s;
 
     }
 
@@ -98,24 +104,24 @@
 
     /* UNCOMMENT IF WANT NAVBAR BEFORE */
     .wrapper1 {
-        /*overflow: hidden;*/
-        position: fixed;
+        overflow: hidden;
+        
+   /*     position:fixed;
         width: 100%;
         height: 0;
         z-index: 1;
         left: 0;
-        top: 55px;
+        top: 54.5px;
         overflow-y: hidden;
         transition: 0.5s;
-        background-color: white;
+        background-color: white;*/
     }
 
 
     /* UNCOMMENT IF WANT NAVBAR BEFORE */
-    .nav-scrollable.collapse1 {
-        /* margin-top: -100%;
-        transition: 0.2s all 0s;*/
-
+    .collapse1 {
+        margin-top: -100px;
+        transition: margin-top 0.5s;
     }
 
 

@@ -1,7 +1,7 @@
 ﻿@page "/order"
 @using System.Globalization;
 @using AdminApp.WASM.Models;
-@layout OrdersLayout
+@layout OrdersLayout;
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
 @inject NavigationManager navManager;
@@ -48,7 +48,7 @@
 				</a>
 			</div>
 			<div class="col-7 px-0">
-				<InputText @bind-Value="@FilterPhoneNumber" placeholder="ПІБ/Телефон" class="form-control" id="phoneNumberInput" />
+				<InputText @bind-Value="@FilterPhoneNumber" placeholder="Телефон" class="form-control" id="phoneNumberInput" />
 				@* <input type="text" /> *@
 			</div>
 			<div class="col-2 pe-0 text-end">
