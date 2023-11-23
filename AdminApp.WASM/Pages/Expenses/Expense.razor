@@ -56,19 +56,19 @@
 		if (expense.Date.Month == month.Month)
 		{
 			<div class="row ubuntu py-2">
-				<div class="col-2 ps-1">
+				<div class="col-2 ps-1 my-auto">
 					<span>
 						@expense.Date.ToString("dd/MM")
 					</span>
 				</div>
 
-				<div class="col-6">
+					<div class="col-6 my-auto p-0">
 					<span>
 						@expense.Description
 					</span>
 				</div>
 
-				<div class="col-3">
+					<div class="col-3 my-auto p-0">
 					&#8372 @expense.Cost
 				</div>
 
@@ -135,9 +135,15 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		AllExpenses = (List<ExpenseVM>)await expenseHandler.GetExpensesAsync(_url);
-		Expenses = AllExpenses;
+		var exps = await expenseHandler.GetExpensesAsync(_url);
 
+		if(!exps.Any())
+		{
+			return;
+		}
+
+		AllExpenses = exps.ToList();
+		Expenses = AllExpenses;
 		// getting only distinct months from all expenses and ordering by descending
 		MonthList = AllExpenses.Select(e => new DateOnly(e.Date.Year, e.Date.Month, 1)).Distinct().OrderDescending().ToList();
 	}

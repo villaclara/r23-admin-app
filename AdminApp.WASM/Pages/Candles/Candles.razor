@@ -5,15 +5,17 @@
 @inject CandleHandlerService candleHandler;
 
 <style>
-	
+	.candle-item {
+		/* #868f74 */
+		border: 1px solid grey;
+		border-radius: 5px;
+		background-color: #5F6451;
+		color: #F9FFE7;
+	}
 </style>
 
 <span></span>
 <div class="container">
-
-	<div class="container">
-		<h1 class="display-4">Свічки</h1>
-	</div>
 
 	<div class="container">
 		<a href="/candle/new-candle" class="add-candle btn">
@@ -66,10 +68,64 @@
 
 			</table>
 		</div>
+
+
+		<div class="container">
+		@foreach(var candle in CandlesExpanded)
+		{
+			<div class="row border border-dark my-2 py-1 candle-item montserat">
+				<div class="col-3">
+						<img src="@GetImgPathToCandleOrDefault(candle.CandleItem)" alt="" class="img-thumbnail" height="60" width="60" />
+				</div>
+
+
+					<div class="col-8">
+						<div class="row">
+							<div class="col">
+								<span class="fw-bolder">
+									@candle.CandleItem.Name
+								</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col">
+
+								<span>&#8372 @candle.CandleItem.SellPrice</span>
+							</div>
+
+						</div>
+
+
+						<div class="row">
+
+							<div class="col">
+								<span>@candle.CandleItem.WaxNeededGram г.</span>
+							</div>
+
+							<div class="col">
+								<span>@candle.CandleItem.WickDiameterCM ниток</span>
+							</div>
+						</div>
+
+					</div>
+
+
+				<div class="col-1 my-auto ps-0">
+						<span class="bi bi-chevron-compact-right"></span>
+				</div>
+	
+				
+				
+
+				
+			</div>
+		}
+		</div>
 	}
 	else
 	{
-		<p> Loading... </p>
+		<p> @MessageResponse </p>
 	}
 
 
@@ -78,6 +134,8 @@
 
 @code {
 	private string path = $"api/Candle?view=full";
+
+	public string MessageResponse { get; set; } = "Loading...";
 
 	public IEnumerable<CandleFullVM>? CandleList { get; set; }
 
@@ -95,6 +153,17 @@
 	protected override async Task OnInitializedAsync()
 	{
 		CandleList = await candleHandler.GetAllCandlesListAsync(path);
+
+		MessageResponse = CandleList.Any() switch
+		{
+			true => "",
+			_ => "Сталась помилка або свічок немає."
+		};
+
+		if(!CandleList.Any())
+		{
+			return;
+		}
 
 		foreach (var c in CandleList)
 		{
@@ -121,4 +190,6 @@
 		}
 	}
 
+
+	public string GetImgPathToCandleOrDefault(CandleFullVM candle) => candle.PhotoLink ?? @"/img/question_mark.png";
 }

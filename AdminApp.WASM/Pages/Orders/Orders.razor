@@ -270,9 +270,9 @@
 
 
 	/*
-		* OrdersExpanded = Orders to display
-		* _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
-		*/
+	* OrdersExpanded = Orders to display
+	* _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
+	*/
 	public ICollection<OrderWithExpandedBool> OrdersExpanded { get; set; } = new List<OrderWithExpandedBool>();
 	private ICollection<OrderWithExpandedBool> _cachedOrdersOnPageLoad = new List<OrderWithExpandedBool>();
 
@@ -280,18 +280,18 @@
 
 
 	/*
-		* For sorting buttons for order Id, Name, Sum
-		* Defines the direction of the sorting (descending => true, ascending => false)
-		*/
+	* For sorting buttons for order Id, Name, Sum
+	* Defines the direction of the sorting (descending => true, ascending => false)
+	*/
 	public bool DescendingOrderForId { get; set; } = true;
 	public bool DescendingOrderForName { get; set; } = false;
 	public bool DescendingOrderForSum { get; set; } = false;
 
 
 	/*
-		* Instance of FilterOrdersService
-		* Performs advanced from filter submenu, including filtering by PhoneNumber
-		*/
+	* Instance of FilterOrdersService
+	* Performs advanced from filter submenu, including filtering by PhoneNumber
+	*/
 	public FilterOrdersService FilterOrder = new(DateTime.Now, endPrice: 0);
 
 
@@ -330,12 +330,17 @@
 
 		OrdersList = await orderHandler.GetAllOrdesListAsync("api/order");
 		OrdersList = OrdersList.OrderByDescending(o => o.Id);
+
 		OrdersExistMessage = OrdersList.Any() switch
 		{
 			true => "",
 			_ => "Сталась помилка або замовлення відсутні"
 		};
 
+		if(!OrdersList.Any())
+		{
+			return;
+		}
 
 		foreach (var o in OrdersList)
 		{

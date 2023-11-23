@@ -213,6 +213,8 @@
 	</div>
 </div>
 
+
+
 @code {
 
 	private string _url = "api/note";
@@ -255,6 +257,11 @@
 	protected override async Task OnInitializedAsync()
 	{
 		AllNotes = await noteHandler.GetAllNotesAsync(_url);
+
+		if(!AllNotes.Any())
+		{
+			return;
+		}
 		_maxDate = GetMaxDateFromNotes(AllNotes);
 		_allowedToDoForLoop = true;
 	}
