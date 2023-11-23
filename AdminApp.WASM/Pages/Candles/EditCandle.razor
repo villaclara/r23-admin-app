@@ -20,6 +20,8 @@
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
 </div>
 
+<p>@MessageResponse</p>
+
 @if (_selectedCandle == default)
 {
 	<div class="container">
@@ -30,6 +32,7 @@ else if (_selectedCandle.Id == 0)
 {
 	<div class="container text-center pb-2" aria-hidden="true">
 			<div class="placeholder placeholder-wave lightgreencolor col-6" style="height: 40px">
+			
 			</div>
 	</div>
 
@@ -139,7 +142,10 @@ else
 		</CascadingValue>
 
 		<div class="container-fluid d-grid d-md-block">
-			<button class="btn btn-lg btn-success rounded-1">Зберегти</button>
+			@* <button class="btn btn-lg btn-success rounded-1">Зберегти</button> *@
+
+			<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Зберегти" IsButtonPressed=@IsEditButtonPressed />
+
 		</div>
 	</EditForm>
 
@@ -147,7 +153,11 @@ else
 	<hr />
 	<hr />
 	<div class="container">
-		<button type="button" class="btn btn-danger btn-sm" @onclick="(() => DeleteCandle())"> Видалити</button>
+		@* <ButtonWithSpinnerAction ButtonCss="btn btn-danger btn-sm" ButtonText="Видалити" IsButtonPressed="@IsDeleteButtonPressed" @onclick="(() => DeleteCandle())"/> *@
+		<button type="button" class="btn btn-danger btn-sm" @onclick="(() => DeleteCandle())">
+			<span>Видалити</span>
+		</button>
+
 	</div>
 	
 }
@@ -168,9 +178,14 @@ else
 
 	public string PossibleNewCategoryName { get; set; } = string.Empty;
 
+	public bool IsEditButtonPressed { get; set; } = false;
+
+	public bool IsDeleteButtonPressed { get; set; } = false;
 
 	protected override async Task OnInitializedAsync()
 	{
+
+
 
 		_selectedCandle = await candleHandler.GetCanldeAsync($"api/candle/cid={Id}?view=full");
 		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
@@ -187,6 +202,8 @@ else
 
 	public async Task HandleValidSubmit()
 	{
+		IsEditButtonPressed = true;
+
 
 		// checking if the possible new category has any value
 		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
@@ -215,14 +232,15 @@ else
 		if (result)
 		{
 			MessageResponse = $"Свічка оновлена.";
-			await Task.Delay(2000);
 
-			navmanager.NavigateTo("candle");
+			//navmanager.NavigateTo("candle");
 		}
 		else
 		{
 			MessageResponse = $"Помилка при збереженні. Спробуйте ще раз.";
 		}
+
+		IsEditButtonPressed = false;
 	}
 
 	public void HandleInvalidSubmit()
@@ -233,7 +251,7 @@ else
 
 	public async Task DeleteCandle()
 	{
-
+		IsDeleteButtonPressed = true;
 
 		var result = await candleHandler.DeleteCandleAsync($"api/candle/cid={Id}");
 		if (result)
@@ -245,6 +263,8 @@ else
 		{
 			MessageResponse = "Помилка при видаленні свічки";
 		}
+
+		IsDeleteButtonPressed = false;
 	}
 
 }

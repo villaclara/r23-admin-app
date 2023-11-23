@@ -167,11 +167,12 @@ else
 
 	<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
 		<DataAnnotationsValidator />
-		@* <OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" /> *@
-		<OrderAsInputFieldsComponent OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
+		<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
+		@* <OrderAsInputFieldsComponent OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" /> *@
 
 		<div class="container d-grid d-md-block p-3">
-			<button class="btn btn-success">Зберегти зміни</button>
+			<ButtonWithSpinnerAction ButtonCss="btn btn-success" ButtonText="Зберегти зміни" IsButtonPressed=@IsEditButtonPressed />
+			@* <button class="btn btn-success">Зберегти зміни</button> *@
 		</div>
 	</EditForm>
 
@@ -182,7 +183,10 @@ else
 	<div class="row pb-4">
 
 	<div class="container">
-		<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteOrderById(Id)">Видалити замовлення</button>
+			@* <ButtonWithSpinnerAction ButtonCss="btn btn-danger btn-sm" ButtonText="Видалити замовлення" IsButtonPressed=@IsDeleteButtonPressed @onclick="() => DeleteOrderById(Id)"/> *@
+		<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteOrderById(Id)">
+			<span>Видалити замовлення</span>
+		</button>
 	</div>
 	</div>
 
@@ -212,6 +216,10 @@ else
 
 	private OrderVM? _orderVM = new OrderVM() { Id = 0 };
 
+	public bool IsEditButtonPressed { get; set; } = false;
+
+	public bool IsDeleteButtonPressed { get; set; } = false;
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -226,18 +234,26 @@ else
 
 	public async Task DeleteOrderById(int orderId)
 	{
+		IsDeleteButtonPressed = true;
+
+
 		var result = await orderHandler.DeleteOrderAsync($"api/order/oid={orderId}");
 		MessageResponse = result switch
 		{
 			true => "Замовлення видалено.",
 			false => "Помилка при видаленні замовлення. Спробуйте ще раз.",
 		};
+
+		IsDeleteButtonPressed = false;
 	}
 
 
 
 	public async Task HandleValidSubmit()
 	{
+		IsEditButtonPressed = true;
+
+
 		// clear all instances of added candles
 		OrderModel.CandleIdAndQuantity.Clear();
 
@@ -267,6 +283,8 @@ else
 		{
 			MessageResponse = "Помилка при збереженні замовлення. Спробуйте ще раз.";
 		}
+
+		IsEditButtonPressed = false;
 	}
 
 	public void HandleInvalidSubmit()

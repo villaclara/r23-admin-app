@@ -15,7 +15,7 @@
 </style>
 
 <span></span>
-<div class="container">
+<div class="container pb-5">
 
 	<div class="container">
 		<a href="/candle/new-candle" class="add-candle btn">
@@ -23,9 +23,12 @@
 		</a>
 	</div>
 
+
+
+
 	@if (CandlesExpanded is not null && CandlesExpanded.Any())
 	{
-		<div class="container-fluid">
+		@* <div class="container-fluid">
 			<table class="table table-hover align-middle">
 				<thead>
 					<tr>
@@ -68,30 +71,35 @@
 
 			</table>
 		</div>
-
+ *@
 
 		<div class="container">
-		@foreach(var candle in CandlesExpanded)
+		@foreach(var candle in CandlesExpanded.OrderBy(c => c.CandleItem.Name))
 		{
 			<div class="row border border-dark my-2 py-1 candle-item montserat">
-				<div class="col-3">
-						<img src="@GetImgPathToCandleOrDefault(candle.CandleItem)" alt="" class="img-thumbnail" height="60" width="60" />
+				<div class="col-3 my-auto">
+						<img src="@GetImgPathToCandleOrDefault(candle.CandleItem)" alt="" class="img-thumbnail" height="65" width="65" />
 				</div>
 
 
 					<div class="col-8">
 						<div class="row">
 							<div class="col">
-								<span class="fw-bolder">
+								<span class="fw-bolder" style="color: #FCFFF3">
 									@candle.CandleItem.Name
 								</span>
 							</div>
 						</div>
 
 						<div class="row">
-							<div class="col">
+							<div class="col small">
 
-								<span>&#8372 @candle.CandleItem.SellPrice</span>
+								<span class="small play">&#8372 @candle.CandleItem.SellPrice.ToZeroNumbersAfterComma()</span>
+
+								@* <br/>
+								<span class="small">@candle.CandleItem.WaxNeededGram г.</span>
+								<span> --- </span>
+								<span class="small">@candle.CandleItem.WickDiameterCM ниток</span> *@
 							</div>
 
 						</div>
@@ -99,12 +107,12 @@
 
 						<div class="row">
 
-							<div class="col">
-								<span>@candle.CandleItem.WaxNeededGram г.</span>
+							<div class="col small">
+								<span class="small">@candle.CandleItem.WaxNeededGram г.</span>
 							</div>
 
 							<div class="col">
-								<span>@candle.CandleItem.WickDiameterCM ниток</span>
+								<span class="small">@candle.CandleItem.WickDiameterCM нит.</span>
 							</div>
 						</div>
 
@@ -112,7 +120,9 @@
 
 
 				<div class="col-1 my-auto ps-0">
+					<a href="/candle/@candle.CandleItem.Id" class="text-light">
 						<span class="bi bi-chevron-compact-right"></span>
+						</a>
 				</div>
 	
 				

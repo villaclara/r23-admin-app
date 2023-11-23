@@ -7,6 +7,8 @@
 
 	<MessageResponseComponent MessageResponse="@MessageResponse" />
 
+	<EditForm Model="NewExpenseForm" OnSubmit="AddExpenseClick">
+
 	<div class="row mb-2">
 		<div class="form-floating gx-1 text-secondary">
 			<InputText class="form-control montserat" @bind-Value="NewExpenseForm.Description" placeholder="Опис" id="floatingDescription" />
@@ -28,10 +30,12 @@
 	<div class="row">
 		<div class="col">
 			<div class="d-grid montserat">
-				<button class="btn btn-sm btn-secondary" @onclick="AddExpenseClick">Додати витрату</button>
+				<ButtonWithSpinnerAction ButtonCss="btn btn-sm btn-secondary" ButtonText="Додати витрату" IsButtonPressed=IsAddExpenseButtonPressed />
+				@* <button class="btn btn-sm btn-secondary" @onclick="AddExpenseClick">Додати витрату</button> *@
 			</div>
 		</div>
 	</div>
+	</EditForm>
 </div>
 
 <hr />
@@ -133,6 +137,8 @@
 
 	public string MessageResponse { get; set; } = "";
 
+	public bool IsAddExpenseButtonPressed { get; set; } = false;
+
 	protected override async Task OnInitializedAsync()
 	{
 		var exps = await expenseHandler.GetExpensesAsync(_url);
@@ -150,6 +156,8 @@
 
 	public async Task AddExpenseClick()
 	{
+		IsAddExpenseButtonPressed = true;
+
 		var expense = new ExpenseVM()
 			{
 				Cost = NewExpenseForm.Cost,
@@ -168,6 +176,8 @@
 		{
 			MessageResponse = "Помилка при додаванні. Спробуйте ще.";
 		}
+
+		IsAddExpenseButtonPressed = false;
 	}
 
 	public async Task DeleteExpense(ExpenseVM expenseVM)
