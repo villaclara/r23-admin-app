@@ -1,4 +1,5 @@
 ﻿body {
+    padding: 0;
 }
 
 .order-last1 {
@@ -9,4 +10,35 @@
 .sylfaen-font {
     font-family: Sylfaen;
     font-size: 5vw;
+}
+
+
+.inner-card.animate-pulse {
+    height: 20px;
+    background-color: #eee;
+    animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;
+}
+
+@keyframes pulse {
+    50% {
+        opacity: .9;
+    }
+}
+
+
+@media (min-width: 641px) {
+
+    .index-page-image {
+        width: 40%;
+        align-self: center;
+    }
+}
+
+
+
+@media (max-width: 640.98px) {
+
+    .index-page-image{
+        width: 100%;
+    }
 }

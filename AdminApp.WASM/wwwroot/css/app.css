@@ -1,6 +1,42 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 
+/* GOOGLE WEB FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300;1,400;1,500&family=Open+Sans:ital,wght@0,300;0,400;1,300;1,400&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Play&family=Ubuntu&display=swap');
+
+
+/* TEXT FONTS */
+.comfortaa {
+    font-family: 'Comfortaa', sans-serif;
+}
+
+ .opensans {
+    font-family: 'Open Sans', sans-serif;
+ }
+
+.raleway {
+    font-family: 'Raleway', sans-serif;
+}
+
+.ubuntu {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.philosopher {
+    font-family: 'Philosopher', sans-serif;
+}
+
+.montserat {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.play {
+    font-family: 'Play', sans-serif;
+}
+
+
+
+/* MAIN SECTION */
 html, body {
 /*    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */ 
     font-family: Verdana;
@@ -134,7 +170,7 @@ a, .btn-link {
 }
 
 
-/* filling text */
+/* filling text when loading road23 to fill the text with color*/
 h3::before {
     content: attr(data-text);
     position: absolute;
@@ -147,8 +183,8 @@ h3::before {
     margin: 20vh auto 1rem auto;
     width: calc(var(--blazor-load-percentage, 0%));
     /*width: 0%;*/
-
-    font-family: Brush Script MT, Brush Script Std, cursive;
+    font-family: 'Philosopher', sans-serif;
+    /*    font-family: Brush Script MT, Brush Script Std, cursive;*/
     font-stretch: 150%;
     font-variant: small-caps;
     font-weight: bold;
@@ -157,5 +193,27 @@ h3::before {
 }
 
 
+
+
+
+/* ANIMATION */
+/* HIDDEN - to not display from the top when moving */
+.wrapper {
+    overflow: hidden;
+}
+
+.expandable {
+    animation: display-down 0.3s ease;
+}
+
+@keyframes display-down {
+    0% {
+        margin-top: -100%;
+    }
+
+    100% {
+        margin-top: 0;
+    }
+}
 
 

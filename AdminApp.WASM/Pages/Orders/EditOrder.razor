@@ -1,0 +1,297 @@
+﻿@page "/order/{Id:int}"
+@layout OrdersLayout;
+@using AdminApp.WASM.Models;
+@using AdminApp.WASM.Components.Misc;
+@inject OrderHandlerService orderHandler;
+@inject CandleHandlerService candleHandler;
+
+<style>
+	.lightpinkcolor {
+		background-color: lightgrey;
+	}
+</style>
+
+<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" ButtonClass="btn-outline-dark" Text="Всі замовлення" />
+
+<MessageResponseComponent MessageResponse="@MessageResponse" />
+
+<!-- NOT FOUND -->
+@if (_orderVM == default)
+{
+	<div class="container">
+		<p>Немає замовлення з таким id.</p>
+	</div>
+}
+
+/* PLACEHOLDERS */
+else if (_orderVM.Id == 0)
+{
+	<div class="container" aria-hidden="true">
+		<div class="container">
+			<div class="pb-2 row text-center">
+				<label class="form-label col-8 col-lg-2 col-form-label fs-5 fw-lighter">
+					Замовлення -
+				</label>
+				<div class="placeholder placeholder-wave col-2">
+				</div>
+			</div>
+
+
+			<div class="pb-2 row">
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+					Дата замовлення
+				</label>
+				<div class="placeholder placeholder-wave col-6 col-lg-2">
+				</div>
+			</div>
+
+
+			<!-- PIB and Phone number are grouped into one row in big screens, two rows on phone screen -->
+			<div class="row row-cols-lg-4 gy-2 pb-2">
+				<label class="form-label col-2 col-lg-1 col-form-label fw-lighter">
+					ПІБ
+				</label>
+				<div class="placeholder placeholder-wave col-10 col-lg-4 ">
+				</div>
+
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+					Номер телефону
+				</label>
+				<div class="placeholder placeholder-wave col-6 col-lg-2 ">
+				</div>
+			</div>
+
+			<!-- City and Delivery adress are grouped into one row in big screens, two rows on phone screen -->
+			<div class="row row-cols-lg-4 gy-2 pb-2">
+				<label class="form-label col-3 col-lg-1 col-form-label fw-lighter">
+					Місто
+				</label>
+				<div class="placeholder placeholder-wave col-9 col-lg-4 ">
+				</div>
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter">
+					Адреса доставки
+				</label>
+				<div class="placeholder placeholder-wave col-6 col-lg-5 ">
+				</div>
+			</div>
+
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fw-lighter">
+					Коментар
+				</label>
+				<div class="placeholder placeholder-wave col-9 col-lg-6 ">
+				</div>
+			</div>
+
+			<hr class="hr-line" />
+
+			<div class="row">
+				<label class="text-center form-label col-5 col-lg-2 col-form-label fw-lighter">
+					Свічки:
+				</label>
+
+
+				<a href="#" tabindex="-1" class="btn btn-success disabled placeholder col-4" aria-hidden="true"></a>
+
+			</div>
+
+
+			<hr class="hr-line" />
+
+			<div class="pb-2 row">
+				<div class="input-group">
+					<label class="input-group-text col-8 col-lg-3  fw-lighter">
+						Промокод
+						<small style="font-size: 11px;"> &nbsp;(% або знижка в грн)</small>
+					</label>
+					<div class="placeholder placeholder-wave col-2 col-lg-2 ">
+					</div>
+					<div class="col-2 ps-0">
+						<button class="btn btn-outline-secondary" type="button">use</button>
+					</div>
+				</div>
+			</div>
+
+
+			<hr />
+
+			<div class="pb-1 row me-1">
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
+					Воску потрібно:
+				</label>
+				<div class="placeholder placeholder-wave col-5 col-lg-2 ">
+				</div>
+				<label class="col-1 col-lg-1 ps-0 my-auto"><span>&nbsp;г.</span></label>
+			</div>
+
+			<div class="pb-2 row me-1">
+				<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
+					Сума
+				</label>
+				<div class="placeholder placeholder-wave col-5 col-lg-2 ">
+				</div>
+				<div class="col-1 col-lg-1 ps-0 my-auto">грн.</div>
+			</div>
+
+			<div class="container d-grid d-md-block p-3">
+
+				<a href="#" tabindex="-1" class="btn btn-success disabled placeholder" aria-hidden="true"></a>
+			</div>
+
+		</div>
+	</div>
+
+}
+
+/* ACTUAL VALUES */
+else
+{
+	<p></p>
+	<div class="container text-center">
+		<div class="row pb-2">
+			<div class="col-8">
+
+		<p class="display-6">
+			Замовлення - @OrderModel.Id
+		</p>
+			</div>
+			<div class="col-3 ps-0 text-center">
+
+		<InputSelect @bind-Value="@OrderModel.IsPaid" class="form-control">
+			<option value="true">опл</option>
+			<option value="false">неопл</option>
+		</InputSelect>
+			</div>
+		</div>
+	</div>
+
+	<EditForm Model="OrderModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+		<DataAnnotationsValidator />
+		<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" />
+		@* <OrderAsInputFieldsComponent OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered" /> *@
+
+		<div class="container d-grid d-md-block p-3">
+			<ButtonWithSpinnerAction ButtonCss="btn btn-success" ButtonText="Зберегти зміни" IsButtonPressed=@IsEditButtonPressed />
+			@* <button class="btn btn-success">Зберегти зміни</button> *@
+		</div>
+	</EditForm>
+
+
+	<hr />
+	<hr />
+
+	<div class="row pb-4">
+
+	<div class="container">
+			@* <ButtonWithSpinnerAction ButtonCss="btn btn-danger btn-sm" ButtonText="Видалити замовлення" IsButtonPressed=@IsDeleteButtonPressed @onclick="() => DeleteOrderById(Id)"/> *@
+		<button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteOrderById(Id)">
+			<span>Видалити замовлення</span>
+		</button>
+	</div>
+	</div>
+
+
+
+}
+@code {
+
+	[Parameter]
+	public int Id { get; set; }
+
+	public string MessageResponse { get; set; } = "";
+
+	// new fixes the rendering error because in OnInitializedAsync it is later initialized, not at the start of rendering page
+	public NewOrderFormModel OrderModel { get; set; } = new NewOrderFormModel();
+
+	// needed to display them when adding new candle to order
+	public IEnumerable<CandleFullVM> Candles { get; set; } = new List<CandleFullVM>();
+
+	// get all chosen candles with quantity > 0
+	public List<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
+
+
+	// expand/hide candles to add them
+	private bool CandlesExpanded { get; set; } = false;
+
+
+	private OrderVM? _orderVM = new OrderVM() { Id = 0 };
+
+	public bool IsEditButtonPressed { get; set; } = false;
+
+	public bool IsDeleteButtonPressed { get; set; } = false;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		_orderVM = await orderHandler.GetOrderAsync($"api/order/oid={Id}");
+		OrderModel = _orderVM?.ConvertToOrderModel_FromFullVM() ?? new NewOrderFormModel();
+
+		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
+
+
+	}
+
+
+	public async Task DeleteOrderById(int orderId)
+	{
+		IsDeleteButtonPressed = true;
+
+
+		var result = await orderHandler.DeleteOrderAsync($"api/order/oid={orderId}");
+		MessageResponse = result switch
+		{
+			true => "Замовлення видалено.",
+			false => "Помилка при видаленні замовлення. Спробуйте ще раз.",
+		};
+
+		IsDeleteButtonPressed = false;
+	}
+
+
+
+	public async Task HandleValidSubmit()
+	{
+		IsEditButtonPressed = true;
+
+
+		// clear all instances of added candles
+		OrderModel.CandleIdAndQuantity.Clear();
+
+		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel
+		foreach (var candle in CandlesOrdered)
+		{
+			if (candle.Quantity > 0)
+			{
+				OrderModel.CandleIdAndQuantity.Add(candle.Id, candle.Quantity);
+			}
+		}
+
+		var orderToUpd = OrderModel.ConvertToFullVM_FromFormModel();
+		orderToUpd.Id = Id;
+
+		/* validation here */
+
+
+		// submitting to api
+		var result = await orderHandler.UpdateOrderAsync($"api/order/oid={Id}", orderToUpd);
+
+		if (result)
+		{
+			MessageResponse = "Замовлення збережено.";
+		}
+		else
+		{
+			MessageResponse = "Помилка при збереженні замовлення. Спробуйте ще раз.";
+		}
+
+		IsEditButtonPressed = false;
+	}
+
+	public void HandleInvalidSubmit()
+	{
+		MessageResponse = "Некоректно введені дані.";
+	}
+}
+
+
+

@@ -1,0 +1,100 @@
+﻿@inject NoteHandlerService noteHandler;
+
+<style>
+	.btn:focus{
+		box-shadow: none;
+	}
+</style>
+
+<div class="row pt-2 border border-0 border-bottom border-dark">
+
+	@if (Note.IsDone)
+	{
+		<div class="col-1 m-auto px-0">
+			<button class="btn border border-0 shadow-none px-0 py-0 m-0" style="color:green" @onclick="UpdateNoteAndDoneAsync">
+				<span class="bi bi-check-square-fill" style="font-size:25px"></span>
+			</button>
+		</div>
+	}
+	else
+	{
+		<div class="col-1 m-auto px-0">
+			<button class="btn border border-0 shadow-none px-0 py-0 m-0" @onclick="UpdateNoteAndDoneAsync">
+				<span class="bi bi-app" style="font-size:25px"></span>
+			</button>
+		</div>
+	}
+
+	@if (EditModeActive)
+	{
+		<div class="col-9 p-0 m-auto">
+			<InputText class="form-control" @bind-Value="Note.NoteText" />
+		</div>
+		<div class="col-1 p-0 m-auto">
+			<button class="btn border border-0 shadow-none" type="button" @onclick="() => UpdateNoteAndEditAsync()">
+				<span class="oi oi-check"></span>
+			</button>
+		</div>
+	}
+	else
+	{
+		<div class="col-9 p-0 m-auto">
+			<label class="col-form-label">@Note.NoteText</label>
+		</div>
+		<div class="col-1 p-0 m-auto">
+			<button class="btn border border-0 shadow-none" type="button" @onclick="() => EditModeActive = !EditModeActive">
+				<span class="oi oi-pencil"></span>
+			</button>
+		</div>
+	}
+</div>
+
+<p>@MessageResponse</p>
+
+
+@code {
+
+	[Parameter]
+	public NoteVM Note { get; set; } = new();
+
+	public bool Checked { get; set; }
+
+	[Parameter]
+	public bool EditModeActive { get; set; } = false;
+
+	public string MessageResponse { get; set; } = "";
+
+	public async Task UpdateNoteAndDoneAsync()
+	{
+		Note.IsDone = !Note.IsDone;
+		var result = await UpdateNoteAsync();
+		if(!result)
+		{
+			MessageResponse = "Помилка.";
+			Note.IsDone = !Note.IsDone;
+		}
+		else
+		{
+			MessageResponse = "";
+		}
+	}
+
+	public async Task UpdateNoteAndEditAsync()
+	{
+		EditModeActive = !EditModeActive;
+		var result = await UpdateNoteAsync();
+		if(result)
+		{
+			MessageResponse = "";
+		}
+		else
+		{
+			MessageResponse = "Помилка";
+		}
+	}
+
+	private async Task<bool> UpdateNoteAsync()
+	{
+		return await noteHandler.UpdateNoteAsync($"api/note/nid={Note.Id}", Note);
+	}
+}

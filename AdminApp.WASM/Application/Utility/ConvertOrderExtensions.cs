@@ -16,6 +16,8 @@ namespace AdminApp.WASM.Application.Utility
 				Comments = model.Comment,
 				Promocode = model.Promocode,
 				TotalSum = model.Price,
+				IsPaid = model.IsPaid,
+				PaymentType = model.PaymentType,
 				Receiver = new OrderReceiverVM
 				{
 					FullName = model.Name,
@@ -53,6 +55,8 @@ namespace AdminApp.WASM.Application.Utility
 				City = ordervm.Receiver.City,
 				Adress = ordervm.Receiver.DeliveryAdress,
 				Comment = ordervm.Comments,
+				PaymentType = ordervm.PaymentType,
+				IsPaid = ordervm.IsPaid,
 				Promocode = ordervm.Promocode,
 				Price = ordervm.TotalSum,
 				CandleIdAndQuantity = new Dictionary<int, int>()

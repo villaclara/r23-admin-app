@@ -1,0 +1,456 @@
+﻿@page "/order"
+@using System.Globalization;
+@using AdminApp.WASM.Models;
+@layout OrdersLayout;
+@inject OrderHandlerService orderHandler;
+@inject CandleHandlerService candleHandler;
+@inject NavigationManager navManager;
+
+<style>
+	.border-space {
+		border: 1px solid grey;
+		border-radius: 5px;
+	}
+
+	.transition-receiver.show11 {
+		/* overflow: hidden;
+			transform: scaleY(1);
+			transition: transform 0.3s ease;
+			transform-origin: top;
+			height: auto; */
+
+		margin-top: 0;
+		transition: 0.3s all 0s;
+		border-block-end: 1px solid;
+		writing-mode: horizontal-tb;
+	}
+
+	.transition-receiver.collapse11 {
+		/* overflow: hidden;
+			transform: scaleY(0);
+			transition: transform 0.3s ease;
+			transform-origin: top;
+			height: 0; */
+
+		margin-top: -100%;
+		transition: 0.5s all 0s;
+	}
+
+</style>
+
+<div class="container">
+
+	<div class="container">
+		<div class="row mb-1">
+			<div class="col-3 p-0">
+				<a href="order/new-order" class="btn btn-light">
+					<span class="text-uppercase"> new</span>
+				</a>
+			</div>
+			<div class="col-7 px-0">
+				<InputText @bind-Value="@FilterPhoneNumber" placeholder="Телефон" class="form-control" id="phoneNumberInput" />
+				@* <input type="text" /> *@
+			</div>
+			<div class="col-2 pe-0 text-end">
+				<button type="button" class="btn btn-secondary" @onclick="() => FilterSubMenuShown = !FilterSubMenuShown">
+					<i class="bi bi-filter-circle"></i>
+				</button>
+			</div>
+
+			<div class="pt-1 col-12 bg-secondary" style="display: @SetFilterShowCss(FilterSubMenuShown)">
+				<!-- FILTER SECTION -->
+				<div class="row pt-1">
+					<div class="col-5 px-1">
+						<InputDate @bind-Value="@FilterOrder.StartDate" @bind-Value:format="dd/MM/yy" class="form-control" />
+					</div>
+					<div class="col-1 align-self-center">
+						<span>-</span>
+					</div>
+					<div class="col-5 px-1">
+						<InputDate @bind-Value="@FilterOrder.EndDate" @bind-Value:format="dd/MM/yy" class="form-control" />
+					</div>
+				</div>
+
+				<div class="row py-2">
+					<div class="col-2 align-self-center pe-0">
+						Сума
+					</div>
+					<div class="col-3 px-1">
+						<InputNumber @bind-Value="@FilterOrder.StartPrice" class="form-control text-center" placeholder="0" />
+					</div>
+					<div class="col-1 align-self-center">
+						<span>-</span>
+					</div>
+					<div class="col-3 px-1">
+						<InputNumber @bind-Value="@FilterOrder.EndPrice" class="form-control text-center" placeholder="0" />
+					</div>
+					<div class="col align-self-center">
+						<span>грн.</span>
+					</div>
+
+				</div>
+
+				<div class="row gx-3 pb-1">
+					<div class="col-2 pe-0">
+					</div>
+					<div class="col-7">
+						<button type="button" class="btn btn-primary w-100" @onclick="@PerformSearch">
+							<span class="bi bi-search-heart-fill">&nbsp;Пошук</span>
+						</button>
+					</div>
+					<div class="col-1">
+					</div>
+					<div class="col-2">
+						<button type="button" class="btn btn-danger w-100" @onclick="@ResetFilter">
+							<span class="bi bi-arrow-clockwise"></span>
+						</button>
+					</div>
+				</div>
+
+
+			</div>
+
+		</div>
+
+
+
+
+
+	</div>
+	<div class="row px-0 mx-0 border border-1" style="height: 2px;"></div>
+
+
+	@if (OrdersExpanded is not null && OrdersExpanded.Any())
+	{
+
+
+		<div class="row">
+			<div class="col ps-0">
+				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(0)">
+					<span class="bi fw-bold fs-5 @SetFilterNameForId(Descending: DescendingOrderForId) @SortByIdIsActiveCss"></span>
+				</button>
+			</div>
+			<div class="col-6">
+				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(1)">
+					<span class="bi fw-bold fs-5 @SetFilterNameForName(Descending: DescendingOrderForName) @SortByNameIsActiveCss"></span>
+				</button>
+			</div>
+			<div class="col-3">
+				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(2)">
+					<span class="bi fw-bold fs-5 @SetFilterNameForSum(Descending: DescendingOrderForSum) @SortBySumIsActiveCss"></span>
+				</button>
+			</div>
+		</div>
+
+		foreach (var order in OrdersExpanded)
+		{
+			<div class="">
+
+				<div class="row border-space py-2" style="background-color: #f7ede4 /*#e7d5c6*/; color: black;">
+					<div class="col-1 align-self-center ps-1 pe-0">
+						<span class="comfortaa fw-bold">
+							@order.OrderVM.Id
+						</span>
+					</div>
+
+					<div class="col-7">
+						<div class="row">
+							<div class="col ps-4 text-nowrap" @onclick="() => order.Expanded = !order.Expanded">
+								<span class="play fw-bolder text-uppercase @SetBorderCssToFullNameDiv(order.Expanded)" style="color: #514538">
+									@order.OrderVM.Receiver.FullName.ToOnlyFirstLastName()
+									<span class="@SetArrowCssClassToOrder(order.Expanded)" style="font-size: 15px"></span>
+								</span>
+
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col ps-4">
+								<div class="overflow-hidden">
+									<div class="transition-receiver @SetAnimationCssClassForOrder(order.Expanded)">
+										<span class="small play fst-italic">
+											<span class="bi bi-telephone-fill"></span>
+											<span>
+												@order.OrderVM.Receiver.PhoneNumber.DisplayPhoneNumberWithDashes() - п.@order.OrderVM.ReceiverRepeat
+											</span><br />
+											@order.OrderVM.Receiver.City - @order.OrderVM.Receiver.DeliveryAdress
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="row">
+							<div class="col lh-sm">
+								@foreach (var detail in order.OrderVM.OrderDetails)
+								{
+
+									<span class="small ubuntu">
+										@CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.Name - @detail.CandleQuantity шт.<br />
+									</span>
+
+								}
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="col-4 text-center align-self-top ps-0" @onclick="() => NavigateToOrder(order.OrderVM.Id)">
+						<div class="row">
+							<div class="col">
+								<span class="opensans" style="color: black">
+									@order.OrderVM.OrderDate.ToString("dd MMM yyyy", new CultureInfo("uk-UA"))
+								</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col text-center">
+								<span class="fw-bolder play" style="color: #575655; font-size: 18px;">
+									&#8372 @order.OrderVM.TotalSum.ToZeroNumbersAfterComma()
+								</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col">
+								<span class="@SetImageForPaymentType(order.OrderVM.PaymentType) @SetFontColorImgCssClassIfOrderIsPaid(order.OrderVM.IsPaid)" style="font-size: 20px"></span>
+							</div>
+						</div>
+
+					</div>
+
+
+					<div class="col">
+						<div class="row">
+							<div class="col-1">
+							</div>
+							<div class="col-4 pe-0">
+								@{
+									int totalgrams1 = 0;
+									foreach (var detail in order.OrderVM.OrderDetails)
+									{
+										int aa = (int)CandleNames.FirstOrDefault(c => c.Id == detail.CandleId)?.WaxNeededGram!;
+										int grams = aa * detail.CandleQuantity;
+										totalgrams1 += grams;
+									}
+									<span class="small ubuntu">Воску - @totalgrams1 г.</span>
+								}
+							</div>
+
+							<div class="col-auto">
+								<span class="bi bi-chat-dots small opensans">&nbsp;@order.OrderVM.Comments</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		}
+
+		<div class="container" style="height: 40px;">
+		</div>
+
+	}
+
+</div>
+@OrdersExistMessage
+
+@code {
+
+
+	public IEnumerable<OrderVM> OrdersList { get; set; } = new List<OrderVM>();
+
+	public string OrdersExistMessage { get; set; } = "Loading...";
+
+	private IEnumerable<CandleFullVM> CandleNames { get; set; } = new List<CandleFullVM>();
+
+
+	/*
+	* OrdersExpanded = Orders to display
+	* _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
+	*/
+	public ICollection<OrderWithExpandedBool> OrdersExpanded { get; set; } = new List<OrderWithExpandedBool>();
+	private ICollection<OrderWithExpandedBool> _cachedOrdersOnPageLoad = new List<OrderWithExpandedBool>();
+
+
+
+
+	/*
+	* For sorting buttons for order Id, Name, Sum
+	* Defines the direction of the sorting (descending => true, ascending => false)
+	*/
+	public bool DescendingOrderForId { get; set; } = true;
+	public bool DescendingOrderForName { get; set; } = false;
+	public bool DescendingOrderForSum { get; set; } = false;
+
+
+	/*
+	* Instance of FilterOrdersService
+	* Performs advanced from filter submenu, including filtering by PhoneNumber
+	*/
+	public FilterOrdersService FilterOrder = new(DateTime.Now, endPrice: 0);
+
+
+	public bool FilterSubMenuShown { get; set; } = false;
+
+
+	// used for calling FilterOrders method on phoneNumber change
+	private string _filterPhone = "";
+	public string FilterPhoneNumber
+	{
+		get
+		{
+			return _filterPhone;
+		}
+
+		set
+		{
+			_filterPhone = value;
+			FilterOrdersByPhoneNumberInput(_filterPhone);
+		}
+	}
+
+
+	private static string _textcolorfilter = "text-light";
+
+	public string SortByIdIsActiveCss { get; set; } = _textcolorfilter;
+	public string SortByNameIsActiveCss { get; set; } = "";
+	public string SortBySumIsActiveCss { get; set; } = "";
+
+
+
+	/* Initializing method of the page */
+	protected override async Task OnInitializedAsync()
+	{
+		CandleNames = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
+
+		OrdersList = await orderHandler.GetAllOrdesListAsync("api/order");
+		OrdersList = OrdersList.OrderByDescending(o => o.Id);
+
+		OrdersExistMessage = OrdersList.Any() switch
+		{
+			true => "",
+			_ => "Сталась помилка або замовлення відсутні"
+		};
+
+		if(!OrdersList.Any())
+		{
+			return;
+		}
+
+		foreach (var o in OrdersList)
+		{
+			OrdersExpanded.Add(new OrderWithExpandedBool(o, false));
+			_cachedOrdersOnPageLoad.Add(new OrderWithExpandedBool(o, false));
+		}
+
+		int maxTotalSumOfOrders = (int)_cachedOrdersOnPageLoad.Max(o => o.OrderVM.TotalSum);
+		FilterOrder = new(endPrice: maxTotalSumOfOrders);
+	}
+
+	public string HexColorFromPaidOrderOption(bool isPaid) => isPaid ? "#C8E6C9" : "#FFCDD2";
+	public string SetFontColorImgCssClassIfOrderIsPaid(bool isPaid) => isPaid ? "text-success" : "text-danger";
+	public string SetArrowCssClassToOrder(bool isExpanded) => isExpanded ? "bi bi-caret-up" : "bi bi-caret-down";
+	public string SetAnimationCssClassForOrder(bool isExpanded) => isExpanded ? "show11" : "collapse11";
+	public string SetBorderCssToFullNameDiv(bool isExpanded) => isExpanded ? "" : "border border-top-0 border-start-0 border-end-0 border-dark";
+	public string SetFilterShowCss(bool expanded) => expanded ? "block" : "none";
+	public string SetFilterNameForId(bool Descending) => Descending ? "bi bi-sort-down" : "bi bi-sort-up";
+	public string SetFilterNameForName(bool Descending) => Descending ? "bi bi-sort-alpha-down" : "bi bi-sort-alpha-up";
+	public string SetFilterNameForSum(bool Descending) => Descending ? "bi bi-sort-numeric-down" : "bi bi-sort-numeric-up";
+
+	public string SetImageForPaymentType(int pType)
+	{
+		return pType switch
+		{
+			0 => "bi bi-cash-coin", // cash
+			1 => "bi bi-credit-card-fill", // card
+			2 => "bi bi-mailbox2", // zvorotnya dostavka
+			_ => "bi bi-cash-coin" // default cash
+		};
+	}
+
+	public async Task NavigateToOrder(int id)
+	{
+		await Task.Delay(100);
+		navManager.NavigateTo($"order/{id}");
+	}
+
+
+	// phone number in input changed
+	public void FilterOrdersByPhoneNumberInput(string phoneNumber)
+	{
+		FilterOrder.PhoneNumber = phoneNumber;
+		OrdersExpanded = FilterOrder.PerformSearch(_cachedOrdersOnPageLoad);
+	}
+
+	// reset filter button clicked
+	public void ResetFilter()
+	{
+		int maxTotalSumOfOrders = (int)_cachedOrdersOnPageLoad.Max(o => o.OrderVM.TotalSum);
+		FilterOrder.ResetFields(endPrice: maxTotalSumOfOrders);
+		OrdersExpanded = _cachedOrdersOnPageLoad;
+	}
+
+	// search button clicked
+	public void PerformSearch()
+	{
+		OrdersExpanded = FilterOrder.PerformSearch(_cachedOrdersOnPageLoad);
+	}
+
+	// sort button clicked
+	public void OrderByChoosenIdField(int orderByWhat)
+	{
+
+		// 0 - id
+		// 1 - name
+		// 2 - price
+
+		if (orderByWhat == 0)
+		{
+			DescendingOrderForId = !DescendingOrderForId;
+			SortByIdIsActiveCss = _textcolorfilter;
+			SortByNameIsActiveCss = "";
+			SortBySumIsActiveCss = "";
+
+			OrdersExpanded = DescendingOrderForId switch
+			{
+				true => OrdersExpanded.OrderByDescending(o => o.OrderVM.Id).ToList(),
+				false => OrdersExpanded.OrderBy(o => o.OrderVM.Id).ToList()
+			};
+		}
+		else if (orderByWhat == 1)
+		{
+			DescendingOrderForName = !DescendingOrderForName;
+			SortByIdIsActiveCss = "";
+			SortByNameIsActiveCss = _textcolorfilter;
+			SortBySumIsActiveCss = "";
+
+			OrdersExpanded = DescendingOrderForName switch
+			{
+				true => OrdersExpanded.OrderByDescending(o => o.OrderVM.Receiver.FullName).ToList(),
+				false => OrdersExpanded.OrderBy(o => o.OrderVM.Receiver.FullName).ToList()
+			};
+		}
+		else if (orderByWhat == 2)
+		{
+			DescendingOrderForSum = !DescendingOrderForSum;
+			SortByIdIsActiveCss = "";
+			SortByNameIsActiveCss = "";
+			SortBySumIsActiveCss = _textcolorfilter;
+
+			OrdersExpanded = DescendingOrderForSum switch
+			{
+				true => OrdersExpanded.OrderByDescending(o => o.OrderVM.TotalSum).ToList(),
+				false => OrdersExpanded.OrderBy(o => o.OrderVM.TotalSum).ToList()
+			};
+		}
+
+
+
+
+	}
+}

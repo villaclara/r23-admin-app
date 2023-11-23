@@ -3,11 +3,14 @@
 @inject OrderHandlerService orderHandler;
 @inject CandleHandlerService candleHandler;
 @inject ILogger<NewOrder> logger;
+@inject NavigationManager navManager;
+@layout OrdersLayout;
 
 
 <div>
 	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="order" Text="Всі замовлення" ButtonClass="btn-outline-dark"/>
 </div>
+
 
 <MessageResponseComponent MessageResponse="@MessageResponse"/>
 
@@ -21,8 +24,9 @@
 	<DataAnnotationsValidator />
 	<OrderAsInputFields OrderModel="OrderModel" Candles="Candles" CandlesOrdered="CandlesOrdered"/>
 	
-	<div class="container d-grid d-md-block p-3">
-		<button class="btn btn-success">Додати замовлення</button>
+	<div class="container d-grid d-md-block p-5">
+		<ButtonWithSpinnerAction ButtonCss="btn btn-success" ButtonText="Додати замовлення" IsButtonPressed=@IsAddButtonPressed />
+		@* <button class="btn btn-success">Додати замовлення</button> *@
 	</div>
 </EditForm>
 
@@ -39,6 +43,8 @@
 
 	public List<CandleOrdered> CandlesOrdered { get; set; } = new List<CandleOrdered>();
 
+	public bool IsAddButtonPressed { get; set; } = false;
+
 	protected override async Task OnInitializedAsync()
 	{
 		Candles = await candleHandler.GetAllCandlesListAsync("api/candle?view=full");
@@ -46,6 +52,8 @@
 
 	public async Task HandleValidSubmit()
 	{
+		IsAddButtonPressed = true;
+
 		// converting all ordered candles which has quantity more than 0 to the dictionary of OrderModel
 		foreach(var candle in CandlesOrdered)
 		{
@@ -62,12 +70,16 @@
 		if(result)
 		{
 			MessageResponse = "Замовлення додано.";
-			OrderModel = new();
+
+			await Task.Delay(1000);
+			navManager.NavigateTo("/order");
 		}
 		else
 		{
 			MessageResponse = "Помилка при додаванні замовлення. Спробуйте ще раз.";
 		}
+
+		IsAddButtonPressed = false;
 	}
 
 	public void HandleInvalidSubmit()

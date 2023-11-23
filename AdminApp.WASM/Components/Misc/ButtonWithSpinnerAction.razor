@@ -1,0 +1,18 @@
+﻿<button class="@ButtonCss">
+	<span class="@SetButtonCssSpinner(IsButtonPressed)" aria-hidden="true"></span>
+	<span>@ButtonText</span>
+</button>
+
+
+@code {
+	[Parameter]
+	public bool IsButtonPressed { get; set; } = false;
+
+	[Parameter]
+	public string ButtonText { get; set; } = "";
+
+	[Parameter]
+	public string ButtonCss { get; set; } = "";
+
+	public string SetButtonCssSpinner(bool isPressed) => isPressed ? "spinner-border spinner-border-sm" : "";
+}

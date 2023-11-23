@@ -30,6 +30,14 @@ namespace AdminApp.WASM.Models.FormModels
 
         public string? Comment { get; set; }
 
-        public string? Promocode { get; set; }
+		public bool IsPaid { get; set; }
+		public int PaymentType { get; set; }
+
+		public string? Promocode { get; set; }
     }
+
+	// PaymentType
+	// 0 - Cash
+	// 1 - Card
+	// 2 - Zvorotnya Dostavka
 }

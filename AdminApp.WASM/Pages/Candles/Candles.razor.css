@@ -1,0 +1,47 @@
+﻿
+html, body {
+    height: 100%;
+    background-color: #868f74;
+}
+
+h3 {
+    background-color: #f7ba8e;
+}
+
+.add-candle {
+   /* background-color: #c4bda7;
+    color: #000000;*/
+    background-color: #F9FFE7; 
+    color: #5F6451;
+   font-size: 1.2rem;
+}
+
+.lighter-back {
+    background-color: #919A7E;
+}
+
+.animate-display-to-down {
+    transition: ease 1s;
+}
+
+
+/* ANIMATION */
+/* HIDDEN - to not display from the top when moving */
+.wrapper {
+    overflow: hidden;
+}
+
+.expandable {
+    animation: display-down 0.3s ease;
+}
+
+@keyframes display-down {
+    0% {
+        margin-top: -100%;
+    }
+
+    100% {
+        margin-top: 0;
+    }
+
+}

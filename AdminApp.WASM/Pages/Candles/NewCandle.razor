@@ -1,5 +1,5 @@
 ﻿@page "/candle/new-candle"
-@layout CandlesLayout
+@layout CandlesLayout;
 @using AdminApp.WASM.Application.Utility;
 @using AdminApp.WASM.Models.ViewModels;
 @inject NavigationManager navmanager;
@@ -25,7 +25,11 @@
 		</CascadingValue>
 
 		<div class="container-fluid d-grid d-md-block p-5">
-			<button class="btn btn-lg btn-success rounded-1">Додати</button>
+			<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Додати" IsButtonPressed=@_isAddButtonPressed />
+			@* <button class="btn btn-lg btn-success rounded-1">
+				<span class="@SetAddButtonCssSpinner(_isAddButtonPressed)" aria-hidden="true"></span>
+				<span>Додати</span>
+			</button> *@
 		</div>
 	</EditForm>
 </div>
@@ -40,8 +44,14 @@
 
 	public string PossibleNewCategoryName { get; set; } = string.Empty;
 
+	// check if button is pressed
+	private bool _isAddButtonPressed = false;
+
 	public async Task HandleValidSubmit()
 	{
+		// to display spinner in button
+		_isAddButtonPressed = true;
+
 		// checking if the possible new category has any value
 		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
 		{
@@ -60,6 +70,9 @@
 		{
 			MessageResponse = "Не вдалось додати свічку";
 		}
+
+		// remove spinner in button
+		_isAddButtonPressed = false;
 	}
 
 	public void HandleInvalidSubmit()
@@ -76,5 +89,6 @@
 		CatNames.Add(Constants.NEW_CATEGORY_TO_ADD_OPTION);
 
 	}
+
 
 }

@@ -1,0 +1,205 @@
+﻿@page "/candle"
+@layout CandlesLayout;
+@inject HttpClient client;
+@inject NavigationManager navmanager;
+@inject CandleHandlerService candleHandler;
+
+<style>
+	.candle-item {
+		/* #868f74 */
+		border: 1px solid grey;
+		border-radius: 5px;
+		background-color: #5F6451;
+		color: #F9FFE7;
+	}
+</style>
+
+<span></span>
+<div class="container pb-5">
+
+	<div class="container">
+		<a href="/candle/new-candle" class="add-candle btn">
+			<span class="bi bi-patch-plus" aria-hidden="true"></span> Додати свічку
+		</a>
+	</div>
+
+
+
+
+	@if (CandlesExpanded is not null && CandlesExpanded.Any())
+	{
+		@* <div class="container-fluid">
+			<table class="table table-hover align-middle">
+				<thead>
+					<tr>
+						<th scope="col" class="col-2">Id</th>
+						<th scope="col" class="col-7">Назва </th>
+						<th scope="col" class="col-3"></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					@foreach (var can in CandlesExpanded)
+					{
+						<tr style="cursor:pointer" @onclick="() => can.Expanded = !can.Expanded">
+							<td class="col-2"> @can.CandleItem.Id </td>
+							<td class="col-7"> @can.CandleItem.Name </td>
+							<td class="col-3">
+								<div class="d-grid gap-2">
+								<button type="button" class="btn btn-secondary" @onclick="() => EditCandle(can.CandleItem.Id)">
+									<span class="oi oi-pencil" aria-hidden="true"></span>
+								</button>
+								</div>
+							</td>
+						</tr>
+						@if (can.Expanded)
+						{
+							<tr id="toexpand">
+								<td colspan="3" class="col-12 lighter-back">
+									<div class="wrapper">
+										<div class="expandable">
+											<CascadingValue Value="can.CandleItem">
+												<CandleFullInfoAsTable />
+											</CascadingValue>
+										</div>
+									</div>
+								</td>
+							</tr>
+						}
+					}
+				</tbody>
+
+			</table>
+		</div>
+ *@
+
+		<div class="container">
+		@foreach(var candle in CandlesExpanded.OrderBy(c => c.CandleItem.Name))
+		{
+			<div class="row border border-dark my-2 py-1 candle-item montserat">
+				<div class="col-3 my-auto">
+						<img src="@GetImgPathToCandleOrDefault(candle.CandleItem)" alt="" class="img-thumbnail" height="65" width="65" />
+				</div>
+
+
+					<div class="col-8">
+						<div class="row">
+							<div class="col">
+								<span class="fw-bolder" style="color: #FCFFF3">
+									@candle.CandleItem.Name
+								</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col small">
+
+								<span class="small play">&#8372 @candle.CandleItem.SellPrice.ToZeroNumbersAfterComma()</span>
+
+								@* <br/>
+								<span class="small">@candle.CandleItem.WaxNeededGram г.</span>
+								<span> --- </span>
+								<span class="small">@candle.CandleItem.WickDiameterCM ниток</span> *@
+							</div>
+
+						</div>
+
+
+						<div class="row">
+
+							<div class="col small">
+								<span class="small">@candle.CandleItem.WaxNeededGram г.</span>
+							</div>
+
+							<div class="col">
+								<span class="small">@candle.CandleItem.WickDiameterCM нит.</span>
+							</div>
+						</div>
+
+					</div>
+
+
+				<div class="col-1 my-auto ps-0">
+					<a href="/candle/@candle.CandleItem.Id" class="text-light">
+						<span class="bi bi-chevron-compact-right"></span>
+						</a>
+				</div>
+	
+				
+				
+
+				
+			</div>
+		}
+		</div>
+	}
+	else
+	{
+		<p> @MessageResponse </p>
+	}
+
+
+</div>
+
+
+@code {
+	private string path = $"api/Candle?view=full";
+
+	public string MessageResponse { get; set; } = "Loading...";
+
+	public IEnumerable<CandleFullVM>? CandleList { get; set; }
+
+	//public override async Task SetParametersAsync(ParameterView paramss)
+	//{
+	//	CandleList = await client.GetFromJsonAsync<IEnumerable<CandleBasicVM>>(path);
+	//}
+
+	public bool Expanded { get; set; } = false;
+
+	public string? expandedClass => Expanded ? "open" : null;
+
+	public ICollection<CandleWithExpanded> CandlesExpanded { get; set; } = new List<CandleWithExpanded>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		CandleList = await candleHandler.GetAllCandlesListAsync(path);
+
+		MessageResponse = CandleList.Any() switch
+		{
+			true => "",
+			_ => "Сталась помилка або свічок немає."
+		};
+
+		if(!CandleList.Any())
+		{
+			return;
+		}
+
+		foreach (var c in CandleList)
+		{
+			CandlesExpanded.Add(new CandleWithExpanded(c, false));
+		}
+
+	}
+
+	public void EditCandle(int candleId)
+	{
+		navmanager.NavigateTo($"candle/{candleId}");
+	}
+
+
+	public class CandleWithExpanded
+	{
+		public CandleFullVM CandleItem { get; set; }
+		public bool Expanded { get; set; } = false;
+
+		public CandleWithExpanded(CandleFullVM c, bool value)
+		{
+			CandleItem = c;
+			Expanded = value;
+		}
+	}
+
+
+	public string GetImgPathToCandleOrDefault(CandleFullVM candle) => candle.PhotoLink ?? @"/img/question_mark.png";
+}

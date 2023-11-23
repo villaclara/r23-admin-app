@@ -1,0 +1,270 @@
+﻿@page "/candle/{id:int}"
+@layout CandlesLayout;
+@using AdminApp.WASM.Application.Utility;
+@using AdminApp.WASM.Models.FormModels;
+@using AdminApp.WASM.Models.ViewModels;
+@using AdminApp.WASM.Components.Misc;
+@inject NavigationManager navmanager;
+@inject HttpClient hclient;
+@inject CandleHandlerService candleHandler;
+@inject CategoryHandlerService categoryService;
+
+<style>
+	.lightgreencolor {
+		background-color: lightgrey;
+	}
+</style>
+
+
+<div>
+	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+</div>
+
+<p>@MessageResponse</p>
+
+@if (_selectedCandle == default)
+{
+	<div class="container">
+		<p>Немає свічки з таким id.</p>
+	</div>
+}
+else if (_selectedCandle.Id == 0)
+{
+	<div class="container text-center pb-2" aria-hidden="true">
+			<div class="placeholder placeholder-wave lightgreencolor col-6" style="height: 40px">
+			
+			</div>
+	</div>
+
+	<div class="container" aria-hidden="true">
+		<div class="container">
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
+					Назва
+				</label>
+				<div class="placeholder placeholder-wave col-9 lightgreencolor">
+
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
+					Опис
+				</label>
+				<div class="placeholder placeholder-wave col-9 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-4 col-lg-2 col-form-label fs-5 fw-lighter">
+					Категорія
+				</label>
+				<div class="placeholder placeholder-wave col-8 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
+					Фото
+				</label>
+				<div class="placeholder placeholder-wave col-9 lightgreencolor">
+				</div>
+			</div>
+			
+
+			<hr class="hr-line" />
+
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Собівартість
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Ціна продажу
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+
+			<hr class="hr-line"/>
+
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Час горіння
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Висота
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Гніт діаметр
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="pb-2 row">
+				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+					Воску потрібно
+				</label>
+				<div class="placeholder placeholder-wave col-3 lightgreencolor">
+				</div>
+			</div>
+			<div class="p-2 row">
+
+			<a href="#" tabindex="-1" class="btn btn-success disabled placeholder col-4" aria-hidden="true"></a>
+			</div>
+
+		</div>
+	</div>
+}
+else
+{
+	<div class="container text-center">
+		<h3 class="display-4">
+			Свічка - @_selectedCandle?.Id
+		</h3>
+	</div>
+
+	<div class="container">
+
+	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+		<DataAnnotationsValidator />
+		<CascadingValue Value="NewCandleForm">
+			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
+		</CascadingValue>
+
+		<div class="container-fluid d-grid d-md-block">
+			@* <button class="btn btn-lg btn-success rounded-1">Зберегти</button> *@
+
+			<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Зберегти" IsButtonPressed=@IsEditButtonPressed />
+
+		</div>
+	</EditForm>
+
+	</div>
+	<hr />
+	<hr />
+	<div class="container">
+		@* <ButtonWithSpinnerAction ButtonCss="btn btn-danger btn-sm" ButtonText="Видалити" IsButtonPressed="@IsDeleteButtonPressed" @onclick="(() => DeleteCandle())"/> *@
+		<button type="button" class="btn btn-danger btn-sm" @onclick="(() => DeleteCandle())">
+			<span>Видалити</span>
+		</button>
+
+	</div>
+	
+}
+
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	public NewCandleFormModel NewCandleForm { get; set; } = new();
+
+	public string MessageResponse { get; set; } = "";
+
+	private CandleFullVM? _selectedCandle = new CandleFullVM() { Id = 0 };
+
+	public IEnumerable<CategoryVM> Categories { get; set; } = new List<CategoryVM>(10);
+	public List<string> CatNames { get; set; } = new List<string>();
+
+	public string PossibleNewCategoryName { get; set; } = string.Empty;
+
+	public bool IsEditButtonPressed { get; set; } = false;
+
+	public bool IsDeleteButtonPressed { get; set; } = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+
+
+		_selectedCandle = await candleHandler.GetCanldeAsync($"api/candle/cid={Id}?view=full");
+		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+		MessageResponse = "";
+
+
+		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
+		// Categories.Add(new CategoryVM { Name = "..." });
+
+		CatNames = Categories.Select(c => c.Name).ToList();
+		CatNames.Add(Constants.NEW_CATEGORY_TO_ADD_OPTION);
+	}
+
+
+	public async Task HandleValidSubmit()
+	{
+		IsEditButtonPressed = true;
+
+
+		// checking if the possible new category has any value
+		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
+		{
+			NewCandleForm.Category = PossibleNewCategoryName;
+		}
+
+		//_selectedCandle = CandleFormModel.ConvertToFullVM_FromFormModel();
+		//_selectedCandle = _selectedCandle?.UpdateValues_FromFormModel(CandleFormModel);
+
+		_selectedCandle.Name = NewCandleForm.Name;
+		_selectedCandle.Description = NewCandleForm.Description;
+		_selectedCandle.Category = NewCandleForm.Category;
+		_selectedCandle.PhotoLink = NewCandleForm.PhotoLink;
+		_selectedCandle.RealCost = NewCandleForm.RealCost ?? _selectedCandle.RealCost;
+		_selectedCandle.SellPrice = NewCandleForm.SellPrice ?? _selectedCandle.SellPrice;
+		_selectedCandle.HeightCM = NewCandleForm.HeightCM ?? _selectedCandle.HeightCM;
+		_selectedCandle.BurningTimeMins = NewCandleForm.BurningTimeMins ?? _selectedCandle.BurningTimeMins;
+		_selectedCandle.WickDiameterCM = NewCandleForm.WickDiameterCM ?? _selectedCandle.WickDiameterCM;
+		_selectedCandle.WaxNeededGram = NewCandleForm.WaxNeededGram ?? _selectedCandle.WaxNeededGram;
+
+
+		_selectedCandle.Id = Id;
+
+		var result = await candleHandler.UpdateCandleAsync($"api/candle/cid={Id}", _selectedCandle);
+		if (result)
+		{
+			MessageResponse = $"Свічка оновлена.";
+
+			//navmanager.NavigateTo("candle");
+		}
+		else
+		{
+			MessageResponse = $"Помилка при збереженні. Спробуйте ще раз.";
+		}
+
+		IsEditButtonPressed = false;
+	}
+
+	public void HandleInvalidSubmit()
+	{
+
+		MessageResponse = "Invalid submit.";
+	}
+
+	public async Task DeleteCandle()
+	{
+		IsDeleteButtonPressed = true;
+
+		var result = await candleHandler.DeleteCandleAsync($"api/candle/cid={Id}");
+		if (result)
+		{
+			MessageResponse = "Свічка видалена.";
+			NewCandleForm = new();
+		}
+		else
+		{
+			MessageResponse = "Помилка при видаленні свічки";
+		}
+
+		IsDeleteButtonPressed = false;
+	}
+
+}

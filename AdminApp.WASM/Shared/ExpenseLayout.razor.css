@@ -3,9 +3,9 @@
     display: flex;
     flex-direction: column;
     /* background-color: #e7d5c6; */
-    background-color: #C3A689;
+    background-color: #FFEBCC;
     min-height: 100vh;
-    color: white;
+    color: #005B4A;
 }
 
 
@@ -85,6 +85,3 @@ main {
         padding-right: 1.5rem !important;
     }
 }
-
-
-
