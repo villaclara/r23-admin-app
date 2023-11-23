@@ -42,6 +42,8 @@
 
 <div class="container">
 
+	<p>@NoExpensesMessage</p>
+
 @foreach (var month in MonthList)
 {
 
@@ -54,6 +56,7 @@
 			</span>
 		</div>
 	</div>
+
 
 	@foreach (var expense in Expenses.OrderByDescending(e => e.Date))
 	{
@@ -87,35 +90,7 @@
 		}
 	}
 
-	@* <table class="table">
-		<thead>
-			<tr class="border-top border-dark">
-				<th class="montserat border border-top-0 border-bottom-0 border-start-0 border-end-0"></th>
-				<th class="montserat border border-top-0 border-bottom-0 border-start-0 border-end-0" colspan="3">@CastMonthIdToUAMonthName(month.Month) @month.Year</th>
-			</tr>
-		</thead>
-		<tbody>
 
-
-			@foreach (var expense in Expenses.OrderByDescending(e => e.Date))
-			{
-				if (expense.Date.Month == month.Month)
-				{
-
-					<tr class="ubuntu border-bottom border-dark">
-						<td class="col-2 my-auto">@expense.Date.ToString("dd/MM")</td>
-						<td class="col-6 my-auto">@expense.Description</td>
-						<td class="col-3 my-auto">&#8372 @expense.Cost</td>
-						<td class="col-1 my-auto">
-							<button type="button" class="btn btn-sm" @onclick="() => DeleteExpense(expense)">
-								<span class="bi bi-trash3"></span>
-							</button>
-						</td>
-					</tr>
-				}
-			}
-		</tbody>
-	</table> *@
 
 }
 </div>
@@ -137,6 +112,8 @@
 
 	public string MessageResponse { get; set; } = "";
 
+	public string NoExpensesMessage { get; set; } = "";
+
 	public bool IsAddExpenseButtonPressed { get; set; } = false;
 
 	protected override async Task OnInitializedAsync()
@@ -145,6 +122,7 @@
 
 		if(!exps.Any())
 		{
+			NoExpensesMessage = "Сталась помилка або немає витрат.";
 			return;
 		}
 
@@ -168,9 +146,14 @@
 		var result = await expenseHandler.AddExpenseAsync(_url, expense);
 		if (result)
 		{
+			// updating list 
 			Expenses.Add(expense);
+			// getting only distinct months from all expenses and ordering by descending
+			MonthList = Expenses.Select(e => new DateOnly(e.Date.Year, e.Date.Month, 1)).Distinct().OrderDescending().ToList();
+			
 			NewExpenseForm = new() { Date = DateOnly.FromDateTime(DateTime.Now) };
 			MessageResponse = "";
+			NoExpensesMessage = "";
 		}
 		else
 		{

@@ -24,6 +24,8 @@
 			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
 		</CascadingValue>
 
+		<InputFile class="form-control" OnChange="LoadPhoto" />
+
 		<div class="container-fluid d-grid d-md-block p-5">
 			<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Додати" IsButtonPressed=@_isAddButtonPressed />
 			@* <button class="btn btn-lg btn-success rounded-1">
@@ -32,6 +34,8 @@
 			</button> *@
 		</div>
 	</EditForm>
+
+	<p>@_isLoaded</p>
 </div>
 
 @code {
@@ -47,6 +51,7 @@
 	// check if button is pressed
 	private bool _isAddButtonPressed = false;
 
+
 	public async Task HandleValidSubmit()
 	{
 		// to display spinner in button
@@ -57,7 +62,6 @@
 		{
 			NewCandleForm.Category = PossibleNewCategoryName;
 		}
-
 
 		CandleFullVM candleToAdd = NewCandleForm.ConvertToFullVM_FromFormModel();
 
@@ -90,5 +94,27 @@
 
 	}
 
+	private bool _isLoaded = false;
 
+	private async Task LoadPhoto(InputFileChangeEventArgs e)
+	{
+		try
+		{
+			var name = DateTime.Now.ToString("HHmmssddMMyyyy");
+
+			var path = Path.Combine("/img", name, ".jpg");
+			await using FileStream fs = new(path, FileMode.Create);
+			var	browserfile = e.File;
+
+			await browserfile.OpenReadStream(browserfile.Size).CopyToAsync(fs);
+			_isLoaded = true;
+
+			NewCandleForm.PhotoLink = path;
+		}
+		catch (Exception)
+		{
+			_isLoaded = false;
+			NewCandleForm.PhotoLink = default;
+		}
+	}
 }
