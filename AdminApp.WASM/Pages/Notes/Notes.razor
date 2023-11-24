@@ -48,7 +48,7 @@
 		<div class="d-grid">
 			<a class="text-start btn border border-dark bg-section" @onclick="(e) => ChangeSectionOpened(e, true)">
 				<span class="@SetIconIsOpened(FirstSectionOpened)"></span>
-				Дата
+				<span>Дата</span>
 			</a>
 		</div>
 	</div>
@@ -121,7 +121,7 @@
 		<div class="d-grid">
 			<button class="text-start btn border border-dark  bg-section" @onclick="(e) => ChangeSectionOpened(e, false)">
 				<span class="@SetIconIsOpened(SecondSectionOpened)"></span>
-				Всі записи
+				Список справ
 			</button>
 		</div>
 	</div>
@@ -170,7 +170,7 @@
 		<div class="d-grid">
 			<button type="button" class="text-start btn border border-dark  bg-section" @onclick="() => OpenThirdArchiveSection()">
 				<span class="@SetIconIsOpened(ThirdSectionOpened)"></span>
-				Архів
+				Виконані
 			</button>
 		</div>
 	</div>
