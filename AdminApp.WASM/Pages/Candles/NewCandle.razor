@@ -36,6 +36,7 @@
 	</EditForm>
 
 	<p>@_isLoaded</p>
+	<img src="@IMG" height="50" width="50"/>
 </div>
 
 @code {
@@ -96,23 +97,56 @@
 
 	private bool _isLoaded = false;
 
+	public string IMG { get; set; }
+
 	private async Task LoadPhoto(InputFileChangeEventArgs e)
 	{
 		try
 		{
-			var name = DateTime.Now.ToString("HHmmssddMMyyyy");
+			//var dir = Directory.GetCurrentDirectory();
+			//var name = DateTime.Now.ToString("HHmmssddMMyyyy") + ".png";
 
-			var path = Path.Combine("/img", name, ".jpg");
-			await using FileStream fs = new(path, FileMode.Create);
+			//var path = Path.Combine("wwwroot/img", name);
+			//await using FileStream fs = new(path, FileMode.Create);
+
+
+
+			// retrieving the file uploaded
 			var	browserfile = e.File;
 
-			await browserfile.OpenReadStream(browserfile.Size).CopyToAsync(fs);
+			using MemoryStream ms = new();
+			await browserfile.OpenReadStream(browserfile.Size).CopyToAsync(ms);
+
+			// converting image to byte array
+			byte[] imgBuffer = ms.ToArray();
+
+
+
+			//await browserfile.OpenReadStream(browserfile.Size).CopyToAsync(fs);
+
+
+			// convetring to base64 to display
+			var temp = Convert.ToBase64String(imgBuffer);
+			IMG = string.Format("data:image/jpeg;base64,{0}", temp);
 			_isLoaded = true;
 
-			NewCandleForm.PhotoLink = path;
-		}
-		catch (Exception)
+			//NewCandleForm.PhotoLink = path;
+
+
+
+			using var content = new MultipartFormDataContent();
+			var fileContent = new StreamContent(browserfile.OpenReadStream(browserfile.Size));
+			fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(browserfile.ContentType);
+			
+			// RETURNS BAD REQUEST DONT KNOW WHY
+			content.Add(content: fileContent);
+			var result = await hclient.PostAsync($"api/candle/upload?candleId=8004", content);
+			var b = result.Content;
+
+	}
+		catch (Exception ex)
 		{
+			var msg = ex.Message;
 			_isLoaded = false;
 			NewCandleForm.PhotoLink = default;
 		}
