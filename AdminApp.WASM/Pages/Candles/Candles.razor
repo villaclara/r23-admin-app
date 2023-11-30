@@ -12,6 +12,12 @@
 		background-color: #5F6451;
 		color: #F9FFE7;
 	}
+
+	.img-candleslist {
+		width: 65px;
+		height: 65px;
+		/* object-fit: contain; */
+	}
 </style>
 
 <span></span>
@@ -78,7 +84,7 @@
 		{
 			<div class="row border border-dark my-2 py-1 candle-item montserat">
 				<div class="col-3 my-auto">
-						<img src="@GetImgPathToCandleOrDefault(candle.CandleItem)" alt="" class="img-thumbnail" height="65" width="65" />
+						<img src="@candle.ImgSrc" alt="" class="rounded img-candleslist" />
 				</div>
 
 
@@ -177,7 +183,17 @@
 
 		foreach (var c in CandleList)
 		{
-			CandlesExpanded.Add(new CandleWithExpanded(c, false));
+			var response = await client.GetAsync(@$"api/candle/imgForId={c.Id}");
+			var imgstr = await response.Content.ReadAsStringAsync();
+
+			var str = string.Format("data:image/jpeg;base64,{0}", imgstr);
+
+			if (string.IsNullOrEmpty(imgstr))
+			{
+				str = "img/question_mark.png";
+			}
+
+			CandlesExpanded.Add(new CandleWithExpanded(c, false, str));
 		}
 
 	}
@@ -193,13 +209,29 @@
 		public CandleFullVM CandleItem { get; set; }
 		public bool Expanded { get; set; } = false;
 
-		public CandleWithExpanded(CandleFullVM c, bool value)
+		public string ImgSrc { get; set; } = "img/question_mark.png";
+
+		public CandleWithExpanded(CandleFullVM c, bool value, string imgsrc)
 		{
 			CandleItem = c;
 			Expanded = value;
+			ImgSrc = imgsrc;
 		}
 	}
 
 
-	public string GetImgPathToCandleOrDefault(CandleFullVM candle) => candle.PhotoLink ?? @"/img/question_mark.png";
+	public async Task<string> GetImgPathToCandleOrDefault(CandleFullVM candle)
+	{
+		var response = await client.GetStringAsync(@$"api/candle/imgForId={candle.Id}");
+		//var imgString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+		var str = string.Format("data:image/jpeg;base64,{0}", response);
+
+		if(string.IsNullOrEmpty(str))
+		{
+			return "img/question_mark.png";
+		}
+
+		return str;
+	}
 }

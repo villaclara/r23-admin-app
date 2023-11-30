@@ -53,6 +53,8 @@ builder.Services.AddScoped<NoteHandlerService>();
 builder.Services.AddScoped<ICRUDService<ExpenseVM>, CRUDService<ExpenseVM>>();
 builder.Services.AddScoped<ExpenseHandlerService>();
 
+builder.Services.AddScoped<IImageUploader, MultipartDataContent_ImageUploader>();
+
 
 var app = builder.Build();
 
