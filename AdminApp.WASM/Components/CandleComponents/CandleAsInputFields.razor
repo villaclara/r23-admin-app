@@ -9,8 +9,8 @@
 	}
 </style>
 
-<div class="container">
-	<div class="pb-2 row">
+<div class="">
+	<div class="pb-2 row mx-0">
 		<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
 			Назва
 		</label>
@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-	<div class="pb-2 row">
+	<div class="row pb-2 mx-auto">
 		<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
 			Опис
 		</label>
@@ -62,20 +62,11 @@
 		}
 	</div>
 
-	<div class="pb-2 row">
-		<label class="form-label col-3 col-lg-2 col-form-label fs-5 fw-lighter">
-			Фото
-		</label>
-		<div class="col-9 col-lg-6">
-			<!-- until photo is not supported, later change-->
-			<InputText @bind-Value="NewCandleForm.PhotoLink" class="form-control" placeholder="поки недоступно" readonly />
-			<ValidationMessage For="() => NewCandleForm.PhotoLink" />
-		</div>
-	</div>
+	@* <hr class="hr-line" /> *@
 
-	<hr class="hr-line" />
+	<div class="container rounded border border-dark my-1">
 
-	<div class="pb-2 row input-group">
+	<div class="pb-2 mt-2 mx-auto row input-group">
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Собівартість
 		</label>
@@ -88,7 +79,7 @@
 		<ValidationMessage For="() => NewCandleForm.RealCost" />
 	</div>
 
-	<div class="pb-2 row input-group">
+	<div class="pb-2 mx-auto row input-group">
 		<label class="form-label col-5 col-lg-2 col-form-label pe-0 me-0 fw-lighter">
 			Ціна продажу
 		</label>
@@ -101,8 +92,10 @@
 		<ValidationMessage For="() => NewCandleForm.SellPrice" />
 	</div>
 
-	<hr class="hr-line" />
+</div>
 
+	@* <hr class="hr-line" /> *@
+@* 
 	<div class="pb-2 row input-group">
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
 			Час горіння
@@ -157,6 +150,58 @@
 		<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
 
 	</div>
+
+ *@
+
+
+ <div class="container rounded border border-dark">
+
+	<div class="pb-0 mt-2 mx-auto row input-group ubuntu" style="font-size: 14px; font-weight: bold;">
+		<div class="col-6 ps-0">
+			<label class="form-label mb-0"> Час горіння </label>
+		</div>
+		<div class="col-6 ps-0">
+			<label class="form-label mb-0"> Висота </label>
+		</div>
+	</div>
+
+	<div class="pb-2 mx-auto row input-group ubuntu">
+			
+		<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center" />
+		<span class="input-group-text col-2" style="font-size: 14px;">
+			хв.
+		</span>
+			
+		<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
+		<span class="input-group-text col-2" style="font-size: 14px;">
+			см.
+		</span>
+	</div>
+
+	<div class="pb-0 mx-auto row input-group ubuntu" style="font-size: 14px; font-weight: bold;">
+		<div class="col-6 ps-0">
+			<label class="form-label mb-0"> Діаметр гноту </label>
+		</div>
+		<div class="col-6 ps-0">
+			<label class="form-label mb-0"> Воску треба </label>
+		</div>
+	</div>
+
+	<div class="pb-2 mx-auto row input-group ubuntu" >
+
+		<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
+		<span class="input-group-text col-2 ps-1" style="font-size: 14px;">
+			ниток
+		</span>
+
+		<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
+		<span class="input-group-text col-2" style="font-size: 14px;">
+			грам
+		</span>
+	</div>
+ </div>
+
+
 </div>
 
 @code {
@@ -175,6 +220,10 @@
 	[Parameter]
 	public EventCallback<string> NewCategoryToAddChanged { get; set; }
 
+	protected override void OnParametersSet()
+	{
+		NewCandleForm.Category = Categories.FirstOrDefault() ?? Constants.NEW_CATEGORY_TO_ADD_OPTION;
+	}
 	// On Focus Out from NewCategoryToAdd input field we notify the Parent that string has changed so the parent knows the string
 	public void FocusOutFromNewCategoryInput()
 	{

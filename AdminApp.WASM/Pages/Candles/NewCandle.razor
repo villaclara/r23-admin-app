@@ -6,36 +6,88 @@
 @inject HttpClient hclient;
 @inject CandleHandlerService candleInteractor;
 @inject CategoryHandlerService categoryService;
+@inject IImageUploader imageUploadService;
 
-<div>
-	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Всі свічки" />
+<style>
+	.hide {
+		display: none;
+	}
+
+	.show {
+		display: block;
+	}
+
+	.inputfile {
+		width: 0.1px;
+		height: 0.1px;
+		overflow: hidden;
+		opacity: 0;
+		position: absolute;
+	}
+</style>
+
+<div class="pb-2">
+
+	<div class="row">
+		<div class="col-8">
+			
+			<div class="row">
+				<div class="col">
+					<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Всі свічки" />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<h3 class="display-4">Нова Свічка</h3>
+
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col ps-3">
+					<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile" />
+					@* <label for="inputfile">labelforinput</label> *@
+				</div>
+			</div>
+		</div>
+		<div class="col-4 my-auto">
+			<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="85" width="85" />
+		</div>
+	</div>
+
+	@* <MessageResponseComponent MessageResponse="@MessageResponse" /> *@
+
+@* 	<div class="row overflow-visible">
+		<div class="col">
+		</div>
+	</div> *@
 </div>
 
-<MessageResponseComponent MessageResponse="@MessageResponse" />
-
 <div class="container">
-	<h3 class="display-4">Нова Свічка</h3>
-</div>
+		
 
-<div class="container">
+		<div class="row">
+			<div class="col">
+
 	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
 		<DataAnnotationsValidator />
 		<CascadingValue Value="NewCandleForm">
 			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
 		</CascadingValue>
 
-		<InputFile class="form-control" OnChange="LoadPhoto" />
-
+		<p> @MessageResponse </p>
 		<div class="container-fluid d-grid d-md-block p-5">
-			<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Додати" IsButtonPressed=@_isAddButtonPressed />
+					<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Додати" IsButtonPressed="@_isAddButtonPressed" />
 			@* <button class="btn btn-lg btn-success rounded-1">
-				<span class="@SetAddButtonCssSpinner(_isAddButtonPressed)" aria-hidden="true"></span>
-				<span>Додати</span>
+			<span class="@SetAddButtonCssSpinner(_isAddButtonPressed)" aria-hidden="true"></span>
+			<span>Додати</span>
 			</button> *@
 		</div>
 	</EditForm>
+			</div>
+		</div>
 
-	<p>@_isLoaded</p>
 </div>
 
 @code {
@@ -51,38 +103,9 @@
 	// check if button is pressed
 	private bool _isAddButtonPressed = false;
 
+	private IBrowserFile? _browserFile;
 
-	public async Task HandleValidSubmit()
-	{
-		// to display spinner in button
-		_isAddButtonPressed = true;
-
-		// checking if the possible new category has any value
-		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
-		{
-			NewCandleForm.Category = PossibleNewCategoryName;
-		}
-
-		CandleFullVM candleToAdd = NewCandleForm.ConvertToFullVM_FromFormModel();
-
-		var result = await candleInteractor.CreateCandleAsync("api/candle", candleToAdd);
-		if (result)
-		{
-			MessageResponse = "Свічка успішно додана.";
-		}
-		else
-		{
-			MessageResponse = "Не вдалось додати свічку";
-		}
-
-		// remove spinner in button
-		_isAddButtonPressed = false;
-	}
-
-	public void HandleInvalidSubmit()
-	{
-		MessageResponse = "Invalid entry";
-	}
+	private string SetCssImageIfIsLoaded(string img) => string.IsNullOrEmpty(img) ? "hide" : "show";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -94,27 +117,106 @@
 
 	}
 
+
+	public async Task HandleValidSubmit()
+	{
+		// to display spinner in button
+		_isAddButtonPressed = true;
+		// checking if the possible new category has any value
+		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
+		{
+			NewCandleForm.Category = PossibleNewCategoryName;
+		}
+
+		CandleFullVM candleToAdd = NewCandleForm.ConvertToFullVM_FromFormModel();
+
+		var result = await candleInteractor.CreateCandleAsync("api/candle", candleToAdd);
+
+		// remove spinner in button
+		_isAddButtonPressed = false;
+
+
+		if (!result)
+		{
+			MessageResponse = "Не вдалось додати свічку";
+			return;
+		}
+
+		// get candle item to retrieve the ID for photo
+		var candle = await candleInteractor.GetCanldeAsync($"api/candle/cname={candleToAdd.Name}?view=full");
+
+		if (candle is null)
+		{
+			MessageResponse = "Не вдалось додати свічку";
+			return;
+		}
+
+		// try to upload image to candle
+		var id = candle.Id;
+		var r = await imageUploadService.UploadImageToCandleByIdAsync(id, _browserFile);
+
+		
+		MessageResponse = r switch
+		{
+			true => "Свічка успішно додана.",
+			false => "Не вдалось додати свічку"
+		};
+
+	}
+
+	public void HandleInvalidSubmit()
+	{
+		MessageResponse = "Invalid entry";
+	}
+
+
 	private bool _isLoaded = false;
 
-	private async Task LoadPhoto(InputFileChangeEventArgs e)
+	public string IMG { get; set; } = "";
+
+	private async Task LoadPhotoToVariable(InputFileChangeEventArgs e)
+	{
+		// retrieving the file uploaded
+		_browserFile = e.File;
+
+		using MemoryStream ms = new();
+		await _browserFile.OpenReadStream(_browserFile.Size).CopyToAsync(ms);
+
+		// converting image to byte array
+		byte[] imgBuffer = ms.ToArray();
+
+		// convetring to base64 to display
+		var temp = Convert.ToBase64String(imgBuffer);
+		IMG = string.Format($"data:image/jpeg;base64,{temp}");
+
+	}
+
+
+	private async Task<bool> UploadPhotoToNewlyAddedCandle(int candleId)
 	{
 		try
 		{
-			var name = DateTime.Now.ToString("HHmmssddMMyyyy");
 
-			var path = Path.Combine("/img", name, ".jpg");
-			await using FileStream fs = new(path, FileMode.Create);
-			var	browserfile = e.File;
+			// SENDING IMAGE TO WEB API TO SAVE ON SERVER
+			// candleId = should be actual candle id
+			using var content = new MultipartFormDataContent();
+			var fileContent = new StreamContent(_browserFile!.OpenReadStream(_browserFile!.Size));
+			fileContent.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
 
-			await browserfile.OpenReadStream(browserfile.Size).CopyToAsync(fs);
-			_isLoaded = true;
+			content.Add(content: fileContent, name: "file", _browserFile.Name);
+			var result = await hclient.PostAsync($"api/candle/upload?candleId={candleId}", content);
+			if (!result.IsSuccessStatusCode)
+			{
+				throw new Exception();
+			}
 
-			NewCandleForm.PhotoLink = path;
+			return true;
 		}
-		catch (Exception)
+
+		catch(Exception)
 		{
-			_isLoaded = false;
-			NewCandleForm.PhotoLink = default;
+			return false;
 		}
 	}
+
 }

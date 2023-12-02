@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AdminApp.WASM.Application.Utility;
+using System.ComponentModel.DataAnnotations;
 
 namespace AdminApp.WASM.Models.FormModels
 {

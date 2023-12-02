@@ -17,8 +17,8 @@ builder.Services.AddScoped(delegate (IServiceProvider sp)
 {
 	return new HttpClient
 	{
-		//BaseAddress = new Uri("http://localhost:5117/")
-		BaseAddress = new Uri("https://testroad.bsite.net/")
+		BaseAddress = new Uri("http://localhost:5117/")
+		//BaseAddress = new Uri("https://testroad.bsite.net/")
 		//BaseAddress = new Uri("https://2eb9-217-196-161-189.ngrok-free.app")
 	};
 });
@@ -52,6 +52,8 @@ builder.Services.AddScoped<NoteHandlerService>();
 
 builder.Services.AddScoped<ICRUDService<ExpenseVM>, CRUDService<ExpenseVM>>();
 builder.Services.AddScoped<ExpenseHandlerService>();
+
+builder.Services.AddScoped<IImageUploader, MultipartDataContent_ImageUploader>();
 
 
 var app = builder.Build();
