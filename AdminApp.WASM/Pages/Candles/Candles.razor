@@ -29,11 +29,27 @@
 		</a>
 	</div>
 
-
-
-
-	@if (CandlesExpanded is not null && CandlesExpanded.Any())
+	@if(CandlesExpanded is null)
 	{
+		<div class="container">
+
+			<AdminApp.WASM.Components.Placeholders.CandleItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.CandleItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.CandleItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.CandleItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.CandleItemListPlaceholder />
+
+		</div>
+	}
+
+	else if (!CandlesExpanded.Any())
+	{
+		<p> @MessageResponse </p>
+	}
+
+	else
+	{
+		
 		@* <div class="container-fluid">
 			<table class="table table-hover align-middle">
 				<thead>
@@ -139,10 +155,6 @@
 		}
 		</div>
 	}
-	else
-	{
-		<p> @MessageResponse </p>
-	}
 
 
 </div>
@@ -164,7 +176,7 @@
 
 	public string? expandedClass => Expanded ? "open" : null;
 
-	public ICollection<CandleWithExpanded> CandlesExpanded { get; set; } = new List<CandleWithExpanded>();
+	public ICollection<CandleWithExpanded>? CandlesExpanded { get; set; } = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -176,6 +188,8 @@
 			_ => "Сталась помилка або свічок немає."
 		};
 
+		CandlesExpanded = new List<CandleWithExpanded>();
+		
 		if(!CandleList.Any())
 		{
 			return;
