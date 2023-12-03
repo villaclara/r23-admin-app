@@ -16,201 +16,205 @@
 
 <div class="montserat">
 
+
+	<!-- MAIN SECTION - NAME, DESCRIPTION, CATEGORY -->
 	<div class="container p-1 rounded py-1 my-1 shadow-sm one-section-candle-option">
-
-
-	<div class="pb-2 row mx-auto mt-2">
-		<label class="form-label col-3 col-lg-2 col-form-label fs-5">
-			Назва
-		</label>
-		<div class="col-9 col-lg-6">
-			<InputText @bind-Value="NewCandleForm.Name" class="form-control" />
-			<ValidationMessage For="() => NewCandleForm.Name" />
-		</div>
-	</div>
-
-	<div class="row pb-2 mx-auto">
-		<label class="form-label col-3 col-lg-2 col-form-label fs-5">
-			Опис
-		</label>
-		<div class="col-9 col-lg-6">
-			<InputText @bind-Value="NewCandleForm.Description" class="form-control" />
-			<ValidationMessage For="() => NewCandleForm.Description" />
-		</div>
-	</div>
-
-	<div class="pb-2 row mx-auto">
-		<label class="form-label col-4 col-lg-2 col-form-label fs-5">
-			Категорія
-		</label>
-		<div class="col-8 col-lg-6">
-			<!-- display all categories as select list.
-				also last should be "..." which means new category will be added
-			-->
-			<InputSelect @bind-Value="NewCandleForm.Category" class="form-select">
-				@if (Categories.Any())
-				{
-					@foreach (var cat in Categories)
-					{
-						<option value="@cat">@cat</option>
-					}
-				}
-			</InputSelect>
-			<ValidationMessage For="() => NewCandleForm.Category" />
-		</div>
-
-		<!-- If user wants to add new category we use NewCategoryToAdd string field to save new cateogry name -->
-		@if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION)
-		{
-			<label class="form-label col-5 col-lg-2 col-form-label fw-lighter" style="font-size: 18px;">
-				Введи нову:
+		<div class="pb-2 row mx-auto mt-2">
+			<label class="form-label col-3 col-lg-2 col-form-label fs-5">
+				Назва
 			</label>
-			<div class="col-7 col-lg-6">
-				<InputText @bind-Value="NewCategoryToAdd" class="form-control" @onfocusout="FocusOutFromNewCategoryInput" />
+			<div class="col-9 col-lg-6">
+				<InputText @bind-Value="NewCandleForm.Name" class="form-control" />
+				<ValidationMessage For="() => NewCandleForm.Name" />
 			</div>
-		}
-	</div>
-
-	</div>
-
-	@* <hr class="hr-line" /> *@
-
-	<div class="container rounded py-1 my-1 one-section-candle-option">
-
-	<div class="pb-2 mt-2 mx-auto row input-group">
-		<label class="form-label col-5 col-lg-2 col-form-label">
-			Собівартість
-		</label>
-		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control text-center" step="1"/>
 		</div>
-		<label class="col-1 col-form-label-sm px-0 fw-lighter">
-			грн.
-		</label>
-		<ValidationMessage For="() => NewCandleForm.RealCost" />
-	</div>
 
-	<div class="pb-2 mx-auto row input-group">
-		<label class="form-label col-5 col-lg-2 col-form-label pe-0 me-0">
-			Ціна продажу
-		</label>
-		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control text-center" />
-		</div>
-		<label class="col-1 col-form-label-sm px-0 fw-lighter">
-			грн.
-		</label>
-		<ValidationMessage For="() => NewCandleForm.SellPrice" />
-	</div>
-
-</div>
-
-	@* <hr class="hr-line" /> *@
-@* 
-	<div class="pb-2 row input-group">
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
-			Час горіння
-		</label>
-		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center" />
-		</div>
-		<label class="col-1 col-form-label-sm px-0 fw-lighter">
-			хв.
-		</label>
-		<ValidationMessage For="() => NewCandleForm.BurningTimeMins" />
-	</div>
-
-	<div class="pb-2 row input-group">
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
-			Висота
-		</label>
-		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
-		</div>
-		<label class="col-1 col-form-label-sm px-0 fw-lighter">
-			см.
-		</label>
-		<ValidationMessage For="() => NewCandleForm.HeightCM" />
-	</div>
-
-	<div class="pb-2 row input-group">
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
-			Гніт діаметр
-		</label>
-		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
-		</div>
-		<div class="col-1 px-0">
-			<label class="col-1 col-form-label-sm px-0 mx-0 fw-lighter">
-				ниток
+		<div class="row pb-2 mx-auto">
+			<label class="form-label col-3 col-lg-2 col-form-label fs-5">
+				Опис
 			</label>
+			<div class="col-9 col-lg-6">
+				<InputText @bind-Value="NewCandleForm.Description" class="form-control" />
+				<ValidationMessage For="() => NewCandleForm.Description" />
+			</div>
 		</div>
-		<ValidationMessage For="() => NewCandleForm.WickDiameterCM" />
+
+		<div class="pb-2 row mx-auto">
+			<label class="form-label col-4 col-lg-2 col-form-label fs-5">
+				Категорія
+			</label>
+			<div class="col-8 col-lg-6">
+				<!-- display all categories as select list.
+					also last should be "..." which means new category will be added
+				-->
+				<InputSelect @bind-Value="NewCandleForm.Category" class="form-select">
+					@if (Categories.Any())
+					{
+						@foreach (var cat in Categories)
+						{
+							<option value="@cat">@cat</option>
+						}
+					}
+				</InputSelect>
+				<ValidationMessage For="() => NewCandleForm.Category" />
+			</div>
+
+			<!-- If user wants to add new category we use NewCategoryToAdd string field to save new cateogry name -->
+			@if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION)
+			{
+				<label class="form-label col-5 col-lg-2 col-form-label fw-lighter" style="font-size: 18px;">
+					Введи нову:
+				</label>
+				<div class="col-7 col-lg-6">
+					<InputText @bind-Value="NewCategoryToAdd" class="form-control" @onfocusout="FocusOutFromNewCategoryInput" />
+				</div>
+			}
+		</div>
+
+	</div>
+
+	@* <hr class="hr-line" /> *@
+
+
+	<!-- PRICE SECTION -->
+	<div class="container rounded py-1 my-1 one-section-candle-option">
+		
+		<div class="pb-2 mt-2 mx-auto row input-group">
+			<label class="form-label col-5 col-lg-2 col-form-label">
+				Собівартість
+			</label>
+			<div class="col-3 col-lg-1">
+				<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control text-center" step="1" />
+			</div>
+			<label class="col-1 col-form-label-sm px-0 fw-lighter">
+				грн.
+			</label>
+			<ValidationMessage For="() => NewCandleForm.RealCost" />
+		</div>
+
+		<div class="pb-2 mx-auto row input-group">
+			<label class="form-label col-5 col-lg-2 col-form-label pe-0 me-0">
+				Ціна продажу
+			</label>
+			<div class="col-3 col-lg-1">
+				<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control text-center" />
+			</div>
+			<label class="col-1 col-form-label-sm px-0 fw-lighter">
+				грн.
+			</label>
+			<ValidationMessage For="() => NewCandleForm.SellPrice" />
+		</div>
+
+	</div>
+
+	@* <hr class="hr-line" /> *@
+	@*
+	<div class="pb-2 row input-group">
+	<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+	Час горіння
+	</label>
+	<div class="col-3 col-lg-1">
+	<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center" />
+	</div>
+	<label class="col-1 col-form-label-sm px-0 fw-lighter">
+	хв.
+	</label>
+	<ValidationMessage For="() => NewCandleForm.BurningTimeMins" />
 	</div>
 
 	<div class="pb-2 row input-group">
-		<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
-			Воску потрібно
-		</label>
-		<div class="col-3 col-lg-1">
-			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
-		</div>
-		<label class="col-1 col-form-label-sm px-0 fw-lighter">
-			г.
-		</label>
-		<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
+	<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+	Висота
+	</label>
+	<div class="col-3 col-lg-1">
+	<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
+	</div>
+	<label class="col-1 col-form-label-sm px-0 fw-lighter">
+	см.
+	</label>
+	<ValidationMessage For="() => NewCandleForm.HeightCM" />
+	</div>
+
+	<div class="pb-2 row input-group">
+	<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+	Гніт діаметр
+	</label>
+	<div class="col-3 col-lg-1">
+	<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
+	</div>
+	<div class="col-1 px-0">
+	<label class="col-1 col-form-label-sm px-0 mx-0 fw-lighter">
+	ниток
+	</label>
+	</div>
+	<ValidationMessage For="() => NewCandleForm.WickDiameterCM" />
+	</div>
+
+	<div class="pb-2 row input-group">
+	<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
+	Воску потрібно
+	</label>
+	<div class="col-3 col-lg-1">
+	<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
+	</div>
+	<label class="col-1 col-form-label-sm px-0 fw-lighter">
+	г.
+	</label>
+	<ValidationMessage For="() => NewCandleForm.WaxNeededGram" />
 
 	</div>
 
- *@
+	*@
 
 
+	<!-- INGREDIENTS SECTION -->
 	<div class="container rounded py-1 my-1 one-section-candle-option">
 
-	<div class="pb-0 mt-2 mx-auto row input-group" style="font-size: 14px;">
-		<div class="col-6 ps-0">
-			<label class="form-label mb-0"> Час горіння </label>
+		<div class="pb-0 mt-2 mx-auto row input-group">
+			<div class="col-6 ps-0">
+				<label class="form-label mb-0"> Час горіння </label>
+			</div>
+			<div class="col-6 ps-0">
+				<label class="form-label mb-0"> Висота </label>
+			</div>
 		</div>
-		<div class="col-6 ps-0">
-			<label class="form-label mb-0"> Висота </label>
+
+		<div class="pb-2 mx-auto row input-group">
+
+			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center"/>
+			@* <input type="number" value="@NewCandleForm.BurningTimeMins" class="form-control text-center" /> *@
+			<span class="input-group-text col-2 ps-1">
+				хв.
+			</span>
+
+			<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
+			<span class="input-group-text col-2 ps-1">
+				см.
+			</span>
+		</div>
+
+		<div class="pb-0 mx-auto row input-group">
+			<div class="col-6 ps-0">
+				<label class="form-label mb-0"> Діаметр гноту </label>
+			</div>
+			<div class="col-6 ps-0">
+				<label class="form-label mb-0"> Воску треба </label>
+			</div>
+		</div>
+
+		<div class="pb-2 mx-auto row input-group">
+
+			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
+			<span class="input-group-text col-2 ps-1">
+				ниток
+			</span>
+
+			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
+			<span class="input-group-text col-2 ps-1">
+				грам
+			</span>
 		</div>
 	</div>
-
-	<div class="pb-2 mx-auto row input-group">
-			
-		<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center" />
-		<span class="input-group-text col-2 ps-1" style="font-size: 14px;">
-			хв.
-		</span>
-			
-		<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
-		<span class="input-group-text col-2 ps-1" style="font-size: 14px;">
-			см.
-		</span>
-	</div>
-
-	<div class="pb-0 mx-auto row input-group" style="font-size: 14px;">
-		<div class="col-6 ps-0">
-			<label class="form-label mb-0"> Діаметр гноту </label>
-		</div>
-		<div class="col-6 ps-0">
-			<label class="form-label mb-0"> Воску треба </label>
-		</div>
-	</div>
-
-	<div class="pb-2 mx-auto row input-group" >
-
-		<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
-		<span class="input-group-text col-2 ps-1" style="font-size: 14px;">
-			ниток
-		</span>
-
-		<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
-		<span class="input-group-text col-2 ps-1" style="font-size: 14px;">
-			грам
-		</span>
-	</div>
- </div>
 
 
 </div>

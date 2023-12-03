@@ -63,7 +63,31 @@ html, body {
    
 }
 
+/*@media (max-width: 640.98px) {
 
+    select,
+    textarea,
+    input[type='text']:focus,
+    input[type='number']:focus {
+        font-size: 16px;
+    }
+
+    select,
+    textarea,
+    input[type='text'],
+    input[type='number'] {
+        font-size: 16px;
+    }
+
+
+}*/
+
+@media (hover:none) and (pointer:coarse) {
+    input[type='text'],
+    input[type='number'] {
+        font-size: 16px;
+    }
+}
 
 h1:focus {
     outline: none;

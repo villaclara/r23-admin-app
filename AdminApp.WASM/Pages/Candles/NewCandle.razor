@@ -26,26 +26,26 @@
 	}
 </style>
 
-<div class="">
+<div class="container">
 
 	<div class="row">
 		<div class="col-8">
 			
 			<div class="row">
-				<div class="col">
+				<div class="col ps-0">
 					<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Всі свічки" />
 				</div>
 			</div>
 
-			<div class="container row py-2">
-				<div class="col">
+			<div class="row py-2 pe-0">
+				<div class="col pe-0">
 					<span class="display-6 comfortaa fw-bolder">Нова Свічка</span>
 
 				</div>
 			</div>
 
-			<div class="container row">
-				<div class="col px-0 montserat">
+			<div class="row">
+				<div class="col montserat">
 					<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile"/>
 					@* <label for="inputfile">labelforinput</label> *@
 				</div>
@@ -159,7 +159,7 @@
 		MessageResponse = r switch
 		{
 			true => "Свічка успішно додана.",
-			false => "Не вдалось додати свічку"
+			false => "Свічка додана, але фото не вдалось додати."
 		};
 
 	}
@@ -192,31 +192,5 @@
 	}
 
 
-	private async Task<bool> UploadPhotoToNewlyAddedCandle(int candleId)
-	{
-		try
-		{
-
-			// SENDING IMAGE TO WEB API TO SAVE ON SERVER
-			// candleId = should be actual candle id
-			using var content = new MultipartFormDataContent();
-			var fileContent = new StreamContent(_browserFile!.OpenReadStream(_browserFile!.Size));
-			fileContent.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
-
-			content.Add(content: fileContent, name: "file", _browserFile.Name);
-			var result = await hclient.PostAsync($"api/candle/upload?candleId={candleId}", content);
-			if (!result.IsSuccessStatusCode)
-			{
-				throw new Exception();
-			}
-
-			return true;
-		}
-
-		catch(Exception)
-		{
-			return false;
-		}
-	}
 
 }

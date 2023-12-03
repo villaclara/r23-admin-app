@@ -5,9 +5,11 @@
 @using AdminApp.WASM.Models.ViewModels;
 @using AdminApp.WASM.Components.Misc;
 @inject NavigationManager navmanager;
-@inject HttpClient hclient;
-@inject CandleHandlerService candleHandler;
+@inject HttpClient client;
+@inject CandleHandlerService candleService;
 @inject CategoryHandlerService categoryService;
+@inject IImageUploader imageUploadService;
+
 
 <style>
 	.lightgreencolor {
@@ -15,12 +17,6 @@
 	}
 </style>
 
-
-<div>
-	<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
-</div>
-
-<p>@MessageResponse</p>
 
 @if (_selectedCandle == default)
 {
@@ -31,9 +27,8 @@
 else if (_selectedCandle.Id == 0)
 {
 	<div class="container text-center pb-2" aria-hidden="true">
-			<div class="placeholder placeholder-wave lightgreencolor col-6" style="height: 40px">
-			
-			</div>
+		<div class="placeholder placeholder-wave lightgreencolor col-6" style="height: 40px">
+		</div>
 	</div>
 
 	<div class="container" aria-hidden="true">
@@ -43,7 +38,6 @@ else if (_selectedCandle.Id == 0)
 					Назва
 				</label>
 				<div class="placeholder placeholder-wave col-9 lightgreencolor">
-
 				</div>
 			</div>
 			<div class="pb-2 row">
@@ -67,7 +61,7 @@ else if (_selectedCandle.Id == 0)
 				<div class="placeholder placeholder-wave col-9 lightgreencolor">
 				</div>
 			</div>
-			
+
 
 			<hr class="hr-line" />
 
@@ -76,7 +70,6 @@ else if (_selectedCandle.Id == 0)
 					Собівартість
 				</label>
 				<div class="placeholder placeholder-wave col-3 lightgreencolor">
-
 				</div>
 			</div>
 			<div class="pb-2 row">
@@ -87,7 +80,7 @@ else if (_selectedCandle.Id == 0)
 				</div>
 			</div>
 
-			<hr class="hr-line"/>
+			<hr class="hr-line" />
 
 			<div class="pb-2 row">
 				<label class="form-label col-5 col-lg-2 col-form-label pe-0 fw-lighter">
@@ -119,7 +112,7 @@ else if (_selectedCandle.Id == 0)
 			</div>
 			<div class="p-2 row">
 
-			<a href="#" tabindex="-1" class="btn btn-success disabled placeholder col-4" aria-hidden="true"></a>
+				<a href="#" tabindex="-1" class="btn btn-success disabled placeholder col-4" aria-hidden="true"></a>
 			</div>
 
 		</div>
@@ -127,27 +120,57 @@ else if (_selectedCandle.Id == 0)
 }
 else
 {
-	<div class="container text-center">
-		<h3 class="display-4">
-			Свічка - @_selectedCandle?.Id
-		</h3>
+	<div class="container">
+
+		<div class="row">
+			<div class="col-8">
+
+				<div class="row">
+					<div class="col ps-0">
+						<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+					</div>
+				</div>
+
+				<div class="row py-2 pe-0">
+					<div class="col pe-0">
+						<span class="display-6 comfortaa fw-bolder">@NewCandleForm.Name</span>
+
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col montserat">
+						<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile" />
+						@* <label for="inputfile">labelforinput</label> *@
+					</div>
+				</div>
+			</div>
+			<div class="col-4 my-auto rounded border border-dark px-1 py-1 shadow bg-body-tertiary" style="height: 95px; width: 95px;">
+				<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="85" width="85" />
+			</div>
+		</div>
+
 	</div>
 
 	<div class="container">
 
-	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
-		<DataAnnotationsValidator />
-		<CascadingValue Value="NewCandleForm">
-			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
-		</CascadingValue>
+		<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+			<DataAnnotationsValidator />
+			<CascadingValue Value="NewCandleForm">
+				<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
+			</CascadingValue>
 
-		<div class="container-fluid d-grid d-md-block">
-			@* <button class="btn btn-lg btn-success rounded-1">Зберегти</button> *@
 
-			<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Зберегти" IsButtonPressed=@IsEditButtonPressed />
+			<p> @MessageResponse </p>
 
-		</div>
-	</EditForm>
+
+			<div class="container-fluid d-grid d-md-block">
+				@* <button class="btn btn-lg btn-success rounded-1">Зберегти</button> *@
+
+				<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Зберегти" IsButtonPressed=@IsEditButtonPressed />
+
+			</div>
+		</EditForm>
 
 	</div>
 	<hr />
@@ -159,7 +182,7 @@ else
 		</button>
 
 	</div>
-	
+
 }
 
 
@@ -182,13 +205,54 @@ else
 
 	public bool IsDeleteButtonPressed { get; set; } = false;
 
+
+	// Image processing stuff
+	private string SetCssImageIfIsLoaded(string img) => string.IsNullOrEmpty(img) ? "hide" : "show";
+
+	public string IMG { get; set; } = "";
+
+	private IBrowserFile? _browserFile;
+
+
+	private async Task LoadPhotoToVariable(InputFileChangeEventArgs e)
+	{
+		// retrieving the file uploaded
+		_browserFile = e.File;
+
+		using MemoryStream ms = new();
+		await _browserFile.OpenReadStream(_browserFile.Size).CopyToAsync(ms);
+
+		// converting image to byte array
+		byte[] imgBuffer = ms.ToArray();
+
+		// convetring to base64 to display
+		var temp = Convert.ToBase64String(imgBuffer);
+		IMG = string.Format($"data:image/jpeg;base64,{temp}");
+
+
+	}
+
+
+	// Initialization phase
 	protected override async Task OnInitializedAsync()
 	{
 
 
 
-		_selectedCandle = await candleHandler.GetCanldeAsync($"api/candle/cid={Id}?view=full");
+		_selectedCandle = await candleService.GetCanldeAsync($"api/candle/cid={Id}?view=full");
 		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+
+		var response = await client.GetAsync(@$"api/candle/imgForId={Id}");
+		var imgstr = await response.Content.ReadAsStringAsync();
+		IMG = string.Format("data:image/jpeg;base64,{0}", imgstr);
+
+		// set default image if the image is null
+		if (string.IsNullOrEmpty(imgstr))
+		{
+			IMG = "img/question_mark.png";
+		}
+
+
 		MessageResponse = "";
 
 
@@ -228,17 +292,35 @@ else
 
 		_selectedCandle.Id = Id;
 
-		var result = await candleHandler.UpdateCandleAsync($"api/candle/cid={Id}", _selectedCandle);
-		if (result)
-		{
-			MessageResponse = $"Свічка оновлена.";
+		var result = await candleService.UpdateCandleAsync($"api/candle/cid={Id}", _selectedCandle);
 
-			//navmanager.NavigateTo("candle");
-		}
-		else
+		if (!result)
 		{
-			MessageResponse = $"Помилка при збереженні. Спробуйте ще раз.";
+			MessageResponse = "Не вдалось оновити свічку";
+			return;
 		}
+
+
+		// get candle item to retrieve the ID for photo
+		var candle = await candleService.GetCanldeAsync($"api/candle/cname={_selectedCandle.Name}?view=full");
+
+		if (candle is null)
+		{
+			MessageResponse = "Не вдалось оновити свічку";
+			return;
+		}
+
+		// try to upload image to candle
+		var id = candle.Id;
+		var r = await imageUploadService.UploadImageToCandleByIdAsync(id, _browserFile);
+
+
+		MessageResponse = r switch
+		{
+			true => "Свічка успішно оновлена.",
+			false => "Свічка оновлена, але фото не вдалось додати."
+		};
+
 
 		IsEditButtonPressed = false;
 	}
@@ -253,7 +335,7 @@ else
 	{
 		IsDeleteButtonPressed = true;
 
-		var result = await candleHandler.DeleteCandleAsync($"api/candle/cid={Id}");
+		var result = await candleService.DeleteCandleAsync($"api/candle/cid={Id}");
 		if (result)
 		{
 			MessageResponse = "Свічка видалена.";

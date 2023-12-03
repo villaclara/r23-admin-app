@@ -218,6 +218,8 @@
 	}
 
 
+
+
 	public class CandleWithExpanded
 	{
 		public CandleFullVM CandleItem { get; set; }
@@ -233,19 +235,4 @@
 		}
 	}
 
-
-	public async Task<string> GetImgPathToCandleOrDefault(CandleFullVM candle)
-	{
-		var response = await client.GetStringAsync(@$"api/candle/imgForId={candle.Id}");
-		//var imgString = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-		var str = string.Format("data:image/jpeg;base64,{0}", response);
-
-		if(string.IsNullOrEmpty(str))
-		{
-			return "img/question_mark.png";
-		}
-
-		return str;
-	}
 }
