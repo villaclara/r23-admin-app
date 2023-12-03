@@ -40,6 +40,7 @@
 
 <div class="container">
 
+	<!-- NEW BUTTON and FILTERS SECTION-->
 	<div class="container">
 		<div class="row mb-1">
 			<div class="col-3 p-0">
@@ -106,24 +107,20 @@
 						</button>
 					</div>
 				</div>
-
-
 			</div>
-
 		</div>
-
-
-
-
-
 	</div>
-	<div class="row px-0 mx-0 border border-1" style="height: 2px;"></div>
 
+
+
+	<!-- ORDERS LIST SECTION-->
+	<div class="row px-0 mx-0 border border-1" style="height: 2px;"></div>
 
 	@if (OrdersExpanded is not null && OrdersExpanded.Any())
 	{
 
 
+		<!-- SORTING BUTTONS -->
 		<div class="row">
 			<div class="col ps-0">
 				<button type="button" class="btn" @onclick="() => OrderByChoosenIdField(0)">
@@ -142,6 +139,8 @@
 			</div>
 		</div>
 
+
+		<!-- EACH ORDER ITEM -->
 		foreach (var order in OrdersExpanded)
 		{
 			<div class="">
