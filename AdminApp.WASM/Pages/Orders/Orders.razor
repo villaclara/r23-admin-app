@@ -116,9 +116,23 @@
 	<!-- ORDERS LIST SECTION-->
 	<div class="row px-0 mx-0 border border-1" style="height: 2px;"></div>
 
-	@if (OrdersExpanded is not null && OrdersExpanded.Any())
-	{
 
+
+	@if (OrdersExpanded is null)
+	{
+			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
+			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
+	}
+	else if (!OrdersExpanded.Any())
+	{
+		<p class="text-dark"> @OrdersExistMessage </p>
+	}
+
+	else {
 
 		<!-- SORTING BUTTONS -->
 		<div class="row">
@@ -256,7 +270,7 @@
 	}
 
 </div>
-@OrdersExistMessage
+
 
 @code {
 
@@ -272,7 +286,7 @@
 	* OrdersExpanded = Orders to display
 	* _cachedOrdersOnPageLoad = are set in OnInitializedAsync(), contains all orders loaded
 	*/
-	public ICollection<OrderWithExpandedBool> OrdersExpanded { get; set; } = new List<OrderWithExpandedBool>();
+	public ICollection<OrderWithExpandedBool>? OrdersExpanded { get; set; } = null;
 	private ICollection<OrderWithExpandedBool> _cachedOrdersOnPageLoad = new List<OrderWithExpandedBool>();
 
 
@@ -336,6 +350,8 @@
 			_ => "Сталась помилка або замовлення відсутні"
 		};
 
+		OrdersExpanded = new List<OrderWithExpandedBool>();
+		
 		if(!OrdersList.Any())
 		{
 			return;
