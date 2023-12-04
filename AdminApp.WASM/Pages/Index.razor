@@ -141,15 +141,9 @@
 					else if (!TodayNotes.Any())
 					{
 
-						<div class="placeholder placeholder-wave border-round my-1" style="height: 50px;">
-							<span class="placeholder col-12"></span>
-						</div>
-						<div class="placeholder placeholder-wave border-round my-1" style="height: 50px;">
-							<span class="placeholder col-12"></span>
-						</div>
-						<div class="placeholder placeholder-wave border-round my-1" style="height: 50px;">
-							<span class="placeholder col-12"></span>
-						</div>
+						<AdminApp.WASM.Components.Placeholders.NoteItemInIndexPlaceholder />
+						<AdminApp.WASM.Components.Placeholders.NoteItemInIndexPlaceholder />
+						<AdminApp.WASM.Components.Placeholders.NoteItemInIndexPlaceholder />
 
 					}
 					else
@@ -175,183 +169,12 @@
 </div>
 
 
-@* <div class="card m-2 border-round">
-	<div class="card-body  p-0" style="background-color: #f7ede4">
-
-		<article class="">
-			<div class="container-lg">
-				<NavLink href="order" class="container-lg btn btn-lg border border-3 order-last1 shadow">
-					<span class="h3 text-bold">
-						Замовлення
-					</span>
-				</NavLink>
-			</div>
-
-			<div class="container">
-				<table class="table table-striped table-sm">
-					<thead>
-						<tr>
-							<th class="text-center">Id</th>
-							<th class="text-center">Дата</th>
-							<th class="text-center">Номер</th>
-							<th class="text-center">Сума</th>
-						</tr>
-					</thead>
-					<tbody>
-						@if (!LastOrders.Any())
-						{
-							<tr>
-								<td colspan="5" class="col">
-									<div class="placeholder-wave">
-										<span class="placeholder col-1"></span>
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-6"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-1"></span>
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-6"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-1"></span>
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-6"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-1"></span>
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-6"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-1"></span>
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-6"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-								</td>
-							</tr>
-						}
-						else
-						{
-							@foreach (var order in LastOrders)
-							{
-								<tr>
-									<td>@order.Id</td>
-									<td>@order.OrderDate.ToString("dd/MM/yy")</td>
-									<td>
-										<span>
-											@order.Receiver.PhoneNumber
-										</span>
-									</td>
-
-									<td>@order.TotalSum</td>
-								</tr>
-							}
-						}
-					</tbody>
-				</table>
-			</div>
-		</article>
-	</div>
-</div>
-
-
-
-<div class="card m-2 border-round" style="background-color: #868f74">
-	<div class="card-body  p-0">
-
-		<article class="">
-			<div>
-				<div class="container-lg">
-					<NavLink href="candle" class="container-lg btn btn-lg border border-3 shadow">
-						<span class="h3 text-bold">
-							Свічки
-						</span>
-					</NavLink>
-				</div>
-			</div>
-			<div class="container">
-				<table class="table table-striped table-sm">
-					<thead>
-						<tr>
-							<th>Id</th>
-							<th>Назва</th>
-							<th>Ціна</th>
-						</tr>
-					</thead>
-					<tbody>
-						@if (!LastCandles.Any())
-						{
-							<tr>
-
-								<td colspan="5" class="col">
-									<div class="placeholder-wave">
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-7"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-7"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-7"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-7"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-									<div class="placeholder-wave">
-										<span class="placeholder col-2"></span>
-										<span class="placeholder col-7"></span>
-										<span class="placeholder col-2"></span>
-									</div>
-								</td>
-							</tr>
-						}
-						else
-						{
-							@foreach (var candle in LastCandles)
-							{
-								<tr>
-									<td>@candle.Id</td>
-									<td>@candle.Name</td>
-									<td>@candle.SellPrice</td>
-								</tr>
-							}
-						}
-					</tbody>
-				</table>
-			</div>
-		</article>
-
-	</div>
-</div> *@
-
-
-
 @code {
-	public IEnumerable<OrderVM> LastOrders { get; set; } = Enumerable.Empty<OrderVM>();
-	public IEnumerable<CandleFullVM> LastCandles { get; set; } = Enumerable.Empty<CandleFullVM>();
+
 	public IEnumerable<NoteVM>? TodayNotes { get; set; } = Enumerable.Empty<NoteVM>();
 
-	public IEnumerable<CandleFullVM> CandleNames { get; set; } = Enumerable.Empty<CandleFullVM>();
-
-	// Message 'Loading...' or 'No {item}' displayed in the Table
-	public string OrdersLoadingMessage { get; set; } = "Loading...";
-	public string CandlesLoadingMessage { get; set; } = "Loading...";
 
 	// strings to HttpChecker to get if the items exist by path
-	private string _ordersPath = "api/order";
-	private string _candlesPath = "api/candle?view=full";
 	private string _notePath = "api/note";
 
 
@@ -360,33 +183,12 @@
 	protected override async Task OnInitializedAsync()
 	{
 		var noteTask = Task.Run(() => noteHandler.GetAllNotesByDateAsync(DateOnly.FromDateTime(DateTime.Now), _notePath));
-		var orderTask = Task.Run(() => orderHandler.GetLastOrdersAsync(_ordersPath));
-		var candleTask = Task.Run(() => candleHandler.GetLastCandlesListAsync(_candlesPath));
-
-
-		//LastOrders = await orderHandler.GetLastOrdersAsync(_ordersPath);
-		LastOrders = await orderTask;
-		OrdersLoadingMessage = LastOrders.Any() switch
-		{
-			true => "",
-			false => "Сталась помилка або замовлення відсутні."
-		};
-
-		//LastCandles = await candleHandler.GetLastCandlesListAsync(_candlesPath);
-		LastCandles = await candleTask;
-		CandlesLoadingMessage = LastCandles.Any() switch
-		{
-			true => "",
-			false => "Сталась помилка або свічки відсутні."
-		};
-
+		
 		TodayNotes = await noteTask;
 		if (!TodayNotes.Any())
 		{
 			TodayNotes = null;
 		}
-
-		CandleNames = await candleHandler.GetAllCandlesListAsync(_candlesPath);
 	}
 
 
