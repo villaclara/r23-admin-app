@@ -9,7 +9,7 @@
         public string? PhotoLink { get; set; }
         public decimal RealCost { get; set; }
         public decimal SellPrice { get; set; }
-        public int HeightCM { get; set; }
+        public float HeightCM { get; set; }
         public int BurningTimeMins { get; set; }
         public int WaxNeededGram { get; set; }
         public int WickDiameterCM { get; set; }

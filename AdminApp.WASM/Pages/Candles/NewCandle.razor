@@ -143,11 +143,11 @@
 		}
 
 		// get candle item to retrieve the ID for photo
-		var candle = await candleInteractor.GetCanldeAsync($"api/candle/cname={candleToAdd.Name}?view=full");
+		var candle = await candleInteractor.GetCanldeAsync(@$"api/candle/cname=""{candleToAdd.Name}""?view=full");
 
 		if (candle is null)
 		{
-			MessageResponse = "Не вдалось додати свічку";
+			MessageResponse = "Не вдалось додати свічку. Свічка не знайдена.";
 			return;
 		}
 
@@ -166,7 +166,7 @@
 
 	public void HandleInvalidSubmit()
 	{
-		MessageResponse = "Invalid entry";
+		MessageResponse = "Невірно введені дані.";
 	}
 
 
