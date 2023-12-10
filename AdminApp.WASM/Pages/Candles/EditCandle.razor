@@ -187,32 +187,67 @@ else
 
 
 @code {
+
+	// candle Parameters stuff
 	[Parameter]
 	public int Id { get; set; }
 
+	// Form model
 	public NewCandleFormModel NewCandleForm { get; set; } = new();
 
-	public string MessageResponse { get; set; } = "";
-
+	// Selected candle from DB with Id as [Parameter]
 	private CandleFullVM? _selectedCandle = new CandleFullVM() { Id = 0 };
 
+	// MessageResponse displayed 
+	public string MessageResponse { get; set; } = "";
+
+	// Categories to be able to select
 	public IEnumerable<CategoryVM> Categories { get; set; } = new List<CategoryVM>(10);
 	public List<string> CatNames { get; set; } = new List<string>();
 
+	// Possible new category
 	public string PossibleNewCategoryName { get; set; } = string.Empty;
 
-	public bool IsEditButtonPressed { get; set; } = false;
 
+	// Button states to pass into ButtonWithSpinnerAction Component to display spinner when processed
+	public bool IsEditButtonPressed { get; set; } = false;
 	public bool IsDeleteButtonPressed { get; set; } = false;
 
 
 	// Image processing stuff
 	private string SetCssImageIfIsLoaded(string img) => string.IsNullOrEmpty(img) ? "hide" : "show";
-
+	
+	// Image in base64 string 
 	public string IMG { get; set; } = "";
 
+	// File uploaded from user
 	private IBrowserFile? _browserFile;
 
+	// Initialization phase
+	protected override async Task OnInitializedAsync()
+	{
+		_selectedCandle = await candleService.GetCanldeAsync($"api/candle/cid={Id}?view=full");
+		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
+
+		// Get image for candle
+		var response = await client.GetAsync(@$"api/candle/imgForId={Id}");
+		var imgstr = await response.Content.ReadAsStringAsync();
+		IMG = string.Format("data:image/jpeg;base64,{0}", imgstr);
+
+		// set default image if the image is null
+		if (string.IsNullOrEmpty(imgstr))
+		{
+			IMG = "img/question_mark.png";
+		}
+
+
+		MessageResponse = "";
+		
+		// Display categories in Select
+		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
+		CatNames = Categories.Select(c => c.Name).ToList();
+		CatNames.Add(Constants.NEW_CATEGORY_TO_ADD_OPTION);
+	}
 
 	private async Task LoadPhotoToVariable(InputFileChangeEventArgs e)
 	{
@@ -228,46 +263,12 @@ else
 		// convetring to base64 to display
 		var temp = Convert.ToBase64String(imgBuffer);
 		IMG = string.Format($"data:image/jpeg;base64,{temp}");
-
-
 	}
 
-
-	// Initialization phase
-	protected override async Task OnInitializedAsync()
-	{
-
-
-
-		_selectedCandle = await candleService.GetCanldeAsync($"api/candle/cid={Id}?view=full");
-		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
-
-		var response = await client.GetAsync(@$"api/candle/imgForId={Id}");
-		var imgstr = await response.Content.ReadAsStringAsync();
-		IMG = string.Format("data:image/jpeg;base64,{0}", imgstr);
-
-		// set default image if the image is null
-		if (string.IsNullOrEmpty(imgstr))
-		{
-			IMG = "img/question_mark.png";
-		}
-
-
-		MessageResponse = "";
-
-
-		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
-		// Categories.Add(new CategoryVM { Name = "..." });
-
-		CatNames = Categories.Select(c => c.Name).ToList();
-		CatNames.Add(Constants.NEW_CATEGORY_TO_ADD_OPTION);
-	}
-
-
+	// When submit form with valid values
 	public async Task HandleValidSubmit()
 	{
 		IsEditButtonPressed = true;
-
 
 		// checking if the possible new category has any value
 		if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION && !string.IsNullOrEmpty(PossibleNewCategoryName))
@@ -275,10 +276,8 @@ else
 			NewCandleForm.Category = PossibleNewCategoryName;
 		}
 
-		//_selectedCandle = CandleFormModel.ConvertToFullVM_FromFormModel();
-		//_selectedCandle = _selectedCandle?.UpdateValues_FromFormModel(CandleFormModel);
-
-		_selectedCandle.Name = NewCandleForm.Name;
+		// Setting new values to candle
+		_selectedCandle!.Name = NewCandleForm.Name;
 		_selectedCandle.Description = NewCandleForm.Description;
 		_selectedCandle.Category = NewCandleForm.Category;
 		_selectedCandle.PhotoLink = NewCandleForm.PhotoLink;
@@ -288,22 +287,18 @@ else
 		_selectedCandle.BurningTimeMins = NewCandleForm.BurningTimeMins ?? _selectedCandle.BurningTimeMins;
 		_selectedCandle.WickDiameterCM = NewCandleForm.WickDiameterCM ?? _selectedCandle.WickDiameterCM;
 		_selectedCandle.WaxNeededGram = NewCandleForm.WaxNeededGram ?? _selectedCandle.WaxNeededGram;
-
-
+		// assigning value of Id, because otherwise _selectedCandle.Id = 0
 		_selectedCandle.Id = Id;
 
 		var result = await candleService.UpdateCandleAsync($"api/candle/cid={Id}", _selectedCandle);
-
 		if (!result)
 		{
 			MessageResponse = "Не вдалось оновити свічку";
 			return;
 		}
 
-
 		// get candle item to retrieve the ID for photo
 		var candle = await candleService.GetCanldeAsync($"api/candle/cname={_selectedCandle.Name}?view=full");
-
 		if (candle is null)
 		{
 			MessageResponse = "Не вдалось оновити свічку";
@@ -314,21 +309,18 @@ else
 		var id = candle.Id;
 		var r = await imageUploadService.UploadImageToCandleByIdAsync(id, _browserFile);
 
-
 		MessageResponse = r switch
 		{
 			true => "Свічка успішно оновлена.",
 			false => "Свічка оновлена, але фото не вдалось додати."
 		};
 
-
 		IsEditButtonPressed = false;
 	}
 
 	public void HandleInvalidSubmit()
 	{
-
-		MessageResponse = "Invalid submit.";
+		MessageResponse = "Невірно введені дані.";
 	}
 
 	public async Task DeleteCandle()

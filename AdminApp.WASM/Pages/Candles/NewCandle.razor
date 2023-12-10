@@ -143,7 +143,7 @@
 		}
 
 		// get candle item to retrieve the ID for photo
-		var candle = await candleInteractor.GetCanldeAsync(@$"api/candle/cname=""{candleToAdd.Name}""?view=full");
+		var candle = await candleInteractor.GetCanldeAsync($"api/candle/cname={candleToAdd.Name}?view=full");
 
 		if (candle is null)
 		{
