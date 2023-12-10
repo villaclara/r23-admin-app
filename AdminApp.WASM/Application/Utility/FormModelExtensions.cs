@@ -28,8 +28,8 @@ namespace AdminApp.WASM.Application.Utility
                 Description = model.Description,
                 Category = model.Category,
                 PhotoLink = model.PhotoLink,
-                RealCost = (int?)model.RealCost,
-                SellPrice = (int?)model.SellPrice,
+                RealCost = model.RealCost,
+                SellPrice = model.SellPrice,
                 HeightCM = model.HeightCM,
                 BurningTimeMins = model.BurningTimeMins,
                 WickDiameterCM = model.WickDiameterCM,
@@ -37,20 +37,20 @@ namespace AdminApp.WASM.Application.Utility
             };
 
 
-        public static CandleFullVM UpdateValues_FromFormModel(this CandleFullVM model, NewCandleFormModel updatedModel)
-        {
-            model.Name = updatedModel.Name;
-            model.Description = updatedModel.Description;
-            model.Category = updatedModel.Category;
-            model.PhotoLink = updatedModel.PhotoLink;
-            model.RealCost = updatedModel.RealCost ?? model.RealCost;
-            model.SellPrice = updatedModel.SellPrice ?? model.SellPrice;
-            model.HeightCM = updatedModel.HeightCM ?? model.HeightCM;
-            model.BurningTimeMins = updatedModel.BurningTimeMins ?? model.BurningTimeMins;
-            model.WickDiameterCM = updatedModel.WickDiameterCM ?? model.WickDiameterCM;
-            model.WaxNeededGram = updatedModel.WaxNeededGram ?? model.WaxNeededGram;
+        //public static CandleFullVM UpdateValues_FromFormModel(this CandleFullVM model, NewCandleFormModel updatedModel)
+        //{
+        //    model.Name = updatedModel.Name;
+        //    model.Description = updatedModel.Description;
+        //    model.Category = updatedModel.Category;
+        //    model.PhotoLink = updatedModel.PhotoLink;
+        //    model.RealCost = updatedModel.RealCost ?? model.RealCost;
+        //    model.SellPrice = updatedModel.SellPrice ?? model.SellPrice;
+        //    model.HeightCM = updatedModel.HeightCM ?? model.HeightCM;
+        //    model.BurningTimeMins = updatedModel.BurningTimeMins ?? model.BurningTimeMins;
+        //    model.WickDiameterCM = updatedModel.WickDiameterCM ?? model.WickDiameterCM;
+        //    model.WaxNeededGram = updatedModel.WaxNeededGram ?? model.WaxNeededGram;
 
-            return model;
-        }
+        //    return model;
+        //}
     }
 }

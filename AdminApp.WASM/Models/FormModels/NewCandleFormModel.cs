@@ -8,7 +8,6 @@ namespace AdminApp.WASM.Models.FormModels
         [Required(ErrorMessage = "Має бути назва")]
         public string Name { get; set; } = null!;
 
-        [Required(ErrorMessage = "Має бути опис")]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Має бути категорія")]
@@ -18,19 +17,17 @@ namespace AdminApp.WASM.Models.FormModels
 
         [Required(ErrorMessage = "Собівартість не встановлена")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
-        public int? RealCost { get; set; }
+        public decimal? RealCost { get; set; }
 
         [Required(ErrorMessage = "Ціна продажу не встановлена")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
-        public int? SellPrice { get; set; }
+        public decimal? SellPrice { get; set; }
 
-        [Required(ErrorMessage = "Висота не встановлена")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
-        public int? HeightCM { get; set; }
+        public float? HeightCM { get; set; } = 1;
 
-        [Required(ErrorMessage = "Час горіння не встановлено")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
-        public int? BurningTimeMins { get; set; }
+        public int? BurningTimeMins { get; set; } = 1;
 
         [Required(ErrorMessage = "Грам воску не встановлено")]
         [Range(1, int.MaxValue, ErrorMessage = "Мінімальне значення - 1")]
