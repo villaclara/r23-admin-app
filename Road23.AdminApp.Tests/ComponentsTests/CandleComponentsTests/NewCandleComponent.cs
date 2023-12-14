@@ -14,7 +14,8 @@ public class NewCandleComponent : TestContext
         var cut = RenderComponent<ButtonWithSpinnerAction>();
 
         //Assert
-        cut.MarkupMatches("""<button class="@ButtonCss" disabled="@IsButtonPressed"><span class="@SetButtonCssSpinner(IsButtonPressed)" aria-hidden="true"></span><span>@ButtonText</span></button>""");
+        cut.MarkupMatches("""<button class="" disabled=""><span class="" aria-hidden="true"></span><span></span></button>""");
+
     }
 
 }
