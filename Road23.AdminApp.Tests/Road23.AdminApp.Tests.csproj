@@ -24,4 +24,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AdminApp.WASM\AdminApp.WASM.csproj" />
+  </ItemGroup>
+
 </Project>
