@@ -17,7 +17,7 @@ builder.Services.AddScoped(delegate (IServiceProvider sp)
 {
 	return new HttpClient
 	{
-		BaseAddress = new Uri("http://localhost:5117/")
+		BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseAdress")!)
 		//BaseAddress = new Uri("https://testroad.bsite.net/")
 		//BaseAddress = new Uri("https://2eb9-217-196-161-189.ngrok-free.app")
 	};
