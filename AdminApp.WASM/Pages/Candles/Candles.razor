@@ -1,8 +1,9 @@
 ﻿@page "/candle"
+@using AdminApp.WASM.Models
 @layout CandlesLayout;
 @inject HttpClient client;
-@inject NavigationManager navmanager;
 @inject CandleHandlerService candleHandler;
+@inject INavigation navigationService
 
 <style>
 	.candle-item {
@@ -29,6 +30,7 @@
 		</a>
 	</div>
 
+	<!-- placeholder time -->
 	@if(CandlesExpanded is null)
 	{
 		<div class="container">
@@ -42,11 +44,13 @@
 		</div>
 	}
 
+	// no candles at all
 	else if (!CandlesExpanded.Any())
 	{
 		<p> @MessageResponse </p>
 	}
 
+	// actual candles list
 	else
 	{
 		
@@ -166,19 +170,21 @@
 
 	public IEnumerable<CandleFullVM>? CandleList { get; set; }
 
-	//public override async Task SetParametersAsync(ParameterView paramss)
-	//{
-	//	CandleList = await client.GetFromJsonAsync<IEnumerable<CandleBasicVM>>(path);
-	//}
 
-	public bool Expanded { get; set; } = false;
 
-	public string? expandedClass => Expanded ? "open" : null;
+	// public bool Expanded { get; set; } = false;
 
-	public ICollection<CandleWithExpanded>? CandlesExpanded { get; set; } = null;
+	// public string? expandedClass => Expanded ? "open" : null;
+
+	public List<CandleWithExpanded>? CandlesExpanded { get; set; } = null;
+
+
+	private ICollection<CandleWithExpanded>? _candlesCache { get; set; } = null;
+	private List<ImageForCandle>? _imgCacheCandles { get; set; } = null;
 
 	protected override async Task OnInitializedAsync()
 	{
+
 		CandleList = await candleHandler.GetAllCandlesListAsync(path);
 
 		MessageResponse = CandleList.Any() switch
@@ -188,12 +194,53 @@
 		};
 
 		CandlesExpanded = new List<CandleWithExpanded>();
-		
+
 		if(!CandleList.Any())
 		{
 			return;
 		}
 
+		//
+		//
+		//
+		// IT WILL NOT WORK BECAUSE THERE IS NO DIRECTORIES IN THE BROWSER AS WE USED TO SEE
+		//
+		// check if the cache is present
+		if (_imgCacheCandles is null)
+		{
+			_imgCacheCandles = new List<ImageForCandle>();
+
+			foreach (var c in CandleList)
+			{
+				// download image for c.Id as a string
+				var response = await client.GetAsync(@$"api/candle/imgForId={c.Id}");
+				var imgstr = await response.Content.ReadAsStringAsync();
+
+				// in case string is null then we use question mark image for local path
+				var localpath = "img/question_mark.png";
+				if(!string.IsNullOrEmpty(imgstr))
+				{
+					// create byte array as binary file
+					var bytes = Convert.FromBase64String(imgstr);
+					// new local path based on c.Id
+					localpath = @$"/home/web_user/{c.Id}_{c.Name}.jpeg";
+					// create image file in path
+					if(!File.Exists(localpath))
+					{
+						File.Create(localpath);
+					}
+					await File.WriteAllBytesAsync(localpath, bytes);
+				}
+
+				// add each candle image into cache
+				_imgCacheCandles.Add(new ImageForCandle(candleId: c.Id, remotelink: c.PhotoLink, localLink: localpath, isActive: true));
+			}
+		}
+
+
+
+
+		// adding into CandlesExpanded
 		foreach (var c in CandleList)
 		{
 			var response = await client.GetAsync(@$"api/candle/imgForId={c.Id}");
@@ -206,17 +253,31 @@
 				str = "img/question_mark.png";
 			}
 
-			CandlesExpanded.Add(new CandleWithExpanded(c, false, str));
+			CandlesExpanded.Add(new CandleWithExpanded(item: c, expanded: false, imgsrc: str));
+
+
 		}
+
+		// if the cache is not null then we need perform caching checks
+		// for (int i = 0; i < CandlesExpanded.Count(); i++)
+		// {
+		// 	if (CandlesExpanded[i].CandleItem.PhotoLink == _imgCacheCandles[i].RemoteLink)
+		// 	{
+		// 		// nothing needed	
+		// 	}
+		//}
 
 	}
 
 	public void EditCandle(int candleId)
 	{
-		navmanager.NavigateTo($"candle/{candleId}");
+		navigationService.PerformNavigation($"candle/{candleId}");
 	}
 
-
+	private void CreateCacheForCandlesList()
+	{
+		
+	}
 
 
 	public class CandleWithExpanded
@@ -226,12 +287,14 @@
 
 		public string ImgSrc { get; set; } = "img/question_mark.png";
 
-		public CandleWithExpanded(CandleFullVM c, bool value, string imgsrc)
+		public CandleWithExpanded(CandleFullVM item, bool expanded, string imgsrc)
 		{
-			CandleItem = c;
-			Expanded = value;
+			CandleItem = item;
+			Expanded = expanded;
 			ImgSrc = imgsrc;
 		}
 	}
 
+
+	
 }
