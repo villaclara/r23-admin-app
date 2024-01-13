@@ -2,11 +2,12 @@
 @layout CandlesLayout;
 @using AdminApp.WASM.Application.Utility;
 @using AdminApp.WASM.Models.ViewModels;
-@inject NavigationManager navmanager;
+@inject NavigationManager navManager;
 @inject HttpClient hclient;
 @inject CandleHandlerService candleInteractor;
 @inject CategoryHandlerService categoryService;
 @inject IImageUploader imageUploadService;
+@inject INavigation navigationService
 
 <style>
 	.hide {
@@ -138,7 +139,7 @@
 
 		if (!result)
 		{
-			MessageResponse = "Не вдалось додати свічку";
+			MessageResponse = "Не вдалось додати свічку.";
 			return;
 		}
 
@@ -155,12 +156,17 @@
 		var id = candle.Id;
 		var r = await imageUploadService.UploadImageToCandleByIdAsync(id, _browserFile);
 
-		
-		MessageResponse = r switch
+		if(r)
 		{
-			true => "Свічка успішно додана.",
-			false => "Свічка додана, але фото не вдалось додати."
-		};
+			MessageResponse = "Свічка успішно додана.";
+
+
+			navigationService.PerformNavigationWithDelayAsync("/candle");
+		}
+		else
+		{
+			MessageResponse = "Свічка додана, але фото не вдалось додати.";
+		}
 
 	}
 
@@ -191,6 +197,6 @@
 
 	}
 
-
+	
 
 }

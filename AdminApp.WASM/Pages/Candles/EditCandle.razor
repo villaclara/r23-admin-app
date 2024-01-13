@@ -4,11 +4,12 @@
 @using AdminApp.WASM.Models.FormModels;
 @using AdminApp.WASM.Models.ViewModels;
 @using AdminApp.WASM.Components.Misc;
-@inject NavigationManager navmanager;
+@inject NavigationManager navManager;
 @inject HttpClient client;
 @inject CandleHandlerService candleService;
 @inject CategoryHandlerService categoryService;
 @inject IImageUploader imageUploadService;
+@inject INavigation navigationService
 
 
 <style>
@@ -216,7 +217,7 @@ else
 
 	// Image processing stuff
 	private string SetCssImageIfIsLoaded(string img) => string.IsNullOrEmpty(img) ? "hide" : "show";
-	
+
 	// Image in base64 string 
 	public string IMG { get; set; } = "";
 
@@ -242,7 +243,7 @@ else
 
 
 		MessageResponse = "";
-		
+
 		// Display categories in Select
 		Categories = await categoryService.GetCategoryListAsync("api/candlecategory");
 		CatNames = Categories.Select(c => c.Name).ToList();
@@ -301,7 +302,7 @@ else
 		var candle = await candleService.GetCanldeAsync($"api/candle/cname={_selectedCandle.Name}?view=full");
 		if (candle is null)
 		{
-			MessageResponse = "Не вдалось оновити свічку";
+			MessageResponse = "Свічка оновлена, але не отримана інфа для нового фото.";
 			return;
 		}
 
@@ -309,13 +310,27 @@ else
 		var id = candle.Id;
 		var r = await imageUploadService.UploadImageToCandleByIdAsync(id, _browserFile);
 
-		MessageResponse = r switch
-		{
-			true => "Свічка успішно оновлена.",
-			false => "Свічка оновлена, але фото не вдалось додати."
-		};
+		// MessageResponse = r switch
+		// {
+		// 	true => "Свічка успішно оновлена.",
+		// 	false => "Свічка оновлена, але фото не вдалось додати."
+		// };
 
 		IsEditButtonPressed = false;
+
+		if (r)
+		{
+			MessageResponse = "Свічка успішно оновлена.";
+
+			// await Task.Delay(2000);
+			// navManager.NavigateTo("/candle");
+
+			navigationService.PerformNavigationWithDelayAsync("/candle");
+		}
+		else
+		{
+			MessageResponse = "Свічка оновлена, але фото не вдалось додати.";
+		}
 	}
 
 	public void HandleInvalidSubmit()
@@ -332,6 +347,8 @@ else
 		{
 			MessageResponse = "Свічка видалена.";
 			NewCandleForm = new();
+
+			navigationService.PerformNavigationWithDelayAsync("/candle");
 		}
 		else
 		{
@@ -341,4 +358,9 @@ else
 		IsDeleteButtonPressed = false;
 	}
 
+	private async Task PerformNavigation(string where)
+	{
+		await Task.Delay(1000);
+		navigationService.PerformNavigationWithDelayAsync(where);
+	}
 }
