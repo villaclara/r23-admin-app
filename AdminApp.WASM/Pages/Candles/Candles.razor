@@ -104,7 +104,8 @@
 				</div>
 
 
-					<div class="col-8">
+				<!-- Clickable area -->
+						<div class="col-8" @onclick="() => EditCandle(candle.CandleItem.Id)">
 						<div class="row">
 							<div class="col">
 								<span class="fw-bolder" style="color: #FCFFF3">
@@ -144,11 +145,9 @@
 				<div class="col-1 my-auto ps-0">
 					<a href="/candle/@candle.CandleItem.Id" class="text-light">
 						<span class="bi bi-chevron-compact-right"></span>
-						</a>
+					</a>
 				</div>
 	
-				
-				
 
 				
 			</div>

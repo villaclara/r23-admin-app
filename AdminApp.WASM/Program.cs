@@ -55,6 +55,9 @@ builder.Services.AddScoped<ExpenseHandlerService>();
 
 builder.Services.AddScoped<IImageUploader, MultipartDataContent_ImageUploader>();
 
+// navigation
+builder.Services.AddScoped<INavigation, NavManagerNavigationService>();
+
 
 var app = builder.Build();
 
