@@ -58,6 +58,9 @@ builder.Services.AddScoped<IImageUploader, MultipartDataContent_ImageUploader>()
 // navigation
 builder.Services.AddScoped<INavigation, NavManagerNavigationService>();
 
+// candle image cache
+builder.Services.AddSingleton<CandleImageCacheService>();
+
 
 var app = builder.Build();
 

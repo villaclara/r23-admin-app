@@ -1,8 +1,10 @@
 ﻿@page "/candle"
+@using AdminApp.WASM.Models
 @layout CandlesLayout;
 @inject HttpClient client;
-@inject NavigationManager navmanager;
 @inject CandleHandlerService candleHandler;
+@inject INavigation navigationService
+@inject IConfiguration config
 
 <style>
 	.candle-item {
@@ -29,6 +31,7 @@
 		</a>
 	</div>
 
+	<!-- placeholder time -->
 	@if(CandlesExpanded is null)
 	{
 		<div class="container">
@@ -42,11 +45,13 @@
 		</div>
 	}
 
+	// no candles at all
 	else if (!CandlesExpanded.Any())
 	{
 		<p> @MessageResponse </p>
 	}
 
+	// actual candles list
 	else
 	{
 		
@@ -101,6 +106,7 @@
 			<div class="row border border-dark my-2 py-1 candle-item montserat">
 				<div class="col-3 my-auto">
 						<img src="@candle.ImgSrc" alt="" class="rounded img-candleslist" />
+						@* <img src=@SetImageLink(candle.CandleItem.Id) alt="" class="rounded img-candleslist" /> *@
 				</div>
 
 
@@ -166,19 +172,24 @@
 
 	public IEnumerable<CandleFullVM>? CandleList { get; set; }
 
-	//public override async Task SetParametersAsync(ParameterView paramss)
-	//{
-	//	CandleList = await client.GetFromJsonAsync<IEnumerable<CandleBasicVM>>(path);
-	//}
 
-	public bool Expanded { get; set; } = false;
 
-	public string? expandedClass => Expanded ? "open" : null;
+	// public bool Expanded { get; set; } = false;
 
-	public ICollection<CandleWithExpanded>? CandlesExpanded { get; set; } = null;
+	// public string? expandedClass => Expanded ? "open" : null;
+
+	public List<CandleWithExpanded>? CandlesExpanded { get; set; } = null;
+
+
+	private ICollection<CandleWithExpanded>? _candlesCache { get; set; } = null;
+	private List<ImageForCandle>? _imgCacheCandles { get; set; } = null;
+
+
+	private string SetImageLink(int id) => $"http://localhost:5117/api/candle/imgForId={id}";
 
 	protected override async Task OnInitializedAsync()
 	{
+
 		CandleList = await candleHandler.GetAllCandlesListAsync(path);
 
 		MessageResponse = CandleList.Any() switch
@@ -188,35 +199,40 @@
 		};
 
 		CandlesExpanded = new List<CandleWithExpanded>();
-		
+
 		if(!CandleList.Any())
 		{
 			return;
 		}
 
+
+		var basepath = config.GetValue<string>("BaseAdress");
+		
+		// adding into CandlesExpanded
 		foreach (var c in CandleList)
 		{
-			var response = await client.GetAsync(@$"api/candle/imgForId={c.Id}");
-			var imgstr = await response.Content.ReadAsStringAsync();
 
-			var str = string.Format("data:image/jpeg;base64,{0}", imgstr);
-
-			if (string.IsNullOrEmpty(imgstr))
+			var imgsrc = "";
+			if (c.PhotoLink is null)
 			{
-				str = "img/question_mark.png";
+				imgsrc = "img/question_mark.png";
+			}
+			else 
+			{
+				imgsrc = $"{basepath}api/candle/imgForId={c.Id}";
 			}
 
-			CandlesExpanded.Add(new CandleWithExpanded(c, false, str));
+			CandlesExpanded.Add(new CandleWithExpanded(item: c, expanded: false, imgsrc: imgsrc));
+
 		}
+
 
 	}
 
 	public void EditCandle(int candleId)
 	{
-		navmanager.NavigateTo($"candle/{candleId}");
+		navigationService.PerformNavigation($"candle/{candleId}");
 	}
-
-
 
 
 	public class CandleWithExpanded
@@ -226,12 +242,14 @@
 
 		public string ImgSrc { get; set; } = "img/question_mark.png";
 
-		public CandleWithExpanded(CandleFullVM c, bool value, string imgsrc)
+		public CandleWithExpanded(CandleFullVM item, bool expanded, string imgsrc)
 		{
-			CandleItem = c;
-			Expanded = value;
+			CandleItem = item;
+			Expanded = expanded;
 			ImgSrc = imgsrc;
 		}
 	}
 
+
+	
 }
