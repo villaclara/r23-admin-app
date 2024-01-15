@@ -5,6 +5,9 @@
 @inject CandleHandlerService candleHandler;
 @inject OrderHandlerService orderHandler;
 @inject NoteHandlerService noteHandler;
+@inject HttpClient httpclient
+
+@inject CandleImageCacheService cacheService
 
 <PageTitle>Road23 Home</PageTitle>
 
@@ -183,12 +186,14 @@
 	protected override async Task OnInitializedAsync()
 	{
 		var noteTask = Task.Run(() => noteHandler.GetAllNotesByDateAsync(DateOnly.FromDateTime(DateTime.Now), _notePath));
-		
+
 		TodayNotes = await noteTask;
 		if (!TodayNotes.Any())
 		{
 			TodayNotes = null;
 		}
+
+		await cacheService.InitializeCache_IfNeeded(candleHandler, httpclient);
 	}
 
 
