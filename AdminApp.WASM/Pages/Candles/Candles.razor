@@ -4,6 +4,7 @@
 @inject HttpClient client;
 @inject CandleHandlerService candleHandler;
 @inject INavigation navigationService
+@inject IConfiguration config
 
 <style>
 	.candle-item {
@@ -105,6 +106,7 @@
 			<div class="row border border-dark my-2 py-1 candle-item montserat">
 				<div class="col-3 my-auto">
 						<img src="@candle.ImgSrc" alt="" class="rounded img-candleslist" />
+						@* <img src=@SetImageLink(candle.CandleItem.Id) alt="" class="rounded img-candleslist" /> *@
 				</div>
 
 
@@ -182,6 +184,9 @@
 	private ICollection<CandleWithExpanded>? _candlesCache { get; set; } = null;
 	private List<ImageForCandle>? _imgCacheCandles { get; set; } = null;
 
+
+	private string SetImageLink(int id) => $"http://localhost:5117/api/candle/imgForId={id}";
+
 	protected override async Task OnInitializedAsync()
 	{
 
@@ -200,83 +205,33 @@
 			return;
 		}
 
-		//
-		//
-		//
-		// IT WILL NOT WORK BECAUSE THERE IS NO DIRECTORIES IN THE BROWSER AS WE USED TO SEE
-		//
-		// check if the cache is present
-		if (_imgCacheCandles is null)
-		{
-			_imgCacheCandles = new List<ImageForCandle>();
 
-			foreach (var c in CandleList)
-			{
-				// download image for c.Id as a string
-				var response = await client.GetAsync(@$"api/candle/imgForId={c.Id}");
-				var imgstr = await response.Content.ReadAsStringAsync();
-
-				// in case string is null then we use question mark image for local path
-				var localpath = "img/question_mark.png";
-				if(!string.IsNullOrEmpty(imgstr))
-				{
-					// create byte array as binary file
-					var bytes = Convert.FromBase64String(imgstr);
-					// new local path based on c.Id
-					localpath = @$"/home/web_user/{c.Id}_{c.Name}.jpeg";
-					// create image file in path
-					if(!File.Exists(localpath))
-					{
-						File.Create(localpath);
-					}
-					await File.WriteAllBytesAsync(localpath, bytes);
-				}
-
-				// add each candle image into cache
-				_imgCacheCandles.Add(new ImageForCandle(candleId: c.Id, remotelink: c.PhotoLink, localLink: localpath, isActive: true));
-			}
-		}
-
-
-
-
+		var basepath = config.GetValue<string>("BaseAdress");
+		
 		// adding into CandlesExpanded
 		foreach (var c in CandleList)
 		{
-			var response = await client.GetAsync(@$"api/candle/imgForId={c.Id}");
-			var imgstr = await response.Content.ReadAsStringAsync();
 
-			var str = string.Format("data:image/jpeg;base64,{0}", imgstr);
-
-			if (string.IsNullOrEmpty(imgstr))
+			var imgsrc = "";
+			if (c.PhotoLink is null)
 			{
-				str = "img/question_mark.png";
+				imgsrc = "img/question_mark.png";
+			}
+			else 
+			{
+				imgsrc = $"{basepath}api/candle/imgForId={c.Id}";
 			}
 
-			CandlesExpanded.Add(new CandleWithExpanded(item: c, expanded: false, imgsrc: str));
-
+			CandlesExpanded.Add(new CandleWithExpanded(item: c, expanded: false, imgsrc: imgsrc));
 
 		}
 
-		// if the cache is not null then we need perform caching checks
-		// for (int i = 0; i < CandlesExpanded.Count(); i++)
-		// {
-		// 	if (CandlesExpanded[i].CandleItem.PhotoLink == _imgCacheCandles[i].RemoteLink)
-		// 	{
-		// 		// nothing needed	
-		// 	}
-		//}
 
 	}
 
 	public void EditCandle(int candleId)
 	{
 		navigationService.PerformNavigation($"candle/{candleId}");
-	}
-
-	private void CreateCacheForCandlesList()
-	{
-		
 	}
 
 
