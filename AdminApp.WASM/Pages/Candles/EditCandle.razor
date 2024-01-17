@@ -10,6 +10,7 @@
 @inject CategoryHandlerService categoryService;
 @inject IImageUploader imageUploadService;
 @inject INavigation navigationService
+@inject IConfiguration config
 
 
 <style>
@@ -230,15 +231,15 @@ else
 		_selectedCandle = await candleService.GetCanldeAsync($"api/candle/cid={Id}?view=full");
 		NewCandleForm = _selectedCandle?.ConvertToFormModel_FromFullVM() ?? new NewCandleFormModel();
 
-		// Get image for candle
-		var response = await client.GetAsync(@$"api/candle/imgForId={Id}");
-		var imgstr = await response.Content.ReadAsStringAsync();
-		IMG = string.Format("data:image/jpeg;base64,{0}", imgstr);
-
-		// set default image if the image is null
-		if (string.IsNullOrEmpty(imgstr))
+		// image for candle
+		var basepath = config.GetValue<string>("BaseAdress");
+		if(_selectedCandle.PhotoLink is null)
 		{
 			IMG = "img/question_mark.png";
+		}
+		else
+		{
+			IMG = $"{basepath}api/candle/imgForId={_selectedCandle.Id}";
 		}
 
 
