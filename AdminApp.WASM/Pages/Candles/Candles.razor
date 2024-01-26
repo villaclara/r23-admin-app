@@ -6,21 +6,7 @@
 @inject INavigation navigationService
 @inject IConfiguration config
 
-<style>
-	.candle-item {
-		/* #868f74 */
-		border: 1px solid grey;
-		border-radius: 5px;
-		background-color: #5F6451;
-		color: #F9FFE7;
-	}
-
-	.img-candleslist {
-		width: 65px;
-		height: 65px;
-		/* object-fit: contain; */
-	}
-</style>
+<PageTitle>Свічки</PageTitle>
 
 <span></span>
 <div class="container pb-5">
@@ -32,7 +18,7 @@
 	</div>
 
 	<!-- placeholder time -->
-	@if(CandlesExpanded is null)
+	@if (CandlesExpanded is null)
 	{
 		<div class="container">
 
@@ -54,64 +40,21 @@
 	// actual candles list
 	else
 	{
-		
-		@* <div class="container-fluid">
-			<table class="table table-hover align-middle">
-				<thead>
-					<tr>
-						<th scope="col" class="col-2">Id</th>
-						<th scope="col" class="col-7">Назва </th>
-						<th scope="col" class="col-3"></th>
-					</tr>
-				</thead>
-
-				<tbody>
-					@foreach (var can in CandlesExpanded)
-					{
-						<tr style="cursor:pointer" @onclick="() => can.Expanded = !can.Expanded">
-							<td class="col-2"> @can.CandleItem.Id </td>
-							<td class="col-7"> @can.CandleItem.Name </td>
-							<td class="col-3">
-								<div class="d-grid gap-2">
-								<button type="button" class="btn btn-secondary" @onclick="() => EditCandle(can.CandleItem.Id)">
-									<span class="oi oi-pencil" aria-hidden="true"></span>
-								</button>
-								</div>
-							</td>
-						</tr>
-						@if (can.Expanded)
-						{
-							<tr id="toexpand">
-								<td colspan="3" class="col-12 lighter-back">
-									<div class="wrapper">
-										<div class="expandable">
-											<CascadingValue Value="can.CandleItem">
-												<CandleFullInfoAsTable />
-											</CascadingValue>
-										</div>
-									</div>
-								</td>
-							</tr>
-						}
-					}
-				</tbody>
-
-			</table>
-		</div>
- *@
 
 		<div class="container">
-		@foreach(var candle in CandlesExpanded.OrderBy(c => c.CandleItem.Name))
-		{
-			<div class="row border border-dark my-2 py-1 candle-item montserat">
-				<div class="col-3 my-auto">
-						<img src="@candle.ImgSrc" alt="" class="rounded img-candleslist" />
-						@* <img src=@SetImageLink(candle.CandleItem.Id) alt="" class="rounded img-candleslist" /> *@
-				</div>
+			@foreach (var candle in CandlesExpanded.OrderBy(c => c.CandleItem.Name))
+			{
+				<div class="row row-cols-3 row-cols-lg-4 border border-dark my-2 py-1 candle-item montserat">
+					
+					
+					<!-- Candle Image -->
+					<div class="col-3 col-lg-1 my-auto">
+						<img src="@candle.ImgSrc" alt="" class="rounded img-candleslist" /> @* direct image source link from api *@
+					</div>
 
 
-				<!-- Clickable area -->
-						<div class="col-8" @onclick="() => EditCandle(candle.CandleItem.Id)">
+					<!-- Clickable area will open edit candle -->
+					<div class="col-8 col-lg-6" @onclick="() => EditCandle(candle.CandleItem.Id)">
 						<div class="row">
 							<div class="col">
 								<span class="fw-bolder" style="color: #FCFFF3">
@@ -122,13 +65,11 @@
 
 						<div class="row">
 							<div class="col">
-
 								<span class="small play">Ціна - @candle.CandleItem.SellPrice.ToZeroNumbersAfterComma() грн.</span>
+							</div>
 
-								@* <br/>
-								<span class="small">@candle.CandleItem.WaxNeededGram г.</span>
-								<span> --- </span>
-								<span class="small">@candle.CandleItem.WickDiameterCM ниток</span> *@
+							<div class="col desktop-display">
+								<span class="small">Собівартість - @candle.CandleItem.RealCost.ToZeroNumbersAfterComma() грн.</span>
 							</div>
 
 						</div>
@@ -147,17 +88,38 @@
 
 					</div>
 
+					<!-- only display in large screens. Additional info about candle -->
+					<div class="col-lg-4 desktop-display">
+						<div class="row">
+							<div class="col">
+								<span class="small">Категорія - @candle.CandleItem.Category</span>
+							</div>
+						</div>
 
-				<div class="col-1 my-auto ps-0">
-					<a href="/candle/@candle.CandleItem.Id" class="text-light">
-						<span class="bi bi-chevron-compact-right"></span>
-					</a>
+						<div class="row">
+							<div class="col">
+								<span class="small">Час горіння - @candle.CandleItem.BurningTimeMins хв.</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col">
+								<span class="small">Висота - @candle.CandleItem.HeightCM см.</span>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="col-1 col-lg-1 my-auto ps-0">
+						<a href="/candle/@candle.CandleItem.Id" class="text-light">
+							<span class="bi bi-chevron-compact-right"></span>
+						</a>
+					</div>
+
+
+
 				</div>
-	
-
-				
-			</div>
-		}
+			}
 		</div>
 	}
 
@@ -170,22 +132,17 @@
 
 	public string MessageResponse { get; set; } = "Loading...";
 
+	// List retrieved from API
 	public IEnumerable<CandleFullVM>? CandleList { get; set; }
 
-
-
-	// public bool Expanded { get; set; } = false;
-
-	// public string? expandedClass => Expanded ? "open" : null;
-
+	// Manipulating list inside this page
 	public List<CandleWithExpanded>? CandlesExpanded { get; set; } = null;
 
 
+	// Cached candles
 	private ICollection<CandleWithExpanded>? _candlesCache { get; set; } = null;
 	private List<ImageForCandle>? _imgCacheCandles { get; set; } = null;
 
-
-	private string SetImageLink(int id) => $"http://localhost:5117/api/candle/imgForId={id}";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -200,14 +157,14 @@
 
 		CandlesExpanded = new List<CandleWithExpanded>();
 
-		if(!CandleList.Any())
+		if (!CandleList.Any())
 		{
 			return;
 		}
 
 
 		var basepath = config.GetValue<string>("BaseAdress");
-		
+
 		// adding into CandlesExpanded
 		foreach (var c in CandleList)
 		{
@@ -217,7 +174,7 @@
 			{
 				imgsrc = "img/question_mark.png";
 			}
-			else 
+			else
 			{
 				imgsrc = $"{basepath}api/candle/imgForId={c.Id}";
 			}
@@ -251,5 +208,5 @@
 	}
 
 
-	
+
 }

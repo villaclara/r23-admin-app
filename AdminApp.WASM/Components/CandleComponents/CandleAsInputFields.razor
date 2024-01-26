@@ -18,7 +18,7 @@
 
 
 	<!-- MAIN SECTION - NAME, DESCRIPTION, CATEGORY -->
-	<div class="container p-1 rounded py-1 my-1 shadow-sm one-section-candle-option">
+	<div class="container-fluid p-1 rounded py-1 my-1 shadow-sm one-section-candle-option">
 		<div class="pb-2 row mx-auto mt-2">
 			<label class="form-label col-3 col-lg-2 col-form-label fs-5">
 				Назва
@@ -75,10 +75,98 @@
 
 	@* <hr class="hr-line" /> *@
 
+	<div class="row row-cols-1 row-cols-lg-2">
+		<div class="col col-lg-5">
+			<!-- PRICE SECTION -->
+			<div class="container-fluid rounded py-1 my-1 one-section-candle-option h-100">
 
-	<!-- PRICE SECTION -->
+				<div class="pb-2 mt-2 mx-auto row input-group">
+					<label class="form-label col-5 col-lg-6 col-form-label">
+						Собівартість
+					</label>
+					<div class="col-4 col-lg-3">
+						<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control text-center" />
+					</div>
+					<label class="col-1 col-form-label-sm px-0 fw-lighter">
+						грн.
+					</label>
+					<ValidationMessage For="() => NewCandleForm.RealCost" />
+				</div>
+
+				<div class="pb-2 mx-auto row input-group">
+					<label class="form-label col-5 col-lg-6 col-form-label pe-0 me-0">
+						Ціна продажу
+					</label>
+					<div class="col-4 col-lg-3">
+						<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control text-center" />
+					</div>
+					<label class="col-1 col-form-label-sm px-0 fw-lighter">
+						грн.
+					</label>
+					<ValidationMessage For="() => NewCandleForm.SellPrice" />
+				</div>
+
+			</div>
+		</div>
+		<div class="col col-lg-5">
+			<!-- INGREDIENTS SECTION -->
+			<div class="container-fluid rounded py-1 my-1 one-section-candle-option">
+
+
+
+
+				<div class="pb-0 mt-2 mx-auto row input-group">
+					<div class="col-6 ps-0">
+						<label class="form-label mb-0"> Час горіння </label>
+					</div>
+					<div class="col-6 ps-0">
+						<label class="form-label mb-0"> Висота </label>
+					</div>
+				</div>
+
+				<div class="pb-2 mx-auto row input-group">
+
+					<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center" />
+					@* <input type="number" value="@NewCandleForm.BurningTimeMins" class="form-control text-center" /> *@
+					<span class="input-group-text col-2 ps-1">
+						хв.
+					</span>
+
+					<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
+					<span class="input-group-text col-2 ps-1">
+						см.
+					</span>
+				</div>
+
+				<div class="pb-0 mx-auto row input-group">
+					<div class="col-6 ps-0">
+						<label class="form-label mb-0"> Гніт </label>
+					</div>
+					<div class="col-6 ps-0">
+						<label class="form-label mb-0"> Воску треба </label>
+					</div>
+				</div>
+
+				<div class="pb-2 mx-auto row input-group">
+
+					<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
+					<span class="input-group-text col-2 ps-1">
+						ниток
+					</span>
+
+					<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
+					<span class="input-group-text col-2 ps-1">
+						грам
+					</span>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	@* <!-- PRICE SECTION -->
 	<div class="container rounded py-1 my-1 one-section-candle-option">
-		
+
 		<div class="pb-2 mt-2 mx-auto row input-group">
 			<label class="form-label col-5 col-lg-2 col-form-label">
 				Собівартість
@@ -105,57 +193,60 @@
 			<ValidationMessage For="() => NewCandleForm.SellPrice" />
 		</div>
 
-	</div>
+	</div> *@
 
 
-	<!-- INGREDIENTS SECTION -->
+	@* <!-- INGREDIENTS SECTION -->
 	<div class="container rounded py-1 my-1 one-section-candle-option">
 
-		<div class="pb-0 mt-2 mx-auto row input-group">
-			<div class="col-6 ps-0">
-				<label class="form-label mb-0"> Час горіння </label>
+
+
+
+			<div class="pb-0 mt-2 mx-auto row input-group">
+				<div class="col-6 ps-0">
+					<label class="form-label mb-0"> Час горіння </label>
+				</div>
+				<div class="col-6 ps-0">
+					<label class="form-label mb-0"> Висота </label>
+				</div>
 			</div>
-			<div class="col-6 ps-0">
-				<label class="form-label mb-0"> Висота </label>
+
+			<div class="pb-2 mx-auto row input-group">
+
+				<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center" />
+				@* <input type="number" value="@NewCandleForm.BurningTimeMins" class="form-control text-center" /> 
+				<span class="input-group-text col-2 ps-1">
+					хв.
+				</span>
+
+				<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
+				<span class="input-group-text col-2 ps-1">
+					см.
+				</span>
 			</div>
-		</div>
 
-		<div class="pb-2 mx-auto row input-group">
-
-			<InputNumber @bind-Value="NewCandleForm.BurningTimeMins" class="form-control text-center"/>
-			@* <input type="number" value="@NewCandleForm.BurningTimeMins" class="form-control text-center" /> *@
-			<span class="input-group-text col-2 ps-1">
-				хв.
-			</span>
-
-			<InputNumber @bind-Value="NewCandleForm.HeightCM" class="form-control text-center" />
-			<span class="input-group-text col-2 ps-1">
-				см.
-			</span>
-		</div>
-
-		<div class="pb-0 mx-auto row input-group">
-			<div class="col-6 ps-0">
-				<label class="form-label mb-0"> Гніт </label>
+			<div class="pb-0 mx-auto row input-group">
+				<div class="col-6 ps-0">
+					<label class="form-label mb-0"> Гніт </label>
+				</div>
+				<div class="col-6 ps-0">
+					<label class="form-label mb-0"> Воску треба </label>
+				</div>
 			</div>
-			<div class="col-6 ps-0">
-				<label class="form-label mb-0"> Воску треба </label>
+
+			<div class="pb-2 mx-auto row input-group">
+
+				<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
+				<span class="input-group-text col-2 ps-1">
+					ниток
+				</span>
+
+				<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
+				<span class="input-group-text col-2 ps-1">
+					грам
+				</span>
 			</div>
-		</div>
-
-		<div class="pb-2 mx-auto row input-group">
-
-			<InputNumber @bind-Value="NewCandleForm.WickDiameterCM" class="form-control text-center" />
-			<span class="input-group-text col-2 ps-1">
-				ниток
-			</span>
-
-			<InputNumber @bind-Value="NewCandleForm.WaxNeededGram" class="form-control text-center" />
-			<span class="input-group-text col-2 ps-1">
-				грам
-			</span>
-		</div>
-	</div>
+	</div> *@
 
 
 </div>

@@ -8,6 +8,20 @@ h3 {
     background-color: #f7ba8e;
 }
 
+.candle-item {
+    /* #868f74 */
+    border: 1px solid grey;
+    border-radius: 5px;
+    background-color: #5F6451;
+    color: #F9FFE7;
+}
+
+/*.img-candleslist {
+    width: 65px;
+    height: 65px;*/
+    /* object-fit: contain; */
+/*}*/
+
 .add-candle {
    /* background-color: #c4bda7;
     color: #000000;*/
@@ -25,23 +39,51 @@ h3 {
 }
 
 
-/* ANIMATION */
-/* HIDDEN - to not display from the top when moving */
-.wrapper {
-    overflow: hidden;
-}
-
-.expandable {
-    animation: display-down 0.3s ease;
-}
-
-@keyframes display-down {
-    0% {
-        margin-top: -100%;
+@media (min-width: 641px) {
+    .desktop-display {
+        cursor: pointer;
     }
 
-    100% {
-        margin-top: 0;
+    .img-candleslist {
+        height: 65px;
+        width: 80px;
+    }
+}
+
+
+
+@media (max-width: 640.98px) {
+    .desktop-display {
+        display: none;
     }
 
+    .img-candleslist {
+        width: 65px;
+        height: 65px;
+        /* object-fit: contain; */
+    }
 }
+
+
+
+
+
+    /* ANIMATION */
+    /* HIDDEN - to not display from the top when moving */
+    .wrapper {
+        overflow: hidden;
+    }
+
+    .expandable {
+        animation: display-down 0.3s ease;
+    }
+
+    @keyframes display-down {
+        0% {
+            margin-top: -100%;
+        }
+
+        100% {
+            margin-top: 0;
+        }
+    }
