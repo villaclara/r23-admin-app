@@ -63,6 +63,12 @@ html, body {
    
 }
 
+@media (max-width: 640.98px) {
+    html, body {
+        font-size: 4vw;
+    }
+}
+
 /*@media (max-width: 640.98px) {
 
     select,
