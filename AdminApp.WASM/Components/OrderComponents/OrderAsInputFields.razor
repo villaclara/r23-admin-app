@@ -74,7 +74,7 @@
 			Свічки:
 		</label>
 		<div class="col-6 col-lg-6 m-auto">
-			<button type="button" class="btn btn-sm btn-primary m-auto" @onclick="() => CandlesExpanded = !CandlesExpanded">
+			<button type="button" class="btn btn-sm btn-secondary m-auto" @onclick="() => CandlesExpanded = !CandlesExpanded">
 				<i class="bi bi-check-circle" />
 				Вибрати
 			</button>
@@ -129,9 +129,9 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Q</th>
-						<th>Gramm</th>
+						<th>Назва</th>
+						<th>К-сть</th>
+						<th>Грам</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -216,6 +216,9 @@
 	private int _totalGramm;
 
 
+	// Backup sum of the candles selected. It should be always the TRUTH value as if the candles 100% of the price
+	private decimal _backupSum = 0;
+
 	// called after received parameters from parent
 	protected override void OnParametersSet()
 	{
@@ -234,6 +237,8 @@
 					WaxNeededGramm = candle.WaxNeededGram,
 					WickDiameterCM = candle.WickDiameterCM
 				});
+
+
 		}
 
 
@@ -244,6 +249,9 @@
 		{
 			var index = CandlesOrdered.FindIndex(o => o.Id == c.Key);
 			CandlesOrdered[index].Quantity = c.Value;
+
+			// setting the correct backup sum for the editing order
+			_backupSum += (CandlesOrdered[index].Quantity * CandlesOrdered[index].Price);
 		}
 
 
@@ -258,6 +266,8 @@
 	public void IncreaseCounterForChosenCandle(MouseEventArgs args, CandleOrdered candle)
 	{
 		candle.Quantity++;
+
+		_backupSum += candle.Price;
 		OrderModel.Price += candle.Price;
 
 		_totalGramm += candle.WaxNeededGramm;
@@ -267,10 +277,13 @@
 		if (candle.Quantity > 0 && candle.TotalSum >= candle.Price)
 		{
 			candle.Quantity--;
+
+			_backupSum -= candle.Price;
 			OrderModel.Price -= candle.Price;
 
 			// price could not be less than 0
 			OrderModel.Price = OrderModel.Price < 0 ? 0 : OrderModel.Price;
+			_backupSum = _backupSum < 0 ? 0 : _backupSum;
 
 			_totalGramm -= candle.WaxNeededGramm;
 			_totalGramm = _totalGramm < 0 ? 0 : _totalGramm;
@@ -288,6 +301,7 @@
 
 		string trimmed = promocodeValue.Trim();
 		decimal value = 0;
+
 		if (trimmed.EndsWith('%'))
 		{
 			bool result = decimal.TryParse(promocodeValue[..^1], out value);
@@ -301,6 +315,15 @@
 		{
 
 			bool result = decimal.TryParse(promocodeValue, out value);
+
+
+			// reset promocode
+			if(result && value == 0)
+			{
+				OrderModel.Price = _backupSum;
+				return;
+			}
+
 			if (result && OrderModel.Price > value)
 			{
 				OrderModel.Price -= value;
