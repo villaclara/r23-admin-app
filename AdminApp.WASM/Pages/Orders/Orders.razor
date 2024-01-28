@@ -38,7 +38,7 @@
 
 </style>
 
-<div class="container">
+<div class="container-fluid">
 
 	<!-- NEW BUTTON and FILTERS SECTION-->
 	<div class="container">
@@ -117,7 +117,6 @@
 	<div class="row px-0 mx-0 border border-1" style="height: 2px;"></div>
 
 
-
 	@if (OrdersExpanded is null)
 	{
 			<AdminApp.WASM.Components.Placeholders.OrderItemListPlaceholder />
@@ -160,24 +159,25 @@
 			<div class="">
 
 				<div class="row border-space py-2" style="background-color: #f7ede4 /*#e7d5c6*/; color: black;">
-					<div class="col-1 align-self-center ps-1 pe-0">
+					
+					<div class="col-1 col-lg-1 align-self-center ps-1 pe-0">
 						<span class="comfortaa fw-bold">
 							@order.OrderVM.Id
 						</span>
 					</div>
 
-					<div class="col-7">
+					<div class="col-7 col-lg-4">
 						<div class="row">
 							<div class="col ps-4 text-nowrap" @onclick="() => order.Expanded = !order.Expanded">
 								<span class="play fw-bolder text-uppercase @SetBorderCssToFullNameDiv(order.Expanded)" style="color: #514538">
 									@order.OrderVM.Receiver.FullName.ToOnlyFirstLastName()
-									<span class="@SetArrowCssClassToOrder(order.Expanded)" style="font-size: 15px"></span>
+									<span class="@SetArrowCssClassToOrder(order.Expanded) mobile-display mobile-only" style="font-size: 15px"></span>
 								</span>
 
 							</div>
 						</div>
 
-						<div class="row">
+						<div class="row mobile-display">
 							<div class="col ps-4">
 								<div class="overflow-hidden">
 									<div class="transition-receiver @SetAnimationCssClassForOrder(order.Expanded)">
@@ -210,7 +210,34 @@
 
 
 
-					<div class="col-4 text-center align-self-top ps-0" @onclick="() => NavigateToOrder(order.OrderVM.Id)">
+					<!-- Delivery Details only for the Desktop -->
+					<div class="col-lg-4 desktop-display my-auto">
+
+						<div class="row">
+							<div class="col">
+								<span class="small play fst-italic">
+									<span class="bi bi-telephone-fill"></span>
+									<span>
+										@order.OrderVM.Receiver.PhoneNumber.DisplayPhoneNumberWithDashes() - п.@order.OrderVM.ReceiverRepeat
+									</span>
+								</span>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col">
+								<span class="small play fst-italic">
+									<span>
+										@order.OrderVM.Receiver.City - @order.OrderVM.Receiver.DeliveryAdress
+									</span>
+								</span>
+							</div>
+						</div>
+
+					</div>
+
+
+					<div class="col-4 col-lg-3 text-center align-self-top ps-0" @onclick="() => NavigateToOrder(order.OrderVM.Id)">
 						<div class="row">
 							<div class="col">
 								<span class="opensans" style="color: black">
