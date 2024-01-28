@@ -17,6 +17,9 @@
 	.lightgreencolor {
 		background-color: lightgrey;
 	}
+
+	.desktop-display {
+	}
 </style>
 
 
@@ -122,69 +125,83 @@ else if (_selectedCandle.Id == 0)
 }
 else
 {
-	<div class="container">
-
+	<div class="container-fluid">
 		<div class="row">
-			<div class="col-8">
-
+			<div class="col-12 col-lg-8">
 				<div class="row">
-					<div class="col ps-0">
-						<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+					<div class="col-8">
+
+						<div class="row">
+							<div class="col ps-0">
+								<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+							</div>
+						</div>
+
+						<div class="row py-2 pe-0">
+							<div class="col pe-0">
+								<span class="display-6 comfortaa fw-bolder">@NewCandleForm.Name</span>
+
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col montserat">
+								<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile" />
+								@* <label for="inputfile">labelforinput</label> *@
+							</div>
+						</div>
 					</div>
+
+					<div class="col-4 my-auto rounded border border-dark px-1 py-1 shadow bg-body-tertiary mobile-display" style="height: 95px; width: 95px;">
+						<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="85" width="85" />
+					</div>
+
 				</div>
 
-				<div class="row py-2 pe-0">
-					<div class="col pe-0">
-						<span class="display-6 comfortaa fw-bolder">@NewCandleForm.Name</span>
+				<div class="">
 
-					</div>
-				</div>
+					<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+						<DataAnnotationsValidator />
+						<CascadingValue Value="NewCandleForm">
+							<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
+						</CascadingValue>
 
-				<div class="row">
-					<div class="col montserat">
-						<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile" />
-						@* <label for="inputfile">labelforinput</label> *@
-					</div>
+
+						<p> @MessageResponse </p>
+
+
+						<div class="container-fluid d-grid d-md-block pt-3 pb-5 montserat">
+							@* <button class="btn btn-lg btn-success rounded-1">Зберегти</button> *@
+
+							<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Зберегти" IsButtonPressed=@IsEditButtonPressed />
+
+						</div>
+					</EditForm>
+
 				</div>
 			</div>
-			<div class="col-4 my-auto rounded border border-dark px-1 py-1 shadow bg-body-tertiary" style="height: 95px; width: 95px;">
-				<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="85" width="85" />
+
+			<div class="col-lg-4 my-auto desktop-display">
+				<div class="col rounded border border-dark px-1 py-1 shadow bg-body-tertiary desktop-display overflow-hidden" style="height: 350px; width: 350px;">
+					<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="340" width="340" />
+				</div>
 			</div>
+			
+
+		</div>
+
+		
+		<hr />
+		<hr />
+		<div class="container">
+			@* <ButtonWithSpinnerAction ButtonCss="btn btn-danger btn-sm" ButtonText="Видалити" IsButtonPressed="@IsDeleteButtonPressed" @onclick="(() => DeleteCandle())"/> *@
+			<button type="button" class="btn btn-danger btn-sm" @onclick="(() => DeleteCandle())">
+				<span>Видалити</span>
+			</button>
+
 		</div>
 
 	</div>
-
-	<div class="container">
-
-		<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
-			<DataAnnotationsValidator />
-			<CascadingValue Value="NewCandleForm">
-				<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
-			</CascadingValue>
-
-
-			<p> @MessageResponse </p>
-
-
-			<div class="container-fluid d-grid d-md-block">
-				@* <button class="btn btn-lg btn-success rounded-1">Зберегти</button> *@
-
-				<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Зберегти" IsButtonPressed=@IsEditButtonPressed />
-
-			</div>
-		</EditForm>
-
-	</div>
-	<hr />
-	<hr />
-	<div class="container">
-		@* <ButtonWithSpinnerAction ButtonCss="btn btn-danger btn-sm" ButtonText="Видалити" IsButtonPressed="@IsDeleteButtonPressed" @onclick="(() => DeleteCandle())"/> *@
-		<button type="button" class="btn btn-danger btn-sm" @onclick="(() => DeleteCandle())">
-			<span>Видалити</span>
-		</button>
-
-	</div>
-
 }
 
 
@@ -200,7 +217,7 @@ else
 	// Selected candle from DB with Id as [Parameter]
 	private CandleFullVM? _selectedCandle = new CandleFullVM() { Id = 0 };
 
-	// MessageResponse displayed 
+	// MessageResponse displayed
 	public string MessageResponse { get; set; } = "";
 
 	// Categories to be able to select
@@ -219,7 +236,7 @@ else
 	// Image processing stuff
 	private string SetCssImageIfIsLoaded(string img) => string.IsNullOrEmpty(img) ? "hide" : "show";
 
-	// Image in base64 string 
+	// Image in base64 string
 	public string IMG { get; set; } = "";
 
 	// File uploaded from user
@@ -233,7 +250,7 @@ else
 
 		// image for candle
 		var basepath = config.GetValue<string>("BaseAdress");
-		if(_selectedCandle.PhotoLink is null)
+		if (_selectedCandle.PhotoLink is null)
 		{
 			IMG = "img/question_mark.png";
 		}

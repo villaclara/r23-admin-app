@@ -27,69 +27,66 @@
 	}
 </style>
 
-<div class="container">
-
+<div class="container-fluid">
 	<div class="row">
-		<div class="col-8">
-			
+		<div class="col-12 col-lg-8">
 			<div class="row">
-				<div class="col ps-0">
-					<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Всі свічки" />
+				<div class="col-8">
+
+					<div class="row">
+						<div class="col ps-0">
+							<AdminApp.WASM.Components.NavigationComponents.ReturnBackButtonComponent FromPageReached="candle" Text="Назад" />
+						</div>
+					</div>
+
+					<div class="row py-2 pe-0">
+						<div class="col pe-0">
+							<span class="display-6 comfortaa fw-bolder">Нова Свічка</span>
+
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col montserat">
+							<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile" />
+							@* <label for="inputfile">labelforinput</label> *@
+						</div>
+					</div>
 				</div>
+
+				<div class="col-4 my-auto rounded border border-dark px-1 py-1 shadow bg-body-tertiary mobile-display" style="height: 95px; width: 95px;">
+					<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="85" width="85" />
+				</div>
+
 			</div>
 
-			<div class="row py-2 pe-0">
-				<div class="col pe-0">
-					<span class="display-6 comfortaa fw-bolder">Нова Свічка</span>
+			<div class="">
 
-				</div>
-			</div>
+				<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
+					<DataAnnotationsValidator />
+					<CascadingValue Value="NewCandleForm">
+						<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
+					</CascadingValue>
 
-			<div class="row">
-				<div class="col montserat">
-					<InputFile class="form-control form-control-sm" OnChange="LoadPhotoToVariable" id="inputfile"/>
-					@* <label for="inputfile">labelforinput</label> *@
-				</div>
+					<p> @MessageResponse </p>
+					<div class="container-fluid d-grid d-md-block pt-3 pb-5 montserat">
+						<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Додати" IsButtonPressed="@_isAddButtonPressed" />
+					</div>
+				</EditForm>
+
 			</div>
 		</div>
-		<div class="col-4 my-auto rounded border border-dark px-1 py-1 shadow bg-body-tertiary" style="height: 95px; width: 95px;">
-			<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="85" width="85" />
+
+		<div class="col-lg-4 my-auto desktop-display">
+			<div class="col rounded border border-dark px-1 py-1 shadow bg-body-tertiary desktop-display overflow-hidden" style="height: 350px; width: 350px;">
+				<img src="@IMG" alt="" class="@SetCssImageIfIsLoaded(IMG) rounded" height="340" width="340" />
+			</div>
 		</div>
+
+
 	</div>
-
-	@* <MessageResponseComponent MessageResponse="@MessageResponse" /> *@
-
-@* 	<div class="row overflow-visible">
-		<div class="col">
-		</div>
-	</div> *@
 </div>
 
-<div class="container">
-		
-
-		<div class="row">
-			<div class="col">
-
-	<EditForm Model="NewCandleForm" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit" @onsubmit:preventDefault>
-		<DataAnnotationsValidator />
-		<CascadingValue Value="NewCandleForm">
-			<CandleAsInputFields Categories="CatNames" @bind-NewCategoryToAdd="@PossibleNewCategoryName" />
-		</CascadingValue>
-
-		<p> @MessageResponse </p>
-		<div class="container-fluid d-grid d-md-block pt-3 pb-5 montserat">
-					<ButtonWithSpinnerAction ButtonCss="btn btn-lg btn-success rounded-1" ButtonText="Додати" IsButtonPressed="@_isAddButtonPressed" />
-			@* <button class="btn btn-lg btn-success rounded-1">
-			<span class="@SetAddButtonCssSpinner(_isAddButtonPressed)" aria-hidden="true"></span>
-			<span>Додати</span>
-			</button> *@
-		</div>
-	</EditForm>
-			</div>
-		</div>
-
-</div>
 
 @code {
 	public NewCandleFormModel NewCandleForm { get; set; } = new();

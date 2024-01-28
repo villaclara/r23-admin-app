@@ -16,9 +16,69 @@
 
 <div class="montserat">
 
+	<div class="row">
+		<div class="col-12">
+			<!-- MAIN SECTION - NAME, DESCRIPTION, CATEGORY -->
+			<div class="container p-1 rounded py-1 my-1 shadow-sm one-section-candle-option">
+				<div class="pb-2 row mx-auto mt-2">
+					<label class="form-label col-3 col-lg-2 col-form-label fs-5">
+						Назва
+					</label>
+					<div class="col-9 col-lg-6">
+						<InputText @bind-Value="NewCandleForm.Name" class="form-control" />
+						<ValidationMessage For="() => NewCandleForm.Name" />
+					</div>
+				</div>
 
-	<!-- MAIN SECTION - NAME, DESCRIPTION, CATEGORY -->
-	<div class="container-fluid p-1 rounded py-1 my-1 shadow-sm one-section-candle-option">
+				<div class="row pb-2 mx-auto">
+					<label class="form-label col-3 col-lg-2 col-form-label fs-5">
+						Опис
+					</label>
+					<div class="col-9 col-lg-10">
+						<InputText @bind-Value="NewCandleForm.Description" class="form-control" />
+						<ValidationMessage For="() => NewCandleForm.Description" />
+					</div>
+				</div>
+
+				<div class="pb-2 row mx-auto">
+					<label class="form-label col-4 col-lg-2 col-form-label fs-5">
+						Категорія
+					</label>
+					<div class="col-8 col-lg-6">
+						<!-- display all categories as select list.
+							also last should be "..." which means new category will be added
+						-->
+						<InputSelect @bind-Value="NewCandleForm.Category" class="form-select">
+							@if (Categories.Any())
+							{
+								@foreach (var cat in Categories)
+								{
+									<option value="@cat">@cat</option>
+								}
+							}
+						</InputSelect>
+						<ValidationMessage For="() => NewCandleForm.Category" />
+					</div>
+
+					<!-- If user wants to add new category we use NewCategoryToAdd string field to save new cateogry name -->
+					@if (NewCandleForm.Category == Constants.NEW_CATEGORY_TO_ADD_OPTION)
+					{
+						<label class="form-label col-5 col-lg-2 col-form-label fw-lighter" style="font-size: 18px;">
+							Введи нову:
+						</label>
+						<div class="col-7 col-lg-6">
+							<InputText @bind-Value="NewCategoryToAdd" class="form-control" @onfocusout="FocusOutFromNewCategoryInput" />
+						</div>
+					}
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+	@* <!-- MAIN SECTION - NAME, DESCRIPTION, CATEGORY -->
+	<div class="container p-1 rounded py-1 my-1 shadow-sm one-section-candle-option">
 		<div class="pb-2 row mx-auto mt-2">
 			<label class="form-label col-3 col-lg-2 col-form-label fs-5">
 				Назва
@@ -71,7 +131,7 @@
 			}
 		</div>
 
-	</div>
+	</div> *@
 
 	@* <hr class="hr-line" /> *@
 
@@ -84,7 +144,7 @@
 					<label class="form-label col-5 col-lg-6 col-form-label">
 						Собівартість
 					</label>
-					<div class="col-4 col-lg-3">
+					<div class="col-4 col-lg-5">
 						<InputNumber @bind-Value="NewCandleForm.RealCost" class="form-control text-center" />
 					</div>
 					<label class="col-1 col-form-label-sm px-0 fw-lighter">
@@ -97,7 +157,7 @@
 					<label class="form-label col-5 col-lg-6 col-form-label pe-0 me-0">
 						Ціна продажу
 					</label>
-					<div class="col-4 col-lg-3">
+					<div class="col-4 col-lg-5">
 						<InputNumber @bind-Value="NewCandleForm.SellPrice" class="form-control text-center" />
 					</div>
 					<label class="col-1 col-form-label-sm px-0 fw-lighter">
@@ -108,9 +168,10 @@
 
 			</div>
 		</div>
-		<div class="col col-lg-5">
+
+		<div class="col col-lg-7">
 			<!-- INGREDIENTS SECTION -->
-			<div class="container-fluid rounded py-1 my-1 one-section-candle-option">
+			<div class="container-fluid rounded py-1 my-1 one-section-candle-option h-100">
 
 
 

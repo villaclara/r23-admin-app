@@ -61,11 +61,26 @@ html, body {
     }
 
    
+    .desktop-display {
+
+    }
+
+    .mobile-display {
+        display: none;
+    }
 }
 
 @media (max-width: 640.98px) {
     html, body {
         font-size: 4vw;
+    }
+
+    .desktop-display {
+        display: none;
+    }
+
+    .mobile-display {
+
     }
 }
 
