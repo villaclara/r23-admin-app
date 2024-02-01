@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta content="width" name="MobileOptimized" />
-    <title>AdminApp.WASM</title>
+    <title>R23 Admin</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
@@ -43,11 +43,16 @@
     
     <!-- JQuery script to display full height when the mobile keyobard is open -->
     <script>
-        $(function () {
-            var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-            var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-            $("html, body").css({ "width": w, "height": h });
-        });
+        // REMOVED as this was causing the overriding values for the width and height of the html page
+        // so when resizing window the styles was not applying until refreshing page
+        // 
+        // keep it here just to be sure that nothing broke, after update delete this code if not needed
+
+        //$(function () {
+        //    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        //    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        //    $("html, body").css({ "width": w, "height": h });
+        //});
     </script>
 </body>
 
