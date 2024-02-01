@@ -9,7 +9,7 @@
 </style>
 
 
-<div class="container">
+<div class="container-fluid">
 
 	<div class="pb-2 row">
 		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
@@ -23,81 +23,113 @@
 
 	<!-- PIB and Phone number are grouped into one row in big screens, two rows on phone screen -->
 	<div class="row row-cols-lg-4 gy-2 pb-2">
+
 		<label class="form-label col-2 col-lg-1 col-form-label fw-lighter">
 			ПІБ
 		</label>
+		
 		<div class="col-10 col-lg-4">
 			<InputText @bind-Value="OrderModel.Name" class="form-control" />
 			<ValidationMessage For="() => OrderModel.Name" />
 		</div>
 
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+		<label class="form-label col-5 col-lg-auto col-form-label fw-lighter">
 			Номер телефону
 		</label>
+		
 		<div class="col-7 col-lg-2">
 			<InputText @bind-Value="OrderModel.PhoneNumber" class="form-control" placeholder="09811122233" />
+			<ValidationMessage For="() => OrderModel.PhoneNumber" />
 		</div>
-		<ValidationMessage For="() => OrderModel.PhoneNumber" />
+	
 	</div>
 
 	<!-- City and Delivery adress are grouped into one row in big screens, two rows on phone screen -->
 	<div class="row row-cols-lg-4 gy-2 pb-2">
+		
 		<label class="form-label col-3 col-lg-1 col-form-label fw-lighter">
 			Місто
 		</label>
+		
 		<div class="col-9 col-lg-4">
 			<InputText @bind-Value="OrderModel.City" class="form-control" />
 			<ValidationMessage For="() => OrderModel.City" />
 		</div>
-		<label class="form-label col-5 col-lg-2 col-form-label fw-lighter">
+		
+		<label class="form-label col-5 col-lg-auto col-form-label fw-lighter">
 			Адреса доставки
 		</label>
-		<div class="col-7 col-lg-5">
+		
+		<div class="col-7 col-lg-4">
 			<InputText @bind-Value="OrderModel.Adress" class="form-control" />
+			<ValidationMessage For="() => OrderModel.Adress" />
 		</div>
-		<ValidationMessage For="() => OrderModel.Adress" />
+	
 	</div>
 
+	<!-- Comment -->
 	<div class="pb-2 row">
-		<label class="form-label col-3 col-lg-2 col-form-label fw-lighter">
+
+		<label class="form-label col-3 col-lg-1 col-form-label fw-lighter">
 			Коментар
 		</label>
-		<div class="col-9 col-lg-6">
+		
+		<div class="col-9 col-lg-4">
 			<InputText @bind-Value="OrderModel.Comment" class="form-control" />
 		</div>
+	
 	</div>
 
 	<hr class="hr-line" />
 
+
+	<!-- Candles section. One candle per row in mobile, 2 or 3 candles per row on desktop -->
 	<div class="row">
-		<label class="text-center form-label col-5 col-lg-2 col-form-label fw-lighter" @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
+		
+		<label class="text-center form-label col-5 col-lg-1 col-form-label fw-lighter" @onclick="() => CandlesExpanded = !CandlesExpanded" @onclick:preventDefault>
 			Свічки:
 		</label>
-		<div class="col-6 col-lg-6 m-auto">
+		
+		<div class="col-6 col-lg-2 m-auto m-lg-0">
 			<button type="button" class="btn btn-sm btn-secondary m-auto" @onclick="() => CandlesExpanded = !CandlesExpanded">
 				<i class="bi bi-check-circle" />
 				Вибрати
 			</button>
 		</div>
+	
 	</div>
+
 	@if (CandlesExpanded)
 	{
-		<div class="row">
+		<div class="row row-cols-lg-3">
 			@foreach (var candle in CandlesOrdered)
 			{
-				<div class="input-group input-group-sm mb-1 border border-secondary border-top-0 border-start-0 border-end-0">
-					<span class="col-5 col-lg-3 ps-0 m-auto ">@candle.Name</span>
-					<button type="button" class="btn shadow-none pe-0" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">
-						<span class="bi-dash-square-fill m-auto" style="font-size:25px"></span>
-					</button>
+				<!-- One more col and row used to be able to display 3 columns in desktop -->
+				<div class="col-12 col-lg-4">
+					<div class="row">
 
-					<InputNumber class="form-control text-center" style="height: 30px; width: 20px; margin:auto" @bind-Value="candle.Quantity" />
-					<button type="button" class="btn shadow-none ps-0" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">
-						<span class="bi-plus-square-fill m-auto" style="font-size: 25px" aria-hidden="true"></span>
-					</button>
-					<label class="col-3 col-lg m-auto">@candle.TotalSum грн.</label>
+						<!-- Not used "div class=col" because it corrupts view. Used only in spans to position other objects -->
+						<div class="input-group input-group-sm mb-1 border border-secondary border-top-0 border-start-0 border-end-0">
+							<span class="col-5 col-lg-4 ps-0 m-auto ">@candle.Name</span>
+
+							<button type="button" class="btn shadow-none pe-0" @onclick="(e) => DecreaseCounterForChosenCandle(e, candle)">
+								<span class="bi-dash-square-fill m-auto" style="font-size:25px"></span>
+							</button>
+
+							<InputNumber class="form-control text-center" style="height: 30px; width: 20px; margin:auto" @bind-Value="candle.Quantity" />
+
+
+							<button type="button" class="btn shadow-none ps-0" @onclick="(e) => IncreaseCounterForChosenCandle(e, candle)">
+								<span class="bi-plus-square-fill m-auto" style="font-size: 25px" aria-hidden="true"></span>
+							</button>
+
+							<label class="col-3 col-lg-5 m-auto">@candle.TotalSum грн.</label>
+
+						</div>
+						<br />
+
+					</div>
 				</div>
-				<br />
 			}
 
 		</div>
@@ -105,9 +137,10 @@
 
 	<hr class="hr-line" />
 
+	<!-- Promocode time -->
 	<div class="pb-2 row">
 		<div class="input-group">
-			<label class="input-group-text col-8 col-lg-3  fw-lighter">
+			<label class="input-group-text col-8 col-lg-2  fw-lighter">
 				Промокод
 				<small style="font-size: 11px;"> &nbsp;(% або знижка в грн)</small>
 			</label>
@@ -121,76 +154,90 @@
 	</div>
 
 
-	<!-- check if we have already selected any candle -->
-	@if (CandlesOrdered.Any(c => c.Quantity > 0))
-	{
-		<div class="row">
-			Вибрані свічки:
-			<table class="table">
-				<thead>
-					<tr>
-						<th>Назва</th>
-						<th>К-сть</th>
-						<th>Грам</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (var candle in CandlesOrdered)
-					{
-						@if (candle.Quantity > 0)
-						{
+	<!-- Selected candles and Sum section. 
+		On mobile each will be in new row, on desktop we place candles on the left, sum on the right
+	-->
+	<div class="row row-cols-1 row-cols-lg-2">
+		
+		<!-- Selected candles-->
+		<div class="col">
+
+
+			<!-- check if we have already selected any candle -->
+			@if (CandlesOrdered.Any(c => c.Quantity > 0))
+			{
+				<div class="row">
+					Вибрані свічки:
+					<table class="table">
+						<thead>
 							<tr>
-								<td>
-									<span>@candle.Name </span>
-								</td>
-								<td>
-									@candle.Quantity шт
-								</td>
-								<td>
-									@(candle.WaxNeededGramm * candle.Quantity) г
-								</td>
+								<th>Назва</th>
+								<th>К-сть</th>
+								<th>Грам</th>
 							</tr>
-						}
-					}
-				</tbody>
-			</table>
+						</thead>
+						<tbody>
+							@foreach (var candle in CandlesOrdered)
+							{
+								@if (candle.Quantity > 0)
+								{
+									<tr>
+										<td>
+											<span>@candle.Name </span>
+										</td>
+										<td>
+											@candle.Quantity шт
+										</td>
+										<td>
+											@(candle.WaxNeededGramm * candle.Quantity) г
+										</td>
+									</tr>
+								}
+							}
+						</tbody>
+					</table>
+
+				</div>
+			}
+
+			@* <hr /> *@
+		</div>
+		
+
+		<!-- Total section -->
+		<div class="col col-lg-5 mt-lg-auto">
+			<div class="pb-1 row">
+				<label class="col-6 col-lg-4 text-end">Воску потрібно:</label>
+				<label class="col-6 col-lg-3">@_totalGramm<span>&nbsp;г.</span></label>
+			</div>
+
+			<div class="pb-2 row me-1">
+				<label class="form-label col-6 col-lg-4 col-form-label fw-lighter text-end">
+					Сума
+				</label>
+				<div class="col-5 col-lg-3">
+					<InputNumber @bind-Value="OrderModel.Price" class="form-control text-end" @onclick="() => CandlesExpanded = false" />
+					<ValidationMessage For="() => OrderModel.Price" />
+				</div>
+				<div class="col-1 ps-0 my-auto">грн.</div>
+			</div>
+
+			<div class="pb-2 row me-1">
+				<label class="form-label col-6 col-lg-4 col-form-label fw-lighter text-end">
+					Спосіб оплати
+				</label>
+				<div class="col-5 col-lg-3">
+					<InputSelect @bind-Value="OrderModel.PaymentType" class="form-control text-end" @onclick="() => CandlesExpanded = false">
+						<option value="0">Готівка</option>
+						<option value="1">Картка</option>
+						<option value="2">ЗД</option>
+					</InputSelect>
+					<ValidationMessage For="() => OrderModel.PaymentType" />
+				</div>
+			</div>
 
 		</div>
-	}
-
-	<hr />
-
-	<div class="pb-1 row">
-		<label class="col-6 col-lg-2 text-end">Воску потрібно:</label>
-		<label class="col-6 col-lg-2">@_totalGramm<span>&nbsp;г.</span></label>
 	</div>
-
-	<div class="pb-2 row me-1">
-		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
-			Сума
-		</label>
-		<div class="col-5 col-lg-2">
-			<InputNumber @bind-Value="OrderModel.Price" class="form-control text-end" @onclick="() => CandlesExpanded = false" />
-		</div>
-		<div class="col-1 col-lg-1 ps-0 my-auto">грн.</div>
-		<ValidationMessage For="() => OrderModel.Price" />
-	</div>
-
-	<div class="pb-2 row me-1">
-		<label class="form-label col-6 col-lg-2 col-form-label fw-lighter text-end">
-			Спосіб оплати
-		</label>
-		<div class="col-5 col-lg-2">
-			<InputSelect @bind-Value="OrderModel.PaymentType" class="form-control text-end" @onclick="() => CandlesExpanded = false" >
-				<option value="0">Готівка</option>
-				<option value="1">Картка</option>
-				<option value="2">ЗД</option>
-			</InputSelect>
-		</div>
-		<ValidationMessage For="() => OrderModel.PaymentType" />
-	</div>
-
-
 
 </div>
 
